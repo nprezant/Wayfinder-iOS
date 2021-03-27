@@ -1,9 +1,4 @@
-//
-//  WayfinderTests.swift
-//  WayfinderTests
-//
-//  Created by lzitney on 3/22/21.
-//
+// Wayfinder
 
 import XCTest
 @testable import Wayfinder

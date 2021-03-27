@@ -13,6 +13,10 @@
 		5F7487402609A5310046B148 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873F2609A5310046B148 /* Preview Assets.xcassets */; };
 		5F74874B2609A5310046B148 /* WayfinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74874A2609A5310046B148 /* WayfinderTests.swift */; };
 		5F7487562609A5310046B148 /* WayfinderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7487552609A5310046B148 /* WayfinderUITests.swift */; };
+		5F7487A42609B2060046B148 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7487A32609B2060046B148 /* HomeView.swift */; };
+		5F7487A92609B2350046B148 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7487A82609B2350046B148 /* HistoryView.swift */; };
+		5F7487AE2609B2670046B148 /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7487AD2609B2670046B148 /* InsightsView.swift */; };
+		5F7487B6260EAD640046B148 /* MultilineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7487B5260EAD640046B148 /* MultilineTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +49,10 @@
 		5F7487512609A5310046B148 /* WayfinderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WayfinderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7487552609A5310046B148 /* WayfinderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WayfinderUITests.swift; sourceTree = "<group>"; };
 		5F7487572609A5310046B148 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5F7487A32609B2060046B148 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		5F7487A82609B2350046B148 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		5F7487AD2609B2670046B148 /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
+		5F7487B5260EAD640046B148 /* MultilineTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +108,10 @@
 				5F74873C2609A5310046B148 /* Assets.xcassets */,
 				5F7487412609A5310046B148 /* Info.plist */,
 				5F74873E2609A5310046B148 /* Preview Content */,
+				5F7487A32609B2060046B148 /* HomeView.swift */,
+				5F7487A82609B2350046B148 /* HistoryView.swift */,
+				5F7487AD2609B2670046B148 /* InsightsView.swift */,
+				5F7487B5260EAD640046B148 /* MultilineTextField.swift */,
 			);
 			path = Wayfinder;
 			sourceTree = "<group>";
@@ -259,6 +271,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F7487B6260EAD640046B148 /* MultilineTextField.swift in Sources */,
+				5F7487A42609B2060046B148 /* HomeView.swift in Sources */,
+				5F7487A92609B2350046B148 /* HistoryView.swift in Sources */,
+				5F7487AE2609B2670046B148 /* InsightsView.swift in Sources */,
 				5F74873B2609A52B0046B148 /* ContentView.swift in Sources */,
 				5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */,
 			);

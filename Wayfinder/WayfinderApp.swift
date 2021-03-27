@@ -1,9 +1,4 @@
-//
-//  WayfinderApp.swift
-//  Wayfinder
-//
-//  Created by lzitney on 3/22/21.
-//
+// Wayfinder
 
 import SwiftUI
 

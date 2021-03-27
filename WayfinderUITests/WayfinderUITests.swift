@@ -1,9 +1,4 @@
-//
-//  WayfinderUITests.swift
-//  WayfinderUITests
-//
-//  Created by lzitney on 3/22/21.
-//
+// Wayfinder
 
 import XCTest
 
