@@ -5,6 +5,7 @@ import SwiftUI
 struct ReflectionSlider: View {
     let label: String
     let binding: Binding<Double>
+    var range: ClosedRange<Double> = 1...100
     @State private var description = ""
     @State private var isShowingDescription = false
 
@@ -22,7 +23,7 @@ struct ReflectionSlider: View {
             }
             Slider(
                 value: binding,
-                in: 0...100,
+                in: range,
                 step: 1
             )
             if isShowingDescription {
@@ -61,11 +62,12 @@ struct WorkReflectionView: View {
         ScrollView(.vertical, showsIndicators: true) {
             HStack {
                 TextField("Activity name", text: $activityName)
+                    .font(.system(size: 26))
                 Spacer()
             }
             Toggle("Flow state", isOn: $isFlowState)
             ReflectionSlider(label: "Engagement", binding: $engagementValue)
-            ReflectionSlider(label: "Energy", binding: $energyValue)
+            ReflectionSlider(label: "Energy", binding: $energyValue, range: -100...100)
         }
         .padding(.horizontal)
     }
