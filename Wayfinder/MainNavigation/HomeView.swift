@@ -73,14 +73,6 @@ struct WorkReflectionView: View {
     }
 }
 
-struct LifeReflectionView: View {
-    var body: some View {
-        Text("Question 1")
-        Text("Question 2")
-        Text("Question 3")
-    }
-}
-
 struct NoteReflectionView: View {
     @State private var text = ""
     var body: some View {
