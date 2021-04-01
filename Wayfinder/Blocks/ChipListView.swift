@@ -2,58 +2,57 @@
 
 import SwiftUI
 
-struct ChipsDataModel: Identifiable {
+struct ChipData: Identifiable {
     let id = UUID()
-    @State var isSelected: Bool
-    let systemImage: String
+    var isSelected: Bool
     let title: LocalizedStringKey
     let color: Color
 }
 
-class ChipsViewModel: ObservableObject {
-    @Published var dataObject: [ChipsDataModel] = [
-        ChipsDataModel(isSelected: false, systemImage: "pencil.circle", title: "Health", color: Color.red),
-        ChipsDataModel(isSelected: false, systemImage: "pencil.circle", title: "Work", color: Color.blue),
-        ChipsDataModel(isSelected: false, systemImage: "pencil.circle", title: "Play", color: Color.green),
-        ChipsDataModel(isSelected: false, systemImage: "pencil.circle", title: "Love", color: Color.yellow),
+class ChipViewModel: ObservableObject {
+    @Published var dataObject: [ChipData] = [
+        ChipData(isSelected: false, title: "Health", color: Color.red),
+        ChipData(isSelected: false, title: "Work", color: Color.blue),
+        ChipData(isSelected: false, title: "Play", color: Color.green),
+        ChipData(isSelected: false, title: "Love", color: Color.yellow),
     ]
-}
 
-
-struct Chip: View {
-    let systemImage: String
-    let titleKey: LocalizedStringKey
-    @State var isSelected: Bool
-    let color: Color
-    var body: some View {
-        let backgroundColor = color.opacity(isSelected ? 0.5 : 0.75)
-        HStack {
-//            Image.init(systemName: systemImage).font(.body)
-            Text(titleKey).font(.body).lineLimit(1)
-        }.padding(.all)
-        .foregroundColor(isSelected ? .white : .black)
-        .background(backgroundColor)
-        .cornerRadius(20)
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(backgroundColor, lineWidth: 1.5)
-        ).onTapGesture {
-            isSelected.toggle()
+    func setSelected(id: UUID) -> Void {
+        for (index, chipData) in dataObject.enumerated() {
+            dataObject[index].isSelected = chipData.id == id
         }
     }
 }
 
+
+struct Chip: View {
+    @Binding var chipData: ChipData
+
+    var body: some View {
+        let backgroundColor = chipData.color.opacity(chipData.isSelected ? 0.5 : 0.75)
+        Text(chipData.title).font(.body).lineLimit(1)
+            .padding(.all)
+            .foregroundColor(chipData.isSelected ? .white : .black)
+            .background(backgroundColor)
+            .cornerRadius(100)
+            .overlay(
+                RoundedRectangle(cornerRadius: 100)
+                    .stroke(backgroundColor, lineWidth: 1.5)
+            )
+    }
+}
+
 struct ChipList: View {
-    @ObservedObject var viewModel = ChipsViewModel()
+    @ObservedObject var viewModel: ChipViewModel
+
     var body: some View {
         ScrollView(Axis.Set.horizontal, showsIndicators: false) {
             HStack {
-                ForEach(viewModel.dataObject) { chipData in
-                    Chip(systemImage: chipData.systemImage,
-                          titleKey: chipData.title,
-                          isSelected: chipData.isSelected,
-                          color: chipData.color
-                    )
+                ForEach(viewModel.dataObject.indexed(), id: \.1.id) { index, chipData in
+                    Chip(chipData: self.$viewModel.dataObject[index])
+                        .onTapGesture {
+                            viewModel.setSelected(id: chipData.id)
+                        }
                 }
             }
         }
@@ -62,6 +61,6 @@ struct ChipList: View {
 
 struct ChipListView_Previews: PreviewProvider {
     static var previews: some View {
-        ChipList()
+        ChipList(viewModel: ChipViewModel())
     }
 }

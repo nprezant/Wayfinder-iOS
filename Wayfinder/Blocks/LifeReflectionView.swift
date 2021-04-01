@@ -153,22 +153,24 @@ private struct FullScreenView: View {
 
     
     var body: some View {
-        ZStack {
-            responseItem.color.edgesIgnoringSafeArea(.all)
+        ScrollView {
             VStack {
                 HStack {
                     Text(responseItem.question)
                         .font(.title)
                     Spacer()
                 }
+                Rectangle()
+                    .fill(responseItem.color)
+                    .frame(height: 4)
                 MultilineTextField("Response...", text: $responseText)
-                ChipList()
+                ChipList(viewModel: ChipViewModel())
                 Text("done")
                     .onTapGesture {
                         responseItem.response = responseText
                         self.isFullScreen.toggle()
                     }
-            }
+            }.padding()
         }
     }
 }
