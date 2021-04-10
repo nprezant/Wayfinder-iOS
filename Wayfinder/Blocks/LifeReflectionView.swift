@@ -144,6 +144,7 @@ private struct FullScreenView: View {
     @Binding var responseItem: ResponseItem
     
     @State private var responseText: String
+    @State private var chipViewModel = ChipViewModel()
     
     init(isFullScreen: Binding<Bool>, responseItem: Binding<ResponseItem>) {
         self._isFullScreen = isFullScreen
@@ -161,10 +162,10 @@ private struct FullScreenView: View {
                     Spacer()
                 }
                 Rectangle()
-                    .fill(responseItem.color)
+                    .fill(chipViewModel.selectedChip.color)
                     .frame(height: 4)
                 MultilineTextField("Response...", text: $responseText)
-                ChipList(viewModel: ChipViewModel())
+                ChipList(viewModel: chipViewModel)
                 Text("done")
                     .onTapGesture {
                         responseItem.response = responseText

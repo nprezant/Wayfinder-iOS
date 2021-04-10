@@ -10,16 +10,26 @@ struct ChipData: Identifiable {
 }
 
 class ChipViewModel: ObservableObject {
-    @Published var dataObject: [ChipData] = [
-        ChipData(isSelected: false, title: "Health", color: Color.red),
-        ChipData(isSelected: false, title: "Work", color: Color.blue),
-        ChipData(isSelected: false, title: "Play", color: Color.green),
-        ChipData(isSelected: false, title: "Love", color: Color.yellow),
-    ]
+    @Published var dataObject: [ChipData]
+    @State var selectedChip: ChipData
+
+    init() {
+        let chipDataList: [ChipData] = [
+            ChipData(isSelected: false, title: "Health", color: Color.red),
+            ChipData(isSelected: false, title: "Work", color: Color.blue),
+            ChipData(isSelected: false, title: "Play", color: Color.green),
+            ChipData(isSelected: false, title: "Love", color: Color.yellow),
+        ]
+        self.dataObject = chipDataList
+        self.selectedChip = chipDataList[0]
+    }
 
     func setSelected(id: UUID) -> Void {
         for (index, chipData) in dataObject.enumerated() {
             dataObject[index].isSelected = chipData.id == id
+            if (chipData.id == id) {
+                selectedChip = chipData
+            }
         }
     }
 }
