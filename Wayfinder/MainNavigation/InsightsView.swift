@@ -7,3 +7,9 @@ struct InsightsView: View {
         Text("Insights")
     }
 }
+
+struct InsightsView_Previews: PreviewProvider {
+    static var previews: some View {
+        InsightsView()
+    }
+}

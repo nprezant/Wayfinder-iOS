@@ -7,3 +7,9 @@ struct HistoryView: View {
         Text("History")
     }
 }
+
+struct HistoryView_Previews: PreviewProvider {
+    static var previews: some View {
+        HistoryView()
+    }
+}
