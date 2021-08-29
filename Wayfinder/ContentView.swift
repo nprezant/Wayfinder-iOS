@@ -4,23 +4,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        TabView {
-           HomeView()
-             .tabItem {
-                Image(systemName: "homepod")
-                Text("Home")
-           }
-           HistoryView()
-            .tabItem {
-                Image(systemName: "pencil.tip")
-                Text("History")
-            }
-           InsightsView()
-             .tabItem {
-                Image(systemName: "macmini")
-                Text("Insights")
-          }
-        }
+        HomeView()
     }
 }
 
