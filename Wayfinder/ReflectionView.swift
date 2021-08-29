@@ -37,6 +37,8 @@ struct ReflectionView: View {
                 Spacer()
             }
             Toggle("Flow state", isOn: $isFlowState)
+                .padding(.trailing, 5)
+                .toggleStyle(SwitchToggleStyle(tint: Color.accentColor))
             ReflectionSlider(label: "Engagement", binding: $engagementValue, range: 0...100)
             ReflectionSlider(label: "Energy", binding: $energyValue, range: -100...100)
             Spacer()
