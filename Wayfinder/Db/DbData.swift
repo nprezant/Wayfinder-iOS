@@ -23,7 +23,7 @@ class DbData: ObservableObject {
     
     public init() {
         do {
-            try db = SqliteDatabase.open(atPath: DbData.fileURL.absoluteString)
+            try db = SqliteDatabase.open(atPath: DbData.fileURL)
         } catch {
             fatalError("Cannot open database: \(DbData.fileURL)")
         }
@@ -40,6 +40,7 @@ class DbData: ObservableObject {
             }
         }
     }
+    
     func saveReflection(reflection: Reflection) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }

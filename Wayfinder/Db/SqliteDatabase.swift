@@ -22,11 +22,11 @@ class SqliteDatabase {
     }
     
     // Open database connection
-    static func open(atPath: String) throws -> SqliteDatabase {
-        if FileManager().fileExists(atPath: atPath) {
-            return try openExisting(atPath: atPath)
+    static func open(atPath: URL) throws -> SqliteDatabase {
+        if FileManager().fileExists(atPath: atPath.path) {
+            return try openExisting(atPath: atPath.absoluteString)
         } else {
-            return try createNew(atPath: atPath)
+            return try createNew(atPath: atPath.absoluteString)
         }
     }
     

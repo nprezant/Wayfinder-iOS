@@ -4,12 +4,12 @@ import SwiftUI
 
 @main
 struct WayfinderApp: App {
-    @ObservedObject private var data = DbData()
+    @State private var dbData = DbData()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(dbData: $dbData)
                 .onAppear {
-                    data.loadReflections()
+                    dbData.loadReflections()
                 }
         }
     }
