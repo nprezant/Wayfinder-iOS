@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		4F03BE1A26DC4805001E61E5 /* ReflectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE1926DC4805001E61E5 /* ReflectionView.swift */; };
+		4F03BE1C26DD3F65001E61E5 /* SqliteDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE1B26DD3F65001E61E5 /* SqliteDatabase.swift */; };
+		4F03BE2226DD4F33001E61E5 /* Tables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2126DD4F33001E61E5 /* Tables.swift */; };
+		4F03BE2426DD728E001E61E5 /* DbData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2326DD728E001E61E5 /* DbData.swift */; };
 		5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7487382609A52B0046B148 /* WayfinderApp.swift */; };
 		5F74873B2609A52B0046B148 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74873A2609A52B0046B148 /* ContentView.swift */; };
 		5F74873D2609A5310046B148 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873C2609A5310046B148 /* Assets.xcassets */; };
@@ -35,6 +38,10 @@
 
 /* Begin PBXFileReference section */
 		4F03BE1926DC4805001E61E5 /* ReflectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReflectionView.swift; sourceTree = "<group>"; };
+		4F03BE1B26DD3F65001E61E5 /* SqliteDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqliteDatabase.swift; sourceTree = "<group>"; };
+		4F03BE1F26DD4EB4001E61E5 /* Wayfinder-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Wayfinder-Bridging-Header.h"; sourceTree = "<group>"; };
+		4F03BE2126DD4F33001E61E5 /* Tables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tables.swift; sourceTree = "<group>"; };
+		4F03BE2326DD728E001E61E5 /* DbData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbData.swift; sourceTree = "<group>"; };
 		5F7487352609A52B0046B148 /* Wayfinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wayfinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7487382609A52B0046B148 /* WayfinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WayfinderApp.swift; sourceTree = "<group>"; };
 		5F74873A2609A52B0046B148 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -74,6 +81,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4F03BE2026DD4EE2001E61E5 /* Db */ = {
+			isa = PBXGroup;
+			children = (
+				4F03BE1B26DD3F65001E61E5 /* SqliteDatabase.swift */,
+				4F03BE2126DD4F33001E61E5 /* Tables.swift */,
+				4F03BE2326DD728E001E61E5 /* DbData.swift */,
+			);
+			path = Db;
+			sourceTree = "<group>";
+		};
 		5F74872C2609A52A0046B148 = {
 			isa = PBXGroup;
 			children = (
@@ -97,9 +114,11 @@
 		5F7487372609A52B0046B148 /* Wayfinder */ = {
 			isa = PBXGroup;
 			children = (
+				4F03BE2026DD4EE2001E61E5 /* Db */,
 				5F7487382609A52B0046B148 /* WayfinderApp.swift */,
 				5F74873A2609A52B0046B148 /* ContentView.swift */,
 				4F03BE1926DC4805001E61E5 /* ReflectionView.swift */,
+				4F03BE1F26DD4EB4001E61E5 /* Wayfinder-Bridging-Header.h */,
 				5F74873C2609A5310046B148 /* Assets.xcassets */,
 				5F7487412609A5310046B148 /* Info.plist */,
 				5F74873E2609A5310046B148 /* Preview Content */,
@@ -262,8 +281,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F03BE2226DD4F33001E61E5 /* Tables.swift in Sources */,
 				5F74873B2609A52B0046B148 /* ContentView.swift in Sources */,
 				4F03BE1A26DC4805001E61E5 /* ReflectionView.swift in Sources */,
+				4F03BE2426DD728E001E61E5 /* DbData.swift in Sources */,
+				4F03BE1C26DD3F65001E61E5 /* SqliteDatabase.swift in Sources */,
 				5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -357,6 +379,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OBJC_BRIDGING_HEADER = "Wayfinder/Wayfinder-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -411,6 +434,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = "Wayfinder/Wayfinder-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
