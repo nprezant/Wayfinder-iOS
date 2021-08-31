@@ -46,7 +46,6 @@ struct DetailView: View {
         .fullScreenCover(isPresented: $isPresented) {
             NavigationView {
                 EditView(reflectionData: $data)
-                    .navigationTitle(data.name)
                     .navigationBarItems(leading: Button("Cancel") {
                         isPresented = false
                     }, trailing: Button("Done") {
@@ -60,6 +59,8 @@ struct DetailView: View {
 
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailView(reflection: .constant(Reflection.exampleData[0]))
+        NavigationView {
+            DetailView(reflection: .constant(Reflection.exampleData[0]))
+        }
     }
 }
