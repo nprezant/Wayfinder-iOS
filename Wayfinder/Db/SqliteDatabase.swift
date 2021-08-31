@@ -23,10 +23,14 @@ class SqliteDatabase {
     
     // Open database connection
     static func open(atPath: URL) throws -> SqliteDatabase {
-        #if DEBUG
-        try FileManager().removeItem(atPath: atPath.path)
-        #endif
-        if FileManager().fileExists(atPath: atPath.path) {
+//        #if DEBUG
+//        do {
+//            try FileManager.default.removeItem(atPath: atPath.path)
+//        } catch let error as NSError {
+//            print("Error: \(error.domain)")
+//        }
+//        #endif
+        if FileManager.default.fileExists(atPath: atPath.path) {
             return try openExisting(atPath: atPath.absoluteString)
         } else {
             return try createNew(atPath: atPath.absoluteString)

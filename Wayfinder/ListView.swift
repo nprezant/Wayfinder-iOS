@@ -5,18 +5,20 @@ import SwiftUI
 struct ListView: View {
     @Binding var reflections: [Reflection]
     var body: some View {
-        Text("Hello")
-//        List {
-//            ForEach(reflections) { reflection in
-//                NavigationLink(destination: DetailView(scrum: binding(for: reflection))) {
-//                    CardView(reflection: reflection)
-//                }
-//                .listRowBackground(Color.gray)
-//            }
-//        }
-
+        NavigationView {
+            List {
+                ForEach(reflections.indices) { index in
+                    let reflection = reflections[index]
+                    NavigationLink(destination: DetailView(reflection: binding(for: reflection))) {
+                        CardView(reflection: reflection)
+                    }
+                    .listRowBackground(Color.green)
+                }
+            }
+            .navigationTitle("Reflections")
+        }
     }
-    
+
     private func binding(for reflection: Reflection) -> Binding<Reflection> {
         guard let reflectionIndex = reflections.firstIndex(where: { $0.id == reflection.id }) else {
             fatalError("Can't find reflection in array")

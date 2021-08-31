@@ -7,10 +7,15 @@ struct WayfinderApp: App {
     @State private var dbData = DbData()
     var body: some Scene {
         WindowGroup {
-            HomeView(dbData: $dbData)
-                .onAppear {
-                    dbData.loadReflections()
-                }
+            TabView() {
+                HomeView(dbData: $dbData)
+                    .tabItem { Image(systemName: "house.fill") }
+                ListView(reflections: $dbData.reflections)
+                    .tabItem { Image(systemName: "list.bullet") }
+            }
+            .onAppear {
+                dbData.loadReflections()
+            }
         }
     }
 }
