@@ -64,7 +64,7 @@ struct EditView: View {
     }
 }
 
-struct ReflectionView_Previews: PreviewProvider {
+struct EditView_Previews: PreviewProvider {
     static var previews: some View {
         EditView(reflectionData: .constant(Reflection.exampleData[0].data))
     }

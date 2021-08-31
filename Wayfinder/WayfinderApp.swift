@@ -7,7 +7,7 @@ struct WayfinderApp: App {
     @State private var dbData = DbData()
     var body: some Scene {
         WindowGroup {
-            ContentView(dbData: $dbData)
+            HomeView(dbData: $dbData)
                 .onAppear {
                     dbData.loadReflections()
                 }

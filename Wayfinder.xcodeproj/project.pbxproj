@@ -11,8 +11,8 @@
 		4F03BE2226DD4F33001E61E5 /* Tables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2126DD4F33001E61E5 /* Tables.swift */; };
 		4F03BE2426DD728E001E61E5 /* DbData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2326DD728E001E61E5 /* DbData.swift */; };
 		4F03BE2826DED59B001E61E5 /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2726DED59B001E61E5 /* EditView.swift */; };
+		4F03BE2A26DED61C001E61E5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2926DED61C001E61E5 /* HomeView.swift */; };
 		5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7487382609A52B0046B148 /* WayfinderApp.swift */; };
-		5F74873B2609A52B0046B148 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74873A2609A52B0046B148 /* ContentView.swift */; };
 		5F74873D2609A5310046B148 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873C2609A5310046B148 /* Assets.xcassets */; };
 		5F7487402609A5310046B148 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873F2609A5310046B148 /* Preview Assets.xcassets */; };
 		5F74874B2609A5310046B148 /* WayfinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F74874A2609A5310046B148 /* WayfinderTests.swift */; };
@@ -42,9 +42,9 @@
 		4F03BE2126DD4F33001E61E5 /* Tables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tables.swift; sourceTree = "<group>"; };
 		4F03BE2326DD728E001E61E5 /* DbData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbData.swift; sourceTree = "<group>"; };
 		4F03BE2726DED59B001E61E5 /* EditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
+		4F03BE2926DED61C001E61E5 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		5F7487352609A52B0046B148 /* Wayfinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wayfinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7487382609A52B0046B148 /* WayfinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WayfinderApp.swift; sourceTree = "<group>"; };
-		5F74873A2609A52B0046B148 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5F74873C2609A5310046B148 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5F74873F2609A5310046B148 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		5F7487412609A5310046B148 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -116,7 +116,7 @@
 			children = (
 				4F03BE2026DD4EE2001E61E5 /* Db */,
 				5F7487382609A52B0046B148 /* WayfinderApp.swift */,
-				5F74873A2609A52B0046B148 /* ContentView.swift */,
+				4F03BE2926DED61C001E61E5 /* HomeView.swift */,
 				4F03BE2726DED59B001E61E5 /* EditView.swift */,
 				4F03BE1F26DD4EB4001E61E5 /* Wayfinder-Bridging-Header.h */,
 				5F74873C2609A5310046B148 /* Assets.xcassets */,
@@ -282,9 +282,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F03BE2226DD4F33001E61E5 /* Tables.swift in Sources */,
-				5F74873B2609A52B0046B148 /* ContentView.swift in Sources */,
 				4F03BE2826DED59B001E61E5 /* EditView.swift in Sources */,
 				4F03BE2426DD728E001E61E5 /* DbData.swift in Sources */,
+				4F03BE2A26DED61C001E61E5 /* HomeView.swift in Sources */,
 				4F03BE1C26DD3F65001E61E5 /* SqliteDatabase.swift in Sources */,
 				5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */,
 			);

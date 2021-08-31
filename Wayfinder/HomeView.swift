@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct HomeView: View {
     @Binding var dbData: DbData
     @Environment(\.scenePhase) private var scenePhase
     @State private var isNewReflectionPresented = false
@@ -57,8 +57,8 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(dbData: .constant(DbData()))
+        HomeView(dbData: .constant(DbData()))
     }
 }
