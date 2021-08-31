@@ -22,7 +22,7 @@ struct ReflectionSlider: View {
     }
 }
 
-struct ReflectionView: View {
+struct EditView: View {
     @Binding var reflectionData: Reflection.Data
     @State private var isConfirmingCancel = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -66,6 +66,6 @@ struct ReflectionView: View {
 
 struct ReflectionView_Previews: PreviewProvider {
     static var previews: some View {
-        ReflectionView(reflectionData: .constant(Reflection.exampleData[0].data))
+        EditView(reflectionData: .constant(Reflection.exampleData[0].data))
     }
 }

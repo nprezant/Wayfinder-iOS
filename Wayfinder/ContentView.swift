@@ -45,7 +45,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $isNewReflectionPresented) {
             NavigationView {
-                ReflectionView(reflectionData: $newReflectionData)
+                EditView(reflectionData: $newReflectionData)
                     .navigationBarItems(leading: Button("Dismiss") {
                         isNewReflectionPresented = false
                     }, trailing: Button("Add") {
