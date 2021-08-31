@@ -41,13 +41,14 @@ class DbData: ObservableObject {
         }
     }
     
+    // TODO handle async better... perhaps with Result<T>... completion: @escaping (Result<Any, SqliteError>)->())  {
     func saveReflection(reflection: Reflection) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
             do {
                 try self?.db.insertReflection(reflection: reflection)
             } catch {
-                fatalError("Can't insert reflection data")
+                fatalError("Can't insert reflection data. \(self?.db.errorMessage ?? "No db message provided")")
             }
         }
     }

@@ -23,6 +23,9 @@ class SqliteDatabase {
     
     // Open database connection
     static func open(atPath: URL) throws -> SqliteDatabase {
+        #if DEBUG
+        try FileManager().removeItem(atPath: atPath.path)
+        #endif
         if FileManager().fileExists(atPath: atPath.path) {
             return try openExisting(atPath: atPath.absoluteString)
         } else {

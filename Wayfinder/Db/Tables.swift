@@ -8,7 +8,7 @@ struct Reflection : SqlTable {
     static var createStatement: String {
         return """
         CREATE TABLE Reflection(
-            id INT PRIMARY KEY NOT NULL,
+            id INT PRIMARY KEY,
             name TEXT,
             isFlowState BOOL,
             engagement INT,
@@ -20,7 +20,7 @@ struct Reflection : SqlTable {
     
     let id: Int64
     let name: String
-    let isFlowState: Bool
+    let isFlowState: Int64
     let engagement: Int64
     let energy: Int64
     let date: Int64 // unix epoch time
@@ -29,10 +29,38 @@ struct Reflection : SqlTable {
 extension Reflection {
     static var exampleData: [Reflection] {
         [
-            Reflection(id: 1, name: "iOS dev", isFlowState: false, engagement: 70, energy: -20, date: 1000000),
-            Reflection(id: 2, name: "Sleeping", isFlowState: false, engagement: 50, energy: 60, date: 1000000),
+            Reflection(id: 1, name: "iOS dev", isFlowState: false.intValue, engagement: 70, energy: -20, date: 1000000),
+            Reflection(id: 2, name: "Sleeping", isFlowState: false.intValue, engagement: 50, energy: 60, date: 1000000),
         ]
     }
+}
+
+extension Reflection {
+    struct Data {
+        var name: String = ""
+        var isFlowState: Bool = false
+        var engagement: Int64 = 50
+        var energy: Int64 = 0
+        var date: Int64 = 0
+        
+        var reflection: Reflection {
+            return Reflection(id: 0, name: name, isFlowState: isFlowState.intValue, engagement: engagement, energy: energy, date: date)
+        }
+    }
+
+    var data: Data {
+        return Data(name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: date)
+    }
+
+    /*
+    mutating func update(from data: Data) {
+        name = data.name
+        isFlowState = data.isFlowState
+        engagement = data.engagement
+        energy = data.energy
+        date = data.date
+    }
+    */
 }
 
 extension Bool {
@@ -49,8 +77,8 @@ extension SqliteDatabase {
     func insertReflection(reflection: Reflection) throws {
         let insertSql = """
             INSERT INTO Reflection
-                (id, name, isFlowState, engagement, energy, date)
-            VALUES (?, ?, ?, ?, ?, ?);
+                (name, isFlowState, engagement, energy, date)
+            VALUES (?, ?, ?, ?, ?);
         """
         
         let stmt = try prepare(sql: insertSql)
@@ -59,12 +87,11 @@ extension SqliteDatabase {
         }
         
         guard
-            sqlite3_bind_int64(stmt, 1, reflection.id) == SQLITE_OK
-                && sqlite3_bind_text(stmt, 2, reflection.name, -1, nil) == SQLITE_OK
-                && sqlite3_bind_int64(stmt, 3, reflection.isFlowState.intValue) == SQLITE_OK
-                && sqlite3_bind_int64(stmt, 4, reflection.engagement) == SQLITE_OK
-                && sqlite3_bind_int64(stmt, 5, reflection.energy) == SQLITE_OK
-                && sqlite3_bind_int64(stmt, 6, reflection.date) == SQLITE_OK
+            sqlite3_bind_text(stmt, 1, reflection.name, -1, nil) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 2, reflection.isFlowState) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 3, reflection.engagement) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 4, reflection.energy) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 5, reflection.date) == SQLITE_OK
         else {
             throw SqliteError.Bind(message: errorMessage)
         }
@@ -82,7 +109,7 @@ extension SqliteDatabase {
         
         let id = sqlite3_column_int64(stmt, 0)
         let name = String(cString: sqlite3_column_text(stmt, 1))
-        let isFlowState = sqlite3_column_int64(stmt, 2).boolValue
+        let isFlowState = sqlite3_column_int64(stmt, 2)
         let engagement = sqlite3_column_int64(stmt, 3)
         let energy = sqlite3_column_int64(stmt, 4)
         let date = sqlite3_column_int64(stmt, 5)

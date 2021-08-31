@@ -4,11 +4,20 @@ import SwiftUI
 
 struct ContentView: View {
     @Binding var dbData: DbData
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var isNewReflectionPresented = false
+    @State private var newReflectionData = Reflection.Data()
+    func saveAction() -> Void {
+        dbData.saveReflection(reflection: newReflectionData.reflection)
+        newReflectionData = Reflection.Data()
+    }
     var body: some View {
         NavigationView {
             VStack {
                 Spacer()
-                NavigationLink(destination: ReflectionView()) {
+                Button(action: {
+                    isNewReflectionPresented = true
+                }) {
                     Text("Reflect")
                         .font(.system(size: 40))
                         .padding(EdgeInsets(
@@ -17,7 +26,7 @@ struct ContentView: View {
                         .overlay(
                             RoundedRectangle(cornerRadius: 40.0)
                                 .stroke(lineWidth: 2.0)
-                    )
+                        )
                 }
                 Spacer()
                 Text("Summary info")
@@ -32,6 +41,17 @@ struct ContentView: View {
                             .padding(10)
                     }
                 }
+            }
+        }
+        .sheet(isPresented: $isNewReflectionPresented) {
+            NavigationView {
+                ReflectionView(reflectionData: $newReflectionData)
+                    .navigationBarItems(leading: Button("Dismiss") {
+                        isNewReflectionPresented = false
+                    }, trailing: Button("Add") {
+                        saveAction()
+                        isNewReflectionPresented = false
+                    })
             }
         }
     }

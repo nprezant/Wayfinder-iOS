@@ -4,7 +4,7 @@ import SwiftUI
 
 struct ReflectionSlider: View {
     let label: String
-    let binding: Binding<Double>
+    @Binding var value: Int64
     var range: ClosedRange<Double>
 
     var body: some View {
@@ -13,7 +13,9 @@ struct ReflectionSlider: View {
             Spacer()
         }.contentShape(Rectangle()) // Makes entire HStack tappable
         Slider(
-            value: binding,
+            value: Binding<Double>(
+                get: { return Double(value) },
+                set: { value = Int64(truncating: $0 as NSNumber) }),
             in: range,
             step: 1
         )
@@ -21,30 +23,26 @@ struct ReflectionSlider: View {
 }
 
 struct ReflectionView: View {
-    @State private var activityName = ""
-    @State private var isFlowState = false
-    @State private var engagementValue = 50.0
-    @State private var energyValue = 0.0
-
+    @Binding var reflectionData: Reflection.Data
     @State private var isConfirmingCancel = false
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
             HStack {
-                TextField("Activity name", text: $activityName)
+                TextField("Activity name", text: $reflectionData.name)
                     .font(.system(size: 26))
                 Spacer()
             }
-            Toggle("Flow state", isOn: $isFlowState)
+            Toggle("Flow state", isOn: $reflectionData.isFlowState)
                 .padding(.trailing, 5)
                 .toggleStyle(SwitchToggleStyle(tint: Color.accentColor))
-            ReflectionSlider(label: "Engagement", binding: $engagementValue, range: 0...100)
-            ReflectionSlider(label: "Energy", binding: $energyValue, range: -100...100)
+            ReflectionSlider(label: "Engagement", value: $reflectionData.engagement, range: 0...100)
+            ReflectionSlider(label: "Energy", value: $reflectionData.energy, range: -100...100)
             Spacer()
         }
         .padding(.horizontal)
-        .navigationBarItems(
+        /*.navigationBarItems(
             leading:
                 Button("Cancel") {
                    isConfirmingCancel = true
@@ -62,12 +60,12 @@ struct ReflectionView: View {
                     self.presentationMode.wrappedValue.dismiss()
                 }
         )
-        .navigationBarBackButtonHidden(true)
+        .navigationBarBackButtonHidden(true)*/
     }
 }
 
 struct ReflectionView_Previews: PreviewProvider {
     static var previews: some View {
-        ReflectionView()
+        ReflectionView(reflectionData: .constant(Reflection.exampleData[0].data))
     }
 }
