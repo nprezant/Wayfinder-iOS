@@ -19,11 +19,11 @@ struct Reflection : SqlTable {
     }
     
     let id: Int64
-    let name: String
-    let isFlowState: Int64
-    let engagement: Int64
-    let energy: Int64
-    let date: Int64 // unix epoch time
+    var name: String
+    var isFlowState: Int64
+    var engagement: Int64
+    var energy: Int64
+    var date: Int64 // unix epoch time
 }
 
 extension Reflection {
@@ -52,15 +52,13 @@ extension Reflection {
         return Data(name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: date)
     }
 
-    /*
     mutating func update(from data: Data) {
         name = data.name
-        isFlowState = data.isFlowState
+        isFlowState = data.isFlowState.intValue
         engagement = data.engagement
         energy = data.energy
         date = data.date
     }
-    */
 }
 
 extension Bool {

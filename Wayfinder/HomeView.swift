@@ -34,6 +34,13 @@ struct HomeView: View {
                 HStack {
                     Spacer()
                     Button(action: {}) {
+                        Image(systemName: "list.bullet")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 24, height: 24)
+                            .padding(10)
+                    }
+                    Button(action: {}) {
                         Image(systemName: "square.and.arrow.up")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
