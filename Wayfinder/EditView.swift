@@ -24,9 +24,6 @@ struct ReflectionSlider: View {
 
 struct EditView: View {
     @Binding var reflectionData: Reflection.Data
-    @State private var isConfirmingCancel = false
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
             HStack {
@@ -42,25 +39,6 @@ struct EditView: View {
             Spacer()
         }
         .padding(.horizontal)
-        /*.navigationBarItems(
-            leading:
-                Button("Cancel") {
-                   isConfirmingCancel = true
-                }
-                .actionSheet(isPresented: $isConfirmingCancel, content: {
-                    ActionSheet(title: Text("Are you sure you want to discard your changes?"),
-                                buttons: [
-                                    .cancel(Text("Keep Editing")),
-                                    .destructive(Text("Discard Changes"), action: { self.presentationMode.wrappedValue.dismiss() })
-                                ]
-                    )
-                }),
-            trailing:
-                Button("Done") {
-                    self.presentationMode.wrappedValue.dismiss()
-                }
-        )
-        .navigationBarBackButtonHidden(true)*/
     }
 }
 

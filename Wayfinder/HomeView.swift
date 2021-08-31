@@ -12,9 +12,10 @@ struct HomeView: View {
         newReflectionData = Reflection.Data()
     }
     var body: some View {
-        NavigationView {
+        GeometryReader {geometry in
             VStack {
                 Spacer()
+                    .frame(width: geometry.size.width, height: geometry.size.height * 0.33, alignment: .center)
                 Button(action: {
                     isNewReflectionPresented = true
                 }) {
@@ -31,16 +32,6 @@ struct HomeView: View {
                 Spacer()
                 Text("Summary info")
                 Spacer()
-                HStack {
-                    Spacer()
-                    Button(action: {}) {
-                        Image(systemName: "square.and.arrow.up")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 24, height: 24)
-                            .padding(10)
-                    }
-                }
             }
         }
         .sheet(isPresented: $isNewReflectionPresented) {

@@ -16,6 +16,11 @@ struct ListView: View {
                 }
             }
             .navigationTitle("Reflections")
+            .navigationBarItems(trailing: Button(action: {
+                // TODO show sheet
+            }) {
+                Image(systemName: "square.and.arrow.up")
+            })
         }
     }
 
