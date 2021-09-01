@@ -84,10 +84,10 @@ class DbData: ObservableObject {
     func ExportCsv() -> URL {
         let reflections = self.db.reflections()
         
-        var s: String = "name\tisFlowState\tengagement\tenergy\tdate\n"
+        var s: String = "name\tisFlowState\tengagement\tenergy\tdate\tnote\n"
         
         for r in reflections {
-            s.append("\(r.name)\t\(r.isFlowState)\t\(r.engagement)\t\(r.energy)\t\(r.date)\n")
+            s.append("\(r.name)\t\(r.isFlowState)\t\(r.engagement)\t\(r.energy)\t\(r.date)\t\(r.note)\n")
         }
         
         do {
