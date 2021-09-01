@@ -10,7 +10,7 @@ struct DetailView: View {
     @State private var isPresented = false
     var body: some View {
         List {
-            Section(header: Text("Main Info")) {
+            Section() {
                 HStack {
                     Label("Flow State?", systemImage: "wind")
                         .accessibilityLabel(Text("Is Flow State?"))

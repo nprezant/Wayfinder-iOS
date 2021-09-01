@@ -1,5 +1,7 @@
 // Wayfinder
 
+import Foundation
+
 protocol SqlTable {
     static var createStatement: String { get }
 }
@@ -29,8 +31,8 @@ struct Reflection : SqlTable {
 extension Reflection {
     static var exampleData: [Reflection] {
         [
-            Reflection(id: 1, name: "iOS dev", isFlowState: false.intValue, engagement: 70, energy: -20, date: 1000000),
-            Reflection(id: 2, name: "Sleeping", isFlowState: false.intValue, engagement: 50, energy: 60, date: 1000000),
+            Reflection(id: 1, name: "iOS dev", isFlowState: false.intValue, engagement: 70, energy: -20, date: Int64(Date().timeIntervalSince1970)),
+            Reflection(id: 2, name: "Sleeping", isFlowState: false.intValue, engagement: 50, energy: 60, date: Int64(Date().timeIntervalSince1970)),
         ]
     }
 }
@@ -42,15 +44,15 @@ extension Reflection {
         var isFlowState: Bool = false
         var engagement: Int64 = 50
         var energy: Int64 = 0
-        var date: Int64 = 0
+        var date: Date = Date()
         
         var reflection: Reflection {
-            return Reflection(id: id, name: name, isFlowState: isFlowState.intValue, engagement: engagement, energy: energy, date: date)
+            return Reflection(id: id, name: name, isFlowState: isFlowState.intValue, engagement: engagement, energy: energy, date: Int64(date.timeIntervalSince1970))
         }
     }
 
     var data: Data {
-        return Data(id: id, name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: date)
+        return Data(id: id, name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: Date(timeIntervalSince1970: TimeInterval(date)))
     }
 
     mutating func update(from data: Data) {
@@ -59,7 +61,7 @@ extension Reflection {
         isFlowState = data.isFlowState.intValue
         engagement = data.engagement
         energy = data.energy
-        date = data.date
+        date = Int64(data.date.timeIntervalSince1970)
     }
 }
 
