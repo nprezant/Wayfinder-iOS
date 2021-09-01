@@ -15,6 +15,17 @@ struct ListView: View {
         dbData.delete(reflectionIds: toDelete)
     }
     
+    func shareSheet() {
+        let csv = dbData.ExportCsv()
+        let activityVC = UIActivityViewController(
+            activityItems: [csv],
+            applicationActivities: nil
+        )
+        UIApplication.shared.windows.first?.rootViewController?.present(
+            activityVC, animated: true, completion: nil
+        )
+    }
+    
     var body: some View {
         NavigationView {
             List {
@@ -33,7 +44,7 @@ struct ListView: View {
             }
             .navigationTitle("Reflections")
             .navigationBarItems(
-                trailing: Button(action: { /* TODO show sheet */ }) {
+                trailing: Button(action: shareSheet) {
                     Image(systemName: "square.and.arrow.up")
                 }
             )

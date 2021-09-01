@@ -14,8 +14,12 @@ class DbData: ObservableObject {
             fatalError("Can't find documents directory.")
         }
     }
-    private static var fileURL: URL {
+    private static var dbUrl: URL {
         return documentsFolder.appendingPathComponent("wayfinder.sqlite3")
+    }
+    
+    private static var exportUrl: URL {
+        return documentsFolder.appendingPathComponent("wayfinder.csv")
     }
     
     @Published var reflections: [Reflection] = []
@@ -24,9 +28,9 @@ class DbData: ObservableObject {
     
     public init() {
         do {
-            try db = SqliteDatabase.open(atPath: DbData.fileURL)
+            try db = SqliteDatabase.open(atPath: DbData.dbUrl)
         } catch {
-            fatalError("Cannot open database: \(DbData.fileURL)")
+            fatalError("Cannot open database: \(DbData.dbUrl)")
         }
     }
 
@@ -75,6 +79,24 @@ class DbData: ObservableObject {
                 fatalError("Can't delete reflection data. \(self?.db.errorMessage ?? "No db message provided")")
             }
         }
+    }
+    
+    func ExportCsv() -> URL {
+        let reflections = self.db.reflections()
+        
+        var s: String = "name\tisFlowState\tengagement\tenergy\tdate\n"
+        
+        for r in reflections {
+            s.append("\(r.name)\t\(r.isFlowState)\t\(r.engagement)\t\(r.energy)\t\(r.date)\n")
+        }
+        
+        do {
+            try s.write(to: DbData.exportUrl, atomically: true, encoding: .utf8)
+        } catch let e {
+            fatalError("Can't write to csv export file at \(DbData.exportUrl). Error: \(e)")
+        }
+        
+        return DbData.exportUrl;
     }
 }
 
