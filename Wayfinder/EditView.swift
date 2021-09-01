@@ -13,13 +13,17 @@ struct ReflectionSlider: View {
                 Text(label)
                 Spacer()
             }
-            Slider(
-                value: Binding<Double>(
-                    get: { return Double(value) },
-                    set: { value = Int64(truncating: $0 as NSNumber) }),
-                in: range,
-                step: 1
-            )
+            HStack {
+                Slider(
+                    value: Binding<Double>(
+                        get: { return Double(value) },
+                        set: { value = Int64(truncating: $0 as NSNumber) }),
+                    in: range,
+                    step: 1
+                )
+                Text("\(value, specifier: "%+d")")
+                    .frame(minWidth: 50)
+            }
         }
     }
 }
