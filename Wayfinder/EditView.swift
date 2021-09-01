@@ -23,19 +23,19 @@ struct ReflectionSlider: View {
 }
 
 struct EditView: View {
-    @Binding var reflectionData: Reflection.Data
+    @Binding var data: Reflection.Data
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
             HStack {
-                TextField("Activity name", text: $reflectionData.name)
+                TextField("Activity name", text: $data.name)
                     .font(.system(size: 26))
                 Spacer()
             }
-            Toggle("Flow state", isOn: $reflectionData.isFlowState)
+            Toggle("Flow state", isOn: $data.isFlowState)
                 .padding(.trailing, 5)
                 .toggleStyle(SwitchToggleStyle(tint: Color.accentColor))
-            ReflectionSlider(label: "Engagement", value: $reflectionData.engagement, range: 0...100)
-            ReflectionSlider(label: "Energy", value: $reflectionData.energy, range: -100...100)
+            ReflectionSlider(label: "Engagement", value: $data.engagement, range: 0...100)
+            ReflectionSlider(label: "Energy", value: $data.energy, range: -100...100)
             Spacer()
         }
         .padding(.horizontal)
@@ -44,6 +44,6 @@ struct EditView: View {
 
 struct EditView_Previews: PreviewProvider {
     static var previews: some View {
-        EditView(reflectionData: .constant(Reflection.exampleData[0].data))
+        EditView(data: .constant(Reflection.exampleData[0].data))
     }
 }

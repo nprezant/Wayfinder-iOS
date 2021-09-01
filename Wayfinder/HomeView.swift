@@ -36,7 +36,7 @@ struct HomeView: View {
         }
         .sheet(isPresented: $isNewReflectionPresented) {
             NavigationView {
-                EditView(reflectionData: $newReflectionData)
+                EditView(data: $newReflectionData)
                     .navigationBarItems(leading: Button("Dismiss") {
                         isNewReflectionPresented = false
                     }, trailing: Button("Add") {
