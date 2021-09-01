@@ -17,6 +17,7 @@ class DbData: ObservableObject {
     private static var fileURL: URL {
         return documentsFolder.appendingPathComponent("wayfinder.sqlite3")
     }
+    
     @Published var reflections: [Reflection] = []
     
     private var db: SqliteDatabase
@@ -49,6 +50,17 @@ class DbData: ObservableObject {
                 try self?.db.insertReflection(reflection: reflection)
             } catch {
                 fatalError("Can't insert reflection data. \(self?.db.errorMessage ?? "No db message provided")")
+            }
+        }
+    }
+    
+    func updateReflection(reflection: Reflection) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard (self != nil) else { fatalError("Self out of scope") }
+            do {
+                try self?.db.updateReflection(reflection: reflection)
+            } catch {
+                fatalError("Can't update reflection data. \(self?.db.errorMessage ?? "No db message provided")")
             }
         }
     }

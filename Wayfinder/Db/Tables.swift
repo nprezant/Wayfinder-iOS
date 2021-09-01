@@ -98,6 +98,35 @@ extension SqliteDatabase {
         }
     }
     
+    // Update an existing reflection with a matching ID
+    func updateReflection(reflection: Reflection) throws {
+        let sql = """
+            UPDATE Reflection
+            SET (name, isFlowState, engagement, energy, date)
+            = (?, ?, ?, ?, ?)
+            WHERE id = ?;
+        """
+        
+        let stmt = try prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        guard
+            sqlite3_bind_text(stmt, 1, reflection.name, -1, nil) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 2, reflection.isFlowState) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 3, reflection.engagement) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 4, reflection.energy) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 5, reflection.date) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 6, reflection.id) == SQLITE_OK
+        else {
+            throw SqliteError.Bind(message: errorMessage)
+        }
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
+    }
+    
     func reflection(stmt: OpaquePointer?) -> Reflection? {
         guard sqlite3_step(stmt) == SQLITE_ROW else {
             return nil
