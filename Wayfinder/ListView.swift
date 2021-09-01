@@ -9,6 +9,12 @@ struct ListView: View {
         dbData.updateReflection(reflection: reflection)
     }
     
+    func deleteAction(at offsets: IndexSet) -> Void {
+        let toDelete = offsets.map { dbData.reflections[$0].id }
+        dbData.reflections.remove(atOffsets: offsets)
+        dbData.delete(reflectionIds: toDelete)
+    }
+    
     var body: some View {
         NavigationView {
             List {
@@ -23,13 +29,14 @@ struct ListView: View {
                         CardView(reflection: reflection)
                     }
                 }
+                .onDelete(perform: deleteAction)
             }
             .navigationTitle("Reflections")
-            .navigationBarItems(trailing: Button(action: {
-                // TODO show sheet
-            }) {
-                Image(systemName: "square.and.arrow.up")
-            })
+            .navigationBarItems(
+                trailing: Button(action: { /* TODO show sheet */ }) {
+                    Image(systemName: "square.and.arrow.up")
+                }
+            )
         }
     }
 

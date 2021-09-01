@@ -130,6 +130,35 @@ extension SqliteDatabase {
         else {
             throw SqliteError.Bind(message: errorMessage)
         }
+        
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
+    }
+    
+    // Delete reflections with matching IDs
+    func delete(reflectionsIds: [Int64]) throws {
+        if reflectionsIds.isEmpty {
+            return
+        }
+        
+        let questionMarks = [String](repeating: "?", count: reflectionsIds.count)
+        let sql = """
+            DELETE FROM Reflection
+            WHERE id IN (\(questionMarks.joined(separator: ",")));
+        """
+        
+        let stmt = try prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        for (i, id) in reflectionsIds.enumerated() {
+            guard sqlite3_bind_int64(stmt, Int32(i) + 1, id) == SQLITE_OK else {
+                throw SqliteError.Bind(message: errorMessage)
+            }
+        }
+        
         guard sqlite3_step(stmt) == SQLITE_DONE else {
             throw SqliteError.Step(message: errorMessage)
         }

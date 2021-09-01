@@ -65,5 +65,16 @@ class DbData: ObservableObject {
             }
         }
     }
+    
+    func delete(reflectionIds: [Int64]) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard (self != nil) else { fatalError("Self out of scope") }
+            do {
+                try self?.db.delete(reflectionsIds: reflectionIds)
+            } catch {
+                fatalError("Can't delete reflection data. \(self?.db.errorMessage ?? "No db message provided")")
+            }
+        }
+    }
 }
 
