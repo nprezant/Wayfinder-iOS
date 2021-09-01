@@ -31,7 +31,7 @@ struct DetailView: View {
                 }
                 .accessibilityElement(children: .ignore)
             }
-            Section(header: Text("System Info")) {
+            Section() {
                 HStack {
                     Image(systemName: "calendar")
                     Text(Date(timeIntervalSince1970: TimeInterval(reflection.date)), style: .date)

@@ -45,7 +45,7 @@ struct EditView: View {
                 ReflectionSlider(label: "Energy", value: $data.energy, range: -100...100)
             }
             
-            Section(header: Text("System Info")) {
+            Section() {
                 DatePicker(
                     "Date",
                     selection: $data.date,
