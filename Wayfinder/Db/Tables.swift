@@ -8,7 +8,7 @@ struct Reflection : SqlTable {
     static var createStatement: String {
         return """
         CREATE TABLE Reflection(
-            id INT PRIMARY KEY,
+            id INTEGER PRIMARY KEY,
             name TEXT,
             isFlowState BOOL,
             engagement INT,
@@ -18,7 +18,7 @@ struct Reflection : SqlTable {
         """
     }
     
-    let id: Int64
+    var id: Int64
     var name: String
     var isFlowState: Int64
     var engagement: Int64
@@ -37,6 +37,7 @@ extension Reflection {
 
 extension Reflection {
     struct Data {
+        var id: Int64 = 0
         var name: String = ""
         var isFlowState: Bool = false
         var engagement: Int64 = 50
@@ -44,15 +45,16 @@ extension Reflection {
         var date: Int64 = 0
         
         var reflection: Reflection {
-            return Reflection(id: 0, name: name, isFlowState: isFlowState.intValue, engagement: engagement, energy: energy, date: date)
+            return Reflection(id: id, name: name, isFlowState: isFlowState.intValue, engagement: engagement, energy: energy, date: date)
         }
     }
 
     var data: Data {
-        return Data(name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: date)
+        return Data(id: id, name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: date)
     }
 
     mutating func update(from data: Data) {
+        id = data.id
         name = data.name
         isFlowState = data.isFlowState.intValue
         engagement = data.engagement

@@ -4,7 +4,7 @@ import SwiftUI
 
 struct DetailView: View {
     @Binding var reflection: Reflection
-    let saveAction: (() -> Void)
+    let saveAction: ((Reflection) -> Void)
     
     @State private var data: Reflection.Data = Reflection.Data()
     @State private var isPresented = false
@@ -53,7 +53,7 @@ struct DetailView: View {
                     }, trailing: Button("Done") {
                         isPresented = false
                         reflection.update(from: data)
-                        saveAction()
+                        saveAction(reflection)
                     })
             }
         }
@@ -61,7 +61,7 @@ struct DetailView: View {
 }
 
 struct DetailView_Previews: PreviewProvider {
-    static func saveAction() -> Void { }
+    static func saveAction(reflection: Reflection) -> Void { }
     static var previews: some View {
         NavigationView {
             DetailView(reflection: .constant(Reflection.exampleData[0]), saveAction: saveAction)

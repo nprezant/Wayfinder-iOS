@@ -5,8 +5,8 @@ import SwiftUI
 struct ListView: View {
     @ObservedObject var dbData: DbData
     
-    func saveAction(index: Int) -> Void {
-        dbData.updateReflection(reflection: dbData.reflections[index])
+    func saveAction(reflection: Reflection) -> Void {
+        dbData.updateReflection(reflection: reflection)
     }
     
     var body: some View {
@@ -14,7 +14,7 @@ struct ListView: View {
             List {
                 ForEach(dbData.reflections.indices, id: \.self) { index in
                     let reflection = dbData.reflections[index]
-                    NavigationLink(destination: DetailView(reflection: $dbData.reflections[index], saveAction: { saveAction(index: index) })) {
+                    NavigationLink(destination: DetailView(reflection: $dbData.reflections[index], saveAction: saveAction)) {
                         CardView(reflection: reflection)
                     }
                     .listRowBackground(Color.green)
