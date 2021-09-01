@@ -116,8 +116,12 @@ extension SqliteDatabase {
             sqlite3_finalize(stmt)
         }
         
+        // https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Statement.swift#L179
+        // https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Database.swift#L14
+        let SQLITE_TRANSIENT = unsafeBitCast(OpaquePointer(bitPattern: -1), to: sqlite3_destructor_type.self)
+        
         guard
-            sqlite3_bind_text(stmt, 1, reflection.name, -1, nil) == SQLITE_OK
+            sqlite3_bind_text(stmt, 1, reflection.name, -1, SQLITE_TRANSIENT) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 2, reflection.isFlowState) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 3, reflection.engagement) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 4, reflection.energy) == SQLITE_OK
