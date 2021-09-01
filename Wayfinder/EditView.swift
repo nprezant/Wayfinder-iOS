@@ -54,6 +54,9 @@ struct EditView: View {
                 // Can use .labelsHidden() to provide own label
                 .datePickerStyle(DefaultDatePickerStyle())
                 
+                // TODO no placeholder text available yet...
+                TextEditor(text: $data.note)
+                    .frame(maxHeight: 100)
             }
         }
         .listStyle(InsetGroupedListStyle())

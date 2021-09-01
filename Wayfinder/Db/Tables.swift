@@ -2,6 +2,10 @@
 
 import Foundation
 
+// https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Statement.swift#L179
+// https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Database.swift#L14
+let SQLITE_TRANSIENT = unsafeBitCast(OpaquePointer(bitPattern: -1), to: sqlite3_destructor_type.self)
+
 protocol SqlTable {
     static var createStatement: String { get }
 }
@@ -15,7 +19,8 @@ struct Reflection : SqlTable {
             isFlowState BOOL,
             engagement INT,
             energy INT,
-            date INT
+            date INT,
+            note TEXT
         );
         """
     }
@@ -26,13 +31,14 @@ struct Reflection : SqlTable {
     var engagement: Int64
     var energy: Int64
     var date: Int64 // unix epoch time
+    var note: String
 }
 
 extension Reflection {
     static var exampleData: [Reflection] {
         [
-            Reflection(id: 1, name: "iOS dev", isFlowState: false.intValue, engagement: 70, energy: -20, date: Int64(Date().timeIntervalSince1970)),
-            Reflection(id: 2, name: "Sleeping", isFlowState: false.intValue, engagement: 50, energy: 60, date: Int64(Date().timeIntervalSince1970)),
+            Reflection(id: 1, name: "iOS dev", isFlowState: false.intValue, engagement: 70, energy: -20, date: Int64(Date().timeIntervalSince1970), note: "Exhausting"),
+            Reflection(id: 2, name: "Sleeping", isFlowState: false.intValue, engagement: 50, energy: 60, date: Int64(Date().timeIntervalSince1970), note: "Not long enough"),
         ]
     }
 }
@@ -45,14 +51,15 @@ extension Reflection {
         var engagement: Int64 = 50
         var energy: Int64 = 0
         var date: Date = Date()
+        var note: String = ""
         
         var reflection: Reflection {
-            return Reflection(id: id, name: name, isFlowState: isFlowState.intValue, engagement: engagement, energy: energy, date: Int64(date.timeIntervalSince1970))
+            return Reflection(id: id, name: name, isFlowState: isFlowState.intValue, engagement: engagement, energy: energy, date: Int64(date.timeIntervalSince1970), note: note)
         }
     }
 
     var data: Data {
-        return Data(id: id, name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: Date(timeIntervalSince1970: TimeInterval(date)))
+        return Data(id: id, name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: Date(timeIntervalSince1970: TimeInterval(date)), note: note)
     }
 
     mutating func update(from data: Data) {
@@ -62,6 +69,7 @@ extension Reflection {
         engagement = data.engagement
         energy = data.energy
         date = Int64(data.date.timeIntervalSince1970)
+        note = data.note
     }
 }
 
@@ -76,11 +84,12 @@ extension Int64 {
 }
 
 extension SqliteDatabase {
+    
     func insertReflection(reflection: Reflection) throws {
         let sql = """
             INSERT INTO reflection
-                (name, isFlowState, engagement, energy, date)
-            VALUES (?, ?, ?, ?, ?);
+                (name, isFlowState, engagement, energy, date, note)
+            VALUES (?, ?, ?, ?, ?, ?);
         """
         
         let stmt = try prepare(sql: sql)
@@ -89,11 +98,12 @@ extension SqliteDatabase {
         }
         
         guard
-            sqlite3_bind_text(stmt, 1, reflection.name, -1, nil) == SQLITE_OK
+            sqlite3_bind_text(stmt, 1, reflection.name, -1, SQLITE_TRANSIENT) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 2, reflection.isFlowState) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 3, reflection.engagement) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 4, reflection.energy) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 5, reflection.date) == SQLITE_OK
+                && sqlite3_bind_text(stmt, 6, reflection.note, -1, SQLITE_TRANSIENT) == SQLITE_OK
         else {
             throw SqliteError.Bind(message: errorMessage)
         }
@@ -106,8 +116,8 @@ extension SqliteDatabase {
     func updateReflection(reflection: Reflection) throws {
         let sql = """
             UPDATE reflection
-            SET (name, isFlowState, engagement, energy, date)
-            = (?, ?, ?, ?, ?)
+            SET (name, isFlowState, engagement, energy, date, note)
+            = (?, ?, ?, ?, ?, ?)
             WHERE id = ?;
         """
         
@@ -116,17 +126,14 @@ extension SqliteDatabase {
             sqlite3_finalize(stmt)
         }
         
-        // https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Statement.swift#L179
-        // https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Database.swift#L14
-        let SQLITE_TRANSIENT = unsafeBitCast(OpaquePointer(bitPattern: -1), to: sqlite3_destructor_type.self)
-        
         guard
             sqlite3_bind_text(stmt, 1, reflection.name, -1, SQLITE_TRANSIENT) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 2, reflection.isFlowState) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 3, reflection.engagement) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 4, reflection.energy) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 5, reflection.date) == SQLITE_OK
-                && sqlite3_bind_int64(stmt, 6, reflection.id) == SQLITE_OK
+                && sqlite3_bind_text(stmt, 6, reflection.note, -1, SQLITE_TRANSIENT) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 7, reflection.id) == SQLITE_OK
         else {
             throw SqliteError.Bind(message: errorMessage)
         }
@@ -177,12 +184,13 @@ extension SqliteDatabase {
         let engagement = sqlite3_column_int64(stmt, 3)
         let energy = sqlite3_column_int64(stmt, 4)
         let date = sqlite3_column_int64(stmt, 5)
+        let note = String(cString: sqlite3_column_text(stmt, 6))
         
-        return Reflection(id: id, name: name, isFlowState: isFlowState, engagement: engagement, energy: energy, date: date)
+        return Reflection(id: id, name: name, isFlowState: isFlowState, engagement: engagement, energy: energy, date: date, note: note)
     }
     
     func reflection(id: Int64) -> Reflection? {
-        let querySql = "SELECT id, name, isFlowState, engagement, energy, date FROM reflection WHERE id = ?;"
+        let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection WHERE id = ?;"
         
         let stmt = try? prepare(sql: querySql)
         defer {
@@ -197,7 +205,7 @@ extension SqliteDatabase {
     }
     
     func reflections() -> [Reflection] {
-        let querySql = "SELECT id, name, isFlowState, engagement, energy, date FROM reflection"
+        let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection"
         
         let stmt = try? prepare(sql: querySql)
         defer {

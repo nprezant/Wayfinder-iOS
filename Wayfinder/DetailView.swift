@@ -8,6 +8,7 @@ struct DetailView: View {
     
     @State private var data: Reflection.Data = Reflection.Data()
     @State private var isPresented = false
+    
     var body: some View {
         List {
             Section() {
@@ -36,6 +37,8 @@ struct DetailView: View {
                     Image(systemName: "calendar")
                     Text(Date(timeIntervalSince1970: TimeInterval(reflection.date)), style: .date)
                 }
+                Text(reflection.note)
+                    .lineLimit(3)
             }
 
         }
