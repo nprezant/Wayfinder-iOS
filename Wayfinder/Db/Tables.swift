@@ -9,7 +9,7 @@ protocol SqlTable {
 struct Reflection : SqlTable {
     static var createStatement: String {
         return """
-        CREATE TABLE Reflection(
+        CREATE TABLE reflection(
             id INTEGER PRIMARY KEY,
             name TEXT,
             isFlowState BOOL,
@@ -77,13 +77,13 @@ extension Int64 {
 
 extension SqliteDatabase {
     func insertReflection(reflection: Reflection) throws {
-        let insertSql = """
-            INSERT INTO Reflection
+        let sql = """
+            INSERT INTO reflection
                 (name, isFlowState, engagement, energy, date)
             VALUES (?, ?, ?, ?, ?);
         """
         
-        let stmt = try prepare(sql: insertSql)
+        let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
         }
@@ -105,7 +105,7 @@ extension SqliteDatabase {
     // Update an existing reflection with a matching ID
     func updateReflection(reflection: Reflection) throws {
         let sql = """
-            UPDATE Reflection
+            UPDATE reflection
             SET (name, isFlowState, engagement, energy, date)
             = (?, ?, ?, ?, ?)
             WHERE id = ?;
@@ -144,7 +144,7 @@ extension SqliteDatabase {
         
         let questionMarks = [String](repeating: "?", count: reflectionsIds.count)
         let sql = """
-            DELETE FROM Reflection
+            DELETE FROM reflection
             WHERE id IN (\(questionMarks.joined(separator: ",")));
         """
         
@@ -182,7 +182,7 @@ extension SqliteDatabase {
     }
     
     func reflection(id: Int64) -> Reflection? {
-        let querySql = "SELECT id, name, isFlowState, engagement, energy, date FROM Reflection WHERE id = ?;"
+        let querySql = "SELECT id, name, isFlowState, engagement, energy, date FROM reflection WHERE id = ?;"
         
         let stmt = try? prepare(sql: querySql)
         defer {
@@ -197,7 +197,7 @@ extension SqliteDatabase {
     }
     
     func reflections() -> [Reflection] {
-        let querySql = "SELECT id, name, isFlowState, engagement, energy, date FROM Reflection"
+        let querySql = "SELECT id, name, isFlowState, engagement, energy, date FROM reflection"
         
         let stmt = try? prepare(sql: querySql)
         defer {
