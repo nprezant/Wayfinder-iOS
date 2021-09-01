@@ -21,7 +21,7 @@ struct CardView: View {
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(Text("Energy"))
                     .accessibilityValue(Text("\(reflection.energy)"))
-                let checkName = reflection.isFlowState.boolValue ? "checkmark.circle" : "checkmark.circle.fill"
+                let checkName = reflection.isFlowState.boolValue ? "checkmark.circle.fill" : "checkmark.circle"
                 Label(
                     "\(Image(systemName: checkName))", systemImage: "wind")
                     .frame(width: 75)
