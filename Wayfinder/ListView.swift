@@ -3,13 +3,18 @@
 import SwiftUI
 
 struct ListView: View {
-    @Binding var reflections: [Reflection]
+    @ObservedObject var dbData: DbData
+    
+    func saveAction(index: Int) -> Void {
+        dbData.updateReflection(reflection: dbData.reflections[index])
+    }
+    
     var body: some View {
         NavigationView {
             List {
-                ForEach(reflections.indices) { index in
-                    let reflection = reflections[index]
-                    NavigationLink(destination: DetailView(reflection: binding(for: reflection))) {
+                ForEach(dbData.reflections.indices, id: \.self) { index in
+                    let reflection = dbData.reflections[index]
+                    NavigationLink(destination: DetailView(reflection: $dbData.reflections[index], saveAction: { saveAction(index: index) })) {
                         CardView(reflection: reflection)
                     }
                     .listRowBackground(Color.green)
@@ -25,15 +30,15 @@ struct ListView: View {
     }
 
     private func binding(for reflection: Reflection) -> Binding<Reflection> {
-        guard let reflectionIndex = reflections.firstIndex(where: { $0.id == reflection.id }) else {
+        guard let reflectionIndex = dbData.reflections.firstIndex(where: { $0.id == reflection.id }) else {
             fatalError("Can't find reflection in array")
         }
-        return $reflections[reflectionIndex]
+        return $dbData.reflections[reflectionIndex]
     }
 }
 
 struct ListView_Previews: PreviewProvider {
     static var previews: some View {
-        ListView(reflections: .constant(Reflection.exampleData))
+        ListView(dbData: DbData())
     }
 }

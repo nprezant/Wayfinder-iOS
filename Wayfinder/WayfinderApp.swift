@@ -4,13 +4,13 @@ import SwiftUI
 
 @main
 struct WayfinderApp: App {
-    @State private var dbData = DbData()
+    @StateObject private var dbData = DbData()
     var body: some Scene {
         WindowGroup {
             TabView() {
-                HomeView(dbData: $dbData)
+                HomeView(dbData: dbData)
                     .tabItem { Image(systemName: "house.fill") }
-                ListView(reflections: $dbData.reflections)
+                ListView(dbData: dbData)
                     .tabItem { Image(systemName: "list.bullet") }
             }
             .onAppear {
