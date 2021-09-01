@@ -12,14 +12,21 @@ struct CardView: View {
             HStack {
                 Spacer()
                 Label("\(reflection.engagement)", systemImage: "sparkles")
-                    .padding(.trailing, 20)
+                    .frame(width: 75)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(Text("Engagement"))
                     .accessibilityValue(Text("\(reflection.engagement)"))
                 Label("\(reflection.energy)", systemImage: "bolt")
+                    .frame(width: 75)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(Text("Energy"))
                     .accessibilityValue(Text("\(reflection.energy)"))
+                let checkName = reflection.isFlowState.boolValue ? "checkmark.circle" : "checkmark.circle.fill"
+                Label(
+                    "\(Image(systemName: checkName))", systemImage: "wind")
+                    .frame(width: 75)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(Text("Is Flow State"))
             }
             .font(.caption)
         }
@@ -32,7 +39,7 @@ struct CardView_Previews: PreviewProvider {
     static var reflection = Reflection.exampleData[0]
     static var previews: some View {
         CardView(reflection: reflection)
-            .background(Color.yellow)
-            .previewLayout(.fixed(width: 400, height: 60))
+//            .background(Color.yellow)
+            .previewLayout(.fixed(width: 300, height: 60))
     }
 }

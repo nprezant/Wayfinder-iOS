@@ -14,10 +14,14 @@ struct ListView: View {
             List {
                 ForEach(dbData.reflections.indices, id: \.self) { index in
                     let reflection = dbData.reflections[index]
-                    NavigationLink(destination: DetailView(reflection: $dbData.reflections[index], saveAction: saveAction)) {
+                    NavigationLink(
+                        destination: DetailView(
+                            reflection: $dbData.reflections[index],
+                            saveAction: saveAction
+                        )
+                    ) {
                         CardView(reflection: reflection)
                     }
-                    .listRowBackground(Color.green)
                 }
             }
             .navigationTitle("Reflections")
@@ -30,7 +34,9 @@ struct ListView: View {
     }
 
     private func binding(for reflection: Reflection) -> Binding<Reflection> {
-        guard let reflectionIndex = dbData.reflections.firstIndex(where: { $0.id == reflection.id }) else {
+        guard let reflectionIndex = dbData.reflections.firstIndex(
+                where: { $0.id == reflection.id }
+        ) else {
             fatalError("Can't find reflection in array")
         }
         return $dbData.reflections[reflectionIndex]
