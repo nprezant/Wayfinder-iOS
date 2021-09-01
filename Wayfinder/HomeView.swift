@@ -12,27 +12,22 @@ struct HomeView: View {
         newReflectionData = Reflection.Data()
     }
     var body: some View {
-        GeometryReader {geometry in
-            VStack {
-                Spacer()
-                    .frame(width: geometry.size.width, height: geometry.size.height * 0.33, alignment: .center)
-                Button(action: {
-                    isNewReflectionPresented = true
-                }) {
-                    Text("Reflect")
-                        .font(.system(size: 40))
-                        .padding(EdgeInsets(
-                                    top: 10, leading: 20,
-                                    bottom: 10, trailing: 20))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 40.0)
-                                .stroke(lineWidth: 2.0)
-                        )
-                }
-                Spacer()
-                Text("Summary info")
-                Spacer()
+        VStack {
+            Spacer()
+            Button(action: {
+                isNewReflectionPresented = true
+            }) {
+                Text("Reflect")
+                    .font(.system(size: 40))
+                    .padding(EdgeInsets(
+                                top: 10, leading: 20,
+                                bottom: 10, trailing: 20))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 40.0)
+                            .stroke(lineWidth: 2.0)
+                    )
             }
+            Spacer()
         }
         .sheet(isPresented: $isNewReflectionPresented) {
             NavigationView {

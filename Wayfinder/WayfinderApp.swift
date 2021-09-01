@@ -15,8 +15,8 @@ struct WayfinderApp: App {
                     }
                 ListView(dbData: dbData)
                     .tabItem {
-                        Image(systemName: "list.dash")
-                        Text("Library")
+                        Image(systemName: "clock.arrow.circlepath")
+                        Text("History")
                     }
             }
             .onAppear {
