@@ -8,30 +8,15 @@ struct CardView: View {
         VStack(alignment: .leading) {
             Text(reflection.name)
                 .font(.headline)
-            Spacer()
             HStack {
+                Text("\(reflection.engagement)% engagement, \(reflection.energy)% energy")
+                if reflection.isFlowState.boolValue { Image(systemName: "checkmark.circle.fill").foregroundColor(.accentColor) }
                 Spacer()
-                Label("\(reflection.engagement)", systemImage: "sparkles")
-                    .frame(width: 75)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(Text("Engagement"))
-                    .accessibilityValue(Text("\(reflection.engagement)"))
-                Label("\(reflection.energy)", systemImage: "bolt")
-                    .frame(width: 75)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(Text("Energy"))
-                    .accessibilityValue(Text("\(reflection.energy)"))
-                let checkName = reflection.isFlowState.boolValue ? "checkmark.circle.fill" : "checkmark.circle"
-                Label(
-                    "\(Image(systemName: checkName))", systemImage: "wind")
-                    .frame(width: 75)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(Text("Is Flow State"))
             }
             .font(.caption)
         }
-        .padding()
         .foregroundColor(.primary)
+        .padding(.leading).padding(.trailing)
     }
 }
 
@@ -39,7 +24,7 @@ struct CardView_Previews: PreviewProvider {
     static var reflection = Reflection.exampleData[0]
     static var previews: some View {
         CardView(reflection: reflection)
-//            .background(Color.yellow)
+            .previewDevice(PreviewDevice(rawValue: "iPhone 7"))
             .previewLayout(.fixed(width: 300, height: 60))
     }
 }
