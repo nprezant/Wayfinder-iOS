@@ -10,12 +10,6 @@ struct WayfinderApp: App {
     @State private var lastSelectedItem = 0
     @State private var isPresented = false
     
-    @State private var newReflectionData = Reflection.Data()
-    func saveAction() -> Void {
-        dbData.saveReflection(reflection: newReflectionData.reflection)
-        newReflectionData = Reflection.Data()
-    }
-    
     var body: some Scene {
         WindowGroup {
             TabView(selection: $selectedItem) {
@@ -50,20 +44,17 @@ struct WayfinderApp: App {
                 }
             }
             .sheet(isPresented: $isPresented) {
-                NavigationView {
-                    EditView(data: $newReflectionData)
-                        .navigationBarItems(
-                            leading: Button("Dismiss") {
-                                isPresented = false
-                                self.selectedItem = lastSelectedItem
-                            },
-                            trailing: Button("Add") {
-                                saveAction()
-                                isPresented = false
-                                self.selectedItem = lastSelectedItem
-                            }
-                        )
-                }
+                EditViewSheet(
+                    dbData: dbData,
+                    dismissAction: {
+                        isPresented = false
+                        self.selectedItem = lastSelectedItem
+                    },
+                    addAction: {
+                        isPresented = false
+                        self.selectedItem = lastSelectedItem
+                    }
+                )
             }
         }
     }

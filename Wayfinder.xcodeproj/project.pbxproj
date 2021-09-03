@@ -15,6 +15,7 @@
 		4F03BE2E26DED7AC001E61E5 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2D26DED7AC001E61E5 /* DetailView.swift */; };
 		4F03BE3026DEDAF3001E61E5 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2F26DEDAF3001E61E5 /* CardView.swift */; };
 		4F38668126E1EB74006AD6AC /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F38668026E1EB74006AD6AC /* ReportView.swift */; };
+		4F38668326E1EEE9006AD6AC /* EditViewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */; };
 		5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7487382609A52B0046B148 /* WayfinderApp.swift */; };
 		5F74873D2609A5310046B148 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873C2609A5310046B148 /* Assets.xcassets */; };
 		5F7487402609A5310046B148 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873F2609A5310046B148 /* Preview Assets.xcassets */; };
@@ -49,6 +50,7 @@
 		4F03BE2D26DED7AC001E61E5 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		4F03BE2F26DEDAF3001E61E5 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		4F38668026E1EB74006AD6AC /* ReportView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
+		4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewSheet.swift; sourceTree = "<group>"; };
 		5F7487352609A52B0046B148 /* Wayfinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wayfinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7487382609A52B0046B148 /* WayfinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WayfinderApp.swift; sourceTree = "<group>"; };
 		5F74873C2609A5310046B148 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 				4F03BE2026DD4EE2001E61E5 /* Db */,
 				5F7487382609A52B0046B148 /* WayfinderApp.swift */,
 				4F03BE2726DED59B001E61E5 /* EditView.swift */,
+				4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */,
 				4F03BE2B26DED710001E61E5 /* ListView.swift */,
 				4F03BE2F26DEDAF3001E61E5 /* CardView.swift */,
 				4F03BE2D26DED7AC001E61E5 /* DetailView.swift */,
@@ -298,6 +301,7 @@
 				4F38668126E1EB74006AD6AC /* ReportView.swift in Sources */,
 				4F03BE2C26DED710001E61E5 /* ListView.swift in Sources */,
 				4F03BE1C26DD3F65001E61E5 /* SqliteDatabase.swift in Sources */,
+				4F38668326E1EEE9006AD6AC /* EditViewSheet.swift in Sources */,
 				5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

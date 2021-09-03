@@ -6,12 +6,6 @@ struct ListView: View {
     @ObservedObject var dbData: DbData
     
     @State private var isNewReflectionPresented = false
-    @State private var newReflectionData = Reflection.Data()
-    
-    func saveAction() -> Void {
-        dbData.saveReflection(reflection: newReflectionData.reflection)
-        newReflectionData = Reflection.Data()
-    }
     
     func updateAction(reflection: Reflection) -> Void {
         dbData.updateReflection(reflection: reflection)
@@ -65,15 +59,15 @@ struct ListView: View {
             )
         }
         .sheet(isPresented: $isNewReflectionPresented) {
-            NavigationView {
-                EditView(data: $newReflectionData)
-                    .navigationBarItems(leading: Button("Dismiss") {
-                        isNewReflectionPresented = false
-                    }, trailing: Button("Add") {
-                        saveAction()
-                        isNewReflectionPresented = false
-                    })
-            }
+            EditViewSheet(
+                dbData: dbData,
+                dismissAction: {
+                    isNewReflectionPresented = false
+                },
+                addAction: {
+                    isNewReflectionPresented = false
+                }
+            )
         }
     }
 }
