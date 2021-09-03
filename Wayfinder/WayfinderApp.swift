@@ -15,14 +15,14 @@ struct WayfinderApp: App {
             TabView(selection: $selectedItem) {
                 ListView(dbData: dbData)
                     .tabItem {
-                        Image(systemName: "house")
+                        Image(systemName: "list.bullet")
                         Text("Reflections")
                     }
                     .tag(0)
                 Text("")
                     .tabItem {
                         Image(systemName: "plus.circle")
-                        Text("Add")
+                        Text("New")
                     }
                     .font(.title)
                     .tag(1)
