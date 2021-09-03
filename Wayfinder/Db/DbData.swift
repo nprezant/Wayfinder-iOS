@@ -27,7 +27,7 @@ class DbData: ObservableObject {
     private var db: SqliteDatabase
     
     public init(inMemory: Bool = false) {
-        let p = inMemory ? "file::memory:" : DbData.dbUrl.absoluteString
+        let p = inMemory ? URL(string: "file::memory:")! : DbData.dbUrl
         do {
             try db = SqliteDatabase.open(at: p)
         } catch {

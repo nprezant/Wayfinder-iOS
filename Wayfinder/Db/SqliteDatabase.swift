@@ -22,7 +22,7 @@ class SqliteDatabase {
     }
     
     // Open database connection
-    static func open(at path: String) throws -> SqliteDatabase {
+    static func open(at path: URL) throws -> SqliteDatabase {
 //        #if DEBUG
 //        do {
 //            try FileManager.default.removeItem(atPath: atPath.path)
@@ -30,10 +30,10 @@ class SqliteDatabase {
 //            print("Error: \(error.domain)")
 //        }
 //        #endif
-        if FileManager.default.fileExists(atPath: path) {
-            return try openExisting(atPath: path)
+        if FileManager.default.fileExists(atPath: path.path) {
+            return try openExisting(atPath: path.absoluteString)
         } else {
-            return try createNew(atPath: path)
+            return try createNew(atPath: path.absoluteString)
         }
     }
     
