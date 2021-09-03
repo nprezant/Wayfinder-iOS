@@ -51,8 +51,10 @@ struct EditView: View {
                     selection: $data.date,
                     displayedComponents: [.date]
                 )
+                // Force a rebuild on date change; there is a bug that changes the short/medium style randomly otherwise
+                // https://stackoverflow.com/questions/66090210/swiftui-datepicker-jumps-between-short-and-medium-date-formats-when-changing-the
+                .id(data.date)
                 // Can use .labelsHidden() to provide own label
-                .datePickerStyle(DefaultDatePickerStyle())
                 
                 // TODO no placeholder text available yet...
                 TextEditor(text: $data.note)
