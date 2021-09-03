@@ -26,12 +26,27 @@ class DbData: ObservableObject {
     
     private var db: SqliteDatabase
     
-    public init() {
+    public init(inMemory: Bool = false) {
+        let p = inMemory ? "file::memory:" : DbData.dbUrl.absoluteString
         do {
-            try db = SqliteDatabase.open(atPath: DbData.dbUrl)
+            try db = SqliteDatabase.open(at: p)
         } catch {
             fatalError("Cannot open database: \(DbData.dbUrl)")
         }
+    }
+    
+    public static func createExample() -> DbData {
+        let dbData = DbData(inMemory: true)
+        for r in Reflection.exampleData {
+//            dbData.saveReflection(reflection: r)
+            do {
+                try dbData.db.insertReflection(reflection: r)
+            } catch {
+                fatalError("Could not create example data. \(dbData.db.errorMessage)")
+            }
+        }
+        dbData.reflections = dbData.db.reflections()
+        return dbData
     }
 
     func loadReflections() {
