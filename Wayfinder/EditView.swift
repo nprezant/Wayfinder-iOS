@@ -21,7 +21,7 @@ struct ReflectionSlider: View {
                     in: range,
                     step: 1
                 )
-                Text("\(value, specifier: "%+d")")
+                Text("\(value, specifier: "%+d%%")")
                     .frame(minWidth: 50)
             }
         }
