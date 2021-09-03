@@ -5,7 +5,15 @@ import SwiftUI
 struct ListView: View {
     @ObservedObject var dbData: DbData
     
-    func saveAction(reflection: Reflection) -> Void {
+    @State private var isNewReflectionPresented = false
+    @State private var newReflectionData = Reflection.Data()
+    
+    func saveAction() -> Void {
+        dbData.saveReflection(reflection: newReflectionData.reflection)
+        newReflectionData = Reflection.Data()
+    }
+    
+    func updateAction(reflection: Reflection) -> Void {
         dbData.updateReflection(reflection: reflection)
     }
     
@@ -34,7 +42,7 @@ struct ListView: View {
                     NavigationLink(
                         destination: DetailView(
                             reflection: $dbData.reflections[index],
-                            saveAction: saveAction
+                            saveAction: updateAction
                         )
                     ) {
                         CardView(reflection: reflection)
@@ -44,20 +52,29 @@ struct ListView: View {
             }
             .navigationTitle("Reflections")
             .navigationBarItems(
-                trailing: Button(action: shareSheet) {
-                    Image(systemName: "square.and.arrow.up")
+                trailing: HStack {
+                    Button(action: shareSheet) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    Button(action: {
+                        isNewReflectionPresented = true
+                    }) {
+                        Image(systemName: "plus")
+                    }
                 }
             )
         }
-    }
-
-    private func binding(for reflection: Reflection) -> Binding<Reflection> {
-        guard let reflectionIndex = dbData.reflections.firstIndex(
-                where: { $0.id == reflection.id }
-        ) else {
-            fatalError("Can't find reflection in array")
+        .sheet(isPresented: $isNewReflectionPresented) {
+            NavigationView {
+                EditView(data: $newReflectionData)
+                    .navigationBarItems(leading: Button("Dismiss") {
+                        isNewReflectionPresented = false
+                    }, trailing: Button("Add") {
+                        saveAction()
+                        isNewReflectionPresented = false
+                    })
+            }
         }
-        return $dbData.reflections[reflectionIndex]
     }
 }
 
