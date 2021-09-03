@@ -8,6 +8,7 @@ struct CardView: View {
         VStack(alignment: .leading) {
             Text(reflection.name)
                 .font(.headline)
+                .lineLimit(2)
             HStack {
                 Text("\(reflection.engagement)% engagement, \(reflection.energy)% energy")
                 if reflection.isFlowState.boolValue { Image(systemName: "checkmark.circle.fill").foregroundColor(.accentColor) }
