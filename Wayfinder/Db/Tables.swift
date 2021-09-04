@@ -205,7 +205,7 @@ extension SqliteDatabase {
     }
     
     func reflections() -> [Reflection] {
-        let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection"
+        let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection ORDER BY date DESC"
         
         let stmt = try? prepare(sql: querySql)
         defer {
@@ -215,7 +215,7 @@ extension SqliteDatabase {
         var reflections: [Reflection] = []
         
         while (true) {
-            let reflection = reflection(stmt: stmt)
+            let reflection = self.reflection(stmt: stmt)
             if reflection != nil {
                 reflections.append(reflection!)
             } else {
