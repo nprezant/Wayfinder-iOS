@@ -40,7 +40,7 @@ class DbData: ObservableObject {
         for r in Reflection.exampleData {
 //            dbData.saveReflection(reflection: r)
             do {
-                try dbData.db.insertReflection(reflection: r)
+                try dbData.db.insert(reflection: r)
             } catch {
                 fatalError("Could not create example data. \(dbData.db.errorMessage)")
             }
@@ -67,7 +67,7 @@ class DbData: ObservableObject {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
             do {
-                try self?.db.insertReflection(reflection: reflection)
+                try self?.db.insert(reflection: reflection)
             } catch {
                 fatalError("Can't insert reflection data. \(self?.db.errorMessage ?? "No db message provided")")
             }
@@ -78,7 +78,7 @@ class DbData: ObservableObject {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
             do {
-                try self?.db.updateReflection(reflection: reflection)
+                try self?.db.update(reflection: reflection)
             } catch {
                 fatalError("Can't update reflection data. \(self?.db.errorMessage ?? "No db message provided")")
             }

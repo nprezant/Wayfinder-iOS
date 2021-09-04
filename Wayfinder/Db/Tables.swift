@@ -85,7 +85,7 @@ extension Int64 {
 
 extension SqliteDatabase {
     
-    func insertReflection(reflection: Reflection) throws {
+    func insert(reflection: Reflection) throws {
         let sql = """
             INSERT INTO reflection
                 (name, isFlowState, engagement, energy, date, note)
@@ -113,7 +113,7 @@ extension SqliteDatabase {
     }
     
     // Update an existing reflection with a matching ID
-    func updateReflection(reflection: Reflection) throws {
+    func update(reflection: Reflection) throws {
         let sql = """
             UPDATE reflection
             SET (name, isFlowState, engagement, energy, date, note)
@@ -171,7 +171,7 @@ extension SqliteDatabase {
         }
     }
     
-    func reflection(stmt: OpaquePointer?) -> Reflection? {
+    func reflectionStep(stmt: OpaquePointer?) -> Reflection? {
         guard sqlite3_step(stmt) == SQLITE_ROW else {
             return nil
         }
@@ -201,7 +201,7 @@ extension SqliteDatabase {
             return nil
         }
         
-        return reflection(stmt: stmt)
+        return reflectionStep(stmt: stmt)
     }
     
     func reflections() -> [Reflection] {
@@ -215,7 +215,7 @@ extension SqliteDatabase {
         var reflections: [Reflection] = []
         
         while (true) {
-            let reflection = self.reflection(stmt: stmt)
+            let reflection = reflectionStep(stmt: stmt)
             if reflection != nil {
                 reflections.append(reflection!)
             } else {
