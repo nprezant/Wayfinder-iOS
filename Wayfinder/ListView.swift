@@ -7,6 +7,16 @@ struct ListView: View {
     
     @State private var isNewReflectionPresented = false
     
+    var reflectionsByDate: [Date: [Reflection]] {
+        // TODO consider setting standard time of day when creating/editing instead of converting on the fly
+        // Converts all datetimes to be at the same time of day to simulate grouping by day
+        Dictionary(grouping: dbData.reflections, by: { Calendar.current.startOfDay(for: $0.data.date) })
+    }
+    
+    var dates: [Date] {
+        reflectionsByDate.map({ $0.key }).sorted(by: >)
+    }
+    
     func updateAction(reflection: Reflection) -> Void {
         dbData.update(reflection: reflection)
     }
@@ -30,18 +40,22 @@ struct ListView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(dbData.reflections.indices, id: \.self) { index in
-                    let reflection = dbData.reflections[index]
-                    NavigationLink(
-                        destination: DetailView(
-                            reflection: $dbData.reflections[index],
-                            saveAction: updateAction
-                        )
-                    ) {
-                        CardView(reflection: reflection)
+                ForEach(dates, id: \.self) { date in
+                    Section(header: Text(date, style: .date)) {
+                        ForEach(reflectionsByDate[date]!) { r in
+                            let index = dbData.reflections.firstIndex(where: {$0.id == r.id})!
+                            NavigationLink(
+                                destination: DetailView(
+                                    reflection: $dbData.reflections[index],
+                                    saveAction: updateAction
+                                )
+                            ) {
+                                CardView(reflection: dbData.reflections[index])
+                            }
+                        }
+                        .onDelete(perform: deleteAction)
                     }
                 }
-                .onDelete(perform: deleteAction)
             }
             .navigationTitle("Reflections")
             .navigationBarItems(
@@ -56,6 +70,7 @@ struct ListView: View {
                     }
                 }
             )
+            .listStyle(GroupedListStyle())
         }
         .sheet(isPresented: $isNewReflectionPresented) {
             EditViewSheet(

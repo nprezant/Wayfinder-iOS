@@ -10,7 +10,7 @@ protocol SqlTable {
     static var createStatement: String { get }
 }
 
-struct Reflection : SqlTable {
+struct Reflection : Identifiable, SqlTable {
     static var createStatement: String {
         return """
         CREATE TABLE reflection(
@@ -207,7 +207,7 @@ extension SqliteDatabase {
     }
     
     func reflections() -> [Reflection] {
-        let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection ORDER BY date DESC"
+        let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection"
         
         let stmt = try? prepare(sql: querySql)
         defer {
