@@ -30,7 +30,7 @@ struct Reflection : SqlTable {
     var isFlowState: Int64
     var engagement: Int64
     var energy: Int64
-    var date: Int64 // unix epoch time
+    var date: Int64 // Unix epoch time
     var note: String
 }
 
@@ -85,7 +85,7 @@ extension Int64 {
 
 extension SqliteDatabase {
     
-    func insert(reflection: Reflection) throws {
+    func insert(reflection: Reflection) throws -> Int64 {
         let sql = """
             INSERT INTO reflection
                 (name, isFlowState, engagement, energy, date, note)
@@ -110,6 +110,8 @@ extension SqliteDatabase {
         guard sqlite3_step(stmt) == SQLITE_DONE else {
             throw SqliteError.Step(message: errorMessage)
         }
+        
+        return lastInsertedRowId()
     }
     
     // Update an existing reflection with a matching ID

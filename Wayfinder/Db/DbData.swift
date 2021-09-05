@@ -38,9 +38,8 @@ class DbData: ObservableObject {
     public static func createExample() -> DbData {
         let dbData = DbData(inMemory: true)
         for r in Reflection.exampleData {
-//            dbData.saveReflection(reflection: r)
             do {
-                try dbData.db.insert(reflection: r)
+                let _ = try dbData.db.insert(reflection: r)
             } catch {
                 fatalError("Could not create example data. \(dbData.db.errorMessage)")
             }
@@ -50,11 +49,14 @@ class DbData: ObservableObject {
     }
 
     func loadReflections() {
+        // Read the database on the background thread
         DispatchQueue.global(qos: .background).async { [weak self] in
             
             guard let reflections = self?.db.reflections() else {
                 fatalError("Can't read saved reflection data.")
             }
+            
+            // Do any UI work on the main thread
             DispatchQueue.main.async {
                 self?.reflections = reflections
             }
@@ -64,17 +66,27 @@ class DbData: ObservableObject {
     // TODO handle async better... perhaps with Result<T>... completion: @escaping (Result<Any, SqliteError>)->())  {
     func saveReflection(reflection: Reflection) {
         self.reflections.append(reflection)
+        self.reflections.sort(by: {$0.date > $1.date})
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
+            
+            // Database assigns a new id on insert
+            var dbId: Int64?
             do {
-                try self?.db.insert(reflection: reflection)
+                dbId = try self?.db.insert(reflection: reflection)
             } catch {
                 fatalError("Can't insert reflection data. \(self?.db.errorMessage ?? "No db message provided")")
+            }
+            
+            // Update the last inserted reflection to use the database assigned id
+            DispatchQueue.main.async {
+                let location = self?.reflections.firstIndex(where: {$0.id == reflection.id})
+                self?.reflections[location!].id = dbId!
             }
         }
     }
     
-    func updateReflection(reflection: Reflection) {
+    func update(reflection: Reflection) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
             do {
@@ -86,6 +98,7 @@ class DbData: ObservableObject {
     }
     
     func delete(reflectionIds: [Int64]) {
+        self.reflections.removeAll(where: {reflectionIds.contains($0.id)})
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
             do {
@@ -112,6 +125,13 @@ class DbData: ObservableObject {
         }
         
         return DbData.exportUrl;
+    }
+    
+    func nextUniqueReflectionId() -> Int64 {
+        if self.reflections.isEmpty {
+            return 1
+        }
+        return self.reflections.map{$0.id}.max()! + 1 // max() returns nil if array is empty
     }
 }
 

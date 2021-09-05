@@ -98,5 +98,10 @@ class SqliteDatabase {
             throw SqliteError.Step(message: errorMessage)
         }
     }
+    
+    // Get the last inserted rowid
+    func lastInsertedRowId() -> Int64 {
+        return sqlite3_last_insert_rowid(dbPointer)
+    }
 }
 

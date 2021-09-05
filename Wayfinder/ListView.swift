@@ -8,12 +8,11 @@ struct ListView: View {
     @State private var isNewReflectionPresented = false
     
     func updateAction(reflection: Reflection) -> Void {
-        dbData.updateReflection(reflection: reflection)
+        dbData.update(reflection: reflection)
     }
     
     func deleteAction(at offsets: IndexSet) -> Void {
         let toDelete = offsets.map { dbData.reflections[$0].id }
-        dbData.reflections.remove(atOffsets: offsets)
         dbData.delete(reflectionIds: toDelete)
     }
     
