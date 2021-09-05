@@ -7,14 +7,17 @@ struct CardView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(reflection.name)
-                .font(.headline)
+                .font(.body)
                 .lineLimit(2)
             HStack {
                 Text("\(reflection.engagement)% engagement, \(reflection.energy)% energy")
-                if reflection.isFlowState.boolValue { Image(systemName: "checkmark.circle.fill").foregroundColor(.accentColor) }
+                if reflection.isFlowState.boolValue {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.accentColor)
+                }
                 Spacer()
             }
-            .font(.caption)
+            .font(.caption2)
         }
         .foregroundColor(.primary)
         .padding(.leading).padding(.trailing)
