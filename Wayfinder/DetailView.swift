@@ -47,7 +47,7 @@ struct DetailView: View {
             isPresented = true
             data = reflection.data
         })
-        .navigationTitle(reflection.name)
+        .navigationTitle(reflection.name.isEmpty ? "Activity Name" : reflection.name)
         .fullScreenCover(isPresented: $isPresented) {
             NavigationView {
                 EditView(data: $data)
