@@ -46,12 +46,11 @@ struct WayfinderApp: App {
             .sheet(isPresented: $isPresented) {
                 EditViewSheet(
                     dbData: dbData,
+                    isPresented: $isPresented,
                     dismissAction: {
-                        isPresented = false
                         self.selectedItem = lastSelectedItem
                     },
                     addAction: {
-                        isPresented = false
                         self.selectedItem = lastSelectedItem
                     }
                 )

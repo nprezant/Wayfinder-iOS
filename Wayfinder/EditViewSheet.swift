@@ -2,11 +2,16 @@
 
 import SwiftUI
 
+/// A wrapped EditView intended to be embedded in a sheet.
+/// Includes "Dismiss" and "Add" buttons that stop presenting the sheet when pressed.
+/// Pressing the "Add" button will additionally save the new reflection to the database.
+/// Optionally include additional actions to be called on the "Dismiss" and "Add" button presses.
 struct EditViewSheet: View {
     
     @ObservedObject var dbData: DbData
-    let dismissAction: (() -> Void)
-    let addAction: (() -> Void)
+    @Binding var isPresented: Bool
+    var dismissAction: (() -> Void) = {}
+    var addAction: (() -> Void) = {}
     
     @State private var newReflectionData = Reflection.Data()
     
@@ -25,10 +30,12 @@ struct EditViewSheet: View {
                 .navigationBarItems(
                     leading: Button("Dismiss") {
                         dismissAction()
+                        isPresented = false
                     },
                     trailing: Button("Add") {
                         saveAction()
                         addAction()
+                        isPresented = false
                     }
                 )
         }
@@ -37,6 +44,6 @@ struct EditViewSheet: View {
 
 struct EditViewSheet_Previews: PreviewProvider {
     static var previews: some View {
-        EditViewSheet(dbData: DbData(), dismissAction: {}, addAction: {})
+        EditViewSheet(dbData: DbData(), isPresented: .constant(true))
     }
 }

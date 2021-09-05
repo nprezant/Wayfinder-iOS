@@ -75,12 +75,7 @@ struct ListView: View {
         .sheet(isPresented: $isNewReflectionPresented) {
             EditViewSheet(
                 dbData: dbData,
-                dismissAction: {
-                    isNewReflectionPresented = false
-                },
-                addAction: {
-                    isNewReflectionPresented = false
-                }
+                isPresented: $isNewReflectionPresented
             )
         }
     }
