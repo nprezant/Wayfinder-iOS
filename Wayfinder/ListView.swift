@@ -21,9 +21,8 @@ struct ListView: View {
         dbData.update(reflection: reflection)
     }
     
-    func deleteAction(at offsets: IndexSet) -> Void {
-        let toDelete = offsets.map { dbData.reflections[$0].id }
-        dbData.delete(reflectionIds: toDelete)
+    func deleteAction(ids: [Int64]) -> Void {
+        dbData.delete(reflectionIds: ids)
     }
     
     func shareSheet() {
@@ -42,7 +41,8 @@ struct ListView: View {
             List {
                 ForEach(dates, id: \.self) { date in
                     Section(header: Text(date, style: .date)) {
-                        ForEach(reflectionsByDate[date]!) { r in
+                        let reflectionsThisDate = reflectionsByDate[date]!
+                        ForEach(reflectionsThisDate) { r in
                             let index = dbData.reflections.firstIndex(where: {$0.id == r.id})!
                             NavigationLink(
                                 destination: DetailView(
@@ -53,7 +53,9 @@ struct ListView: View {
                                 CardView(reflection: dbData.reflections[index])
                             }
                         }
-                        .onDelete(perform: deleteAction)
+                        .onDelete{
+                            deleteAction(ids: $0.map { reflectionsThisDate[$0].id })
+                        }
                     }
                 }
             }
