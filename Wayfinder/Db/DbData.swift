@@ -140,7 +140,7 @@ class DbData: ObservableObject {
         return self.reflections.map{$0.id}.max()! + 1 // max() returns nil if array is empty
     }
     
-    func report(for date: Date, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
+    func makeAverageReport(for date: Date, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
             let requestedDateComponents = Calendar.current.dateComponents([.day, .year], from: date)
@@ -151,5 +151,36 @@ class DbData: ObservableObject {
             }
         }
     }
+    
+    func makeAverageReport(for start: Date, to end: Date, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard (self != nil) else { fatalError("Self out of scope") }
+            let relevantReflections = self!.reflections.filter{$0.data.date.dayIsBetween(start, and: end)}
+            let result = Reflection.Averaged.make(from: relevantReflections)
+            DispatchQueue.main.async {
+                completion(.success(result))
+            }
+        }
+    }
 }
 
+extension Date {
+    var plusOneWeek: Date {
+        return Calendar.current.date(byAdding: .day, value: 7, to: self)!
+    }
+    
+    var startOfDay: Date {
+        return Calendar.current.startOfDay(for: self)
+    }
+    
+    var endOfDay: Date {
+        var components = DateComponents()
+        components.day = 1
+        components.second = -1
+        return Calendar.current.date(byAdding: components, to: startOfDay)!
+    }
+    
+    func dayIsBetween(_ date1: Date, and date2: Date) -> Bool {
+        return (min(date1, date2).startOfDay ... max(date1, date2).endOfDay).contains(self)
+    }
+}

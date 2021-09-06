@@ -7,7 +7,7 @@ struct ReportView: View {
     var body: some View {
         TabView {
             DailyReportView(dbData: dbData)
-            WeeklyReportView()
+            WeeklyReportView(dbData: dbData)
             Text("Tag/activity report view")
         }
         .tabViewStyle(PageTabViewStyle())

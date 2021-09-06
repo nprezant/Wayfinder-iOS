@@ -3,8 +3,23 @@
 import SwiftUI
 
 struct WeeklyReportView: View {
-    @State var selectedDay: Date = Date()
-    var result: Reflection.Averaged = Reflection.Averaged.exampleData()
+    @ObservedObject var dbData: DbData
+    
+    @State var selectedStartDay: Date = Date()
+    @State var selectedEndDay: Date = Date()
+    @State var averagedResult: Reflection.Averaged? = nil
+    
+    private func updateAverages(start: Date, end: Date) {
+        dbData.makeAverageReport(for: start, to: end) { results in
+            switch results {
+            case .failure(let error):
+                print(error.localizedDescription)
+                
+            case .success(let averagedResult):
+                self.averagedResult = averagedResult
+            }
+        }
+    }
     
     var body: some View {
         VStack {
@@ -16,39 +31,42 @@ struct WeeklyReportView: View {
             HStack {
                 DatePicker(
                     "Date",
-                    selection: $selectedDay,
+                    selection: $selectedStartDay,
                     displayedComponents: [.date]
                 )
-                .id(selectedDay)
+                .id(selectedStartDay)
                 .labelsHidden()
+                .onChange(of: selectedStartDay, perform: { newStartDay in
+                    selectedEndDay = selectedEndDay.plusOneWeek
+                    updateAverages(start: newStartDay, end: selectedEndDay)
+                })
                 Spacer()
                 Text("to")
                 Spacer()
-                Text(Calendar.current.date(byAdding: .day, value: 7, to: selectedDay)!, style: .date)
+                DatePicker(
+                    "Date",
+                    selection: $selectedEndDay,
+                    displayedComponents: [.date]
+                )
+                .id(selectedEndDay)
+                .labelsHidden()
+                .onChange(of: selectedEndDay, perform: { newEndDay in
+                    updateAverages(start: selectedStartDay, end: newEndDay)
+                })
             }
-            HStack {
-                Label("Flow State?", systemImage: "wind")
-                Spacer()
-                Text("\(result.flowStateYes) of \(result.flowStateYes + result.flowStateNo)")
-            }
-            HStack {
-                Label("Engagement", systemImage: "sparkles")
-                Spacer()
-                Text("\(result.engagement)")
-            }
-            HStack {
-                Label("Energy", systemImage: "bolt")
-                Spacer()
-                Text("\(result.energy)")
-            }
+            ReportListView(averagedResult: averagedResult)
             Spacer()
         }
         .padding()
+        .onAppear(perform: {
+            selectedEndDay = selectedEndDay.plusOneWeek
+            updateAverages(start: selectedStartDay, end: selectedEndDay)
+        })
     }
 }
 
 struct WeeklyReportView_Previews: PreviewProvider {
     static var previews: some View {
-        WeeklyReportView()
+        WeeklyReportView(dbData: DbData.createExample())
     }
 }

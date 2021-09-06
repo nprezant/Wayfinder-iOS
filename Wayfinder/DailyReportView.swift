@@ -8,8 +8,8 @@ struct DailyReportView: View {
     @State var selectedDay: Date = Date()
     @State var averagedResult: Reflection.Averaged? = nil
     
-    private func updateResult(date: Date) {
-        dbData.report(for: date) { results in
+    private func updateAverages(date: Date) {
+        dbData.makeAverageReport(for: date) { results in
             switch results {
             case .failure(let error):
                 print(error.localizedDescription)
@@ -36,42 +36,16 @@ struct DailyReportView: View {
                 .id(selectedDay)
                 .labelsHidden()
                 .onChange(of: selectedDay, perform: { newDate in
-                    updateResult(date: newDate)
+                    updateAverages(date: newDate)
                 })
                 Spacer()
             }
-            List {
-            if averagedResult != nil {
-                let result = averagedResult!
-                HStack {
-                    Label("Observations", systemImage: "calendar")
-                    Spacer()
-                    Text("\(result.ids.count)")
-                }
-                HStack {
-                    Label("Flow States", systemImage: "wind")
-                    Spacer()
-                    Text("\(result.flowStateYes) of \(result.flowStateYes + result.flowStateNo)")
-                }
-                HStack {
-                    Label("Average Engagement", systemImage: "sparkles")
-                    Spacer()
-                    Text("\(result.engagement)")
-                }
-                HStack {
-                    Label("Average Energy", systemImage: "bolt")
-                    Spacer()
-                    Text("\(result.energy)")
-                }
-            } else {
-                Text("No reflections recorded on this day")
-            }
-            }
+            ReportListView(averagedResult: averagedResult)
             Spacer()
         }
         .padding()
         .onAppear(perform: {
-            updateResult(date: selectedDay)
+            updateAverages(date: selectedDay)
         })
     }
 }
