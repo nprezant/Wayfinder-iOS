@@ -26,7 +26,7 @@ struct EditViewSheet: View {
     
     var body: some View {
         NavigationView {
-            EditView(data: $newReflectionData)
+            EditView(data: $newReflectionData, existingNames: dbData.uniqueReflectionNames)
                 .navigationBarItems(
                     leading: Button("Dismiss") {
                         dismissAction()

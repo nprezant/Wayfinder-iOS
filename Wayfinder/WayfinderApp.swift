@@ -43,7 +43,7 @@ struct WayfinderApp: App {
                     self.lastSelectedItem = $0
                 }
             }
-            .sheet(isPresented: $isPresented) {
+            .sheet(isPresented: $isPresented, onDismiss: {self.selectedItem = lastSelectedItem}) {
                 EditViewSheet(
                     dbData: dbData,
                     isPresented: $isPresented,

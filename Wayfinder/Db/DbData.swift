@@ -22,7 +22,13 @@ class DbData: ObservableObject {
         return documentsFolder.appendingPathComponent("wayfinder.csv")
     }
     
-    @Published var reflections: [Reflection] = []
+    @Published var reflections: [Reflection] = [] {
+        didSet {
+            uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <)
+        }
+    }
+    
+    @Published var uniqueReflectionNames: [String] = []
     
     private var db: SqliteDatabase
     

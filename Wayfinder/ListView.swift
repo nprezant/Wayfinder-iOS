@@ -47,6 +47,7 @@ struct ListView: View {
                             NavigationLink(
                                 destination: DetailView(
                                     reflection: $dbData.reflections[index],
+                                    existingNames: dbData.uniqueReflectionNames,
                                     saveAction: updateAction
                                 )
                             ) {

@@ -4,6 +4,7 @@ import SwiftUI
 
 struct DetailView: View {
     @Binding var reflection: Reflection
+    let existingNames: [String]
     let saveAction: ((Reflection) -> Void)
     
     @State private var data: Reflection.Data = Reflection.Data()
@@ -50,7 +51,7 @@ struct DetailView: View {
         .navigationTitle(reflection.name.isEmpty ? "Activity Name" : reflection.name)
         .fullScreenCover(isPresented: $isPresented) {
             NavigationView {
-                EditView(data: $data)
+                EditView(data: $data, existingNames: existingNames)
                     .navigationBarItems(leading: Button("Cancel") {
                         isPresented = false
                     }, trailing: Button("Done") {
@@ -67,7 +68,11 @@ struct DetailView_Previews: PreviewProvider {
     static func saveAction(reflection: Reflection) -> Void { }
     static var previews: some View {
         NavigationView {
-            DetailView(reflection: .constant(Reflection.exampleData[0]), saveAction: saveAction)
+            DetailView(
+                reflection: .constant(Reflection.exampleData[0]),
+                existingNames: DbData.createExample().uniqueReflectionNames,
+                saveAction: saveAction
+            )
         }
     }
 }

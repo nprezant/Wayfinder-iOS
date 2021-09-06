@@ -30,20 +30,26 @@ struct ReflectionSlider: View {
 
 struct EditView: View {
     @Binding var data: Reflection.Data
+    let existingNames: [String]
+    
     var body: some View {
         List {
-            VStack {
-                HStack {
-                    TextField("Activity name", text: $data.name)
-                        .font(.largeTitle)
-                    Spacer()
+            Section() {
+                NavigationLink(
+                    destination: NameView(name: $data.name, nameOptions: existingNames)
+                ) {
+                    NameFieldView(name: data.name)
                 }
+            }
+            
+            Section() {
                 Toggle("Flow state", isOn: $data.isFlowState)
                     .padding(.trailing, 5)
                     .toggleStyle(SwitchToggleStyle(tint: Color.accentColor))
                 ReflectionSlider(label: "Engagement", value: $data.engagement, range: 0...100)
                 ReflectionSlider(label: "Energy", value: $data.energy, range: -100...100)
             }
+            
             
             Section() {
                 DatePicker(
@@ -54,7 +60,6 @@ struct EditView: View {
                 // Force a rebuild on date change; there is a bug that changes the short/medium style randomly otherwise
                 // https://stackoverflow.com/questions/66090210/swiftui-datepicker-jumps-between-short-and-medium-date-formats-when-changing-the
                 .id(data.date)
-                // Can use .labelsHidden() to provide own label
                 
                 // TODO no placeholder text available yet...
                 TextEditor(text: $data.note)
@@ -67,6 +72,9 @@ struct EditView: View {
 
 struct EditView_Previews: PreviewProvider {
     static var previews: some View {
-        EditView(data: .constant(Reflection.exampleData[0].data))
+        EditView(
+            data: .constant(Reflection.exampleData[0].data),
+            existingNames: DbData.createExample().uniqueReflectionNames
+        )
     }
 }
