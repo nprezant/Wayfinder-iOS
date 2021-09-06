@@ -10,14 +10,14 @@ struct CardView: View {
                 .font(.body)
                 .lineLimit(2)
             HStack {
-                Text("\(reflection.engagement)% engagement, \(reflection.energy)% energy")
+                Text("Engagement: \(reflection.engagement)%, Energy: \(reflection.energy)%")
                 if reflection.isFlowState.boolValue {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.accentColor)
                 }
                 Spacer()
             }
-            .font(.caption2)
+            .font(.caption)
         }
         .foregroundColor(.primary)
         .padding(.leading).padding(.trailing)
