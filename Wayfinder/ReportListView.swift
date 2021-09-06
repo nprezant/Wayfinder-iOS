@@ -22,12 +22,12 @@ struct ReportListView: View {
                 HStack {
                     Label("Average Engagement", systemImage: "sparkles")
                     Spacer()
-                    Text("\(result.engagement)")
+                    Text("\(result.engagement)%")
                 }
                 HStack {
                     Label("Average Energy", systemImage: "bolt")
                     Spacer()
-                    Text("\(result.energy)")
+                    Text("\(result.energy)%")
                 }
             } else {
                 Text("No reflections found")

@@ -15,21 +15,18 @@ struct DetailView: View {
             Section() {
                 HStack {
                     Label("Flow State?", systemImage: "wind")
-                        .accessibilityLabel(Text("Is Flow State?"))
                     Spacer()
                     Image(systemName: reflection.isFlowState.boolValue ? "checkmark.circle.fill" : "checkmark.circle").foregroundColor(.blue)
                 }
                 HStack {
                     Label("Engagement", systemImage: "sparkles")
-                        .accessibilityLabel(Text("Engagement"))
                     Spacer()
-                    Text("\(reflection.engagement)")
+                    Text("\(reflection.engagement)%")
                 }
                 HStack {
                     Label("Energy", systemImage: "bolt")
-                        .accessibilityLabel(Text("Energy"))
                     Spacer()
-                    Text("\(reflection.energy)")
+                    Text("\(reflection.energy)%")
                 }
                 .accessibilityElement(children: .ignore)
             }
