@@ -30,7 +30,7 @@ struct ReportListView: View {
                     Text("\(result.energy)")
                 }
             } else {
-                Text("No reflections recorded on this day")
+                Text("No reflections found")
             }
         }
     }
