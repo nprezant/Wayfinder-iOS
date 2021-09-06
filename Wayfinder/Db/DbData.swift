@@ -141,21 +141,22 @@ class DbData: ObservableObject {
     }
     
     func makeAverageReport(for date: Date, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard (self != nil) else { fatalError("Self out of scope") }
-            let requestedDateComponents = Calendar.current.dateComponents([.day, .year], from: date)
-            let relevantReflections = self!.reflections.filter{Calendar.current.dateComponents([.day, .year], from: $0.data.date) == requestedDateComponents}
-            let result = Reflection.Averaged.make(from: relevantReflections)
-            DispatchQueue.main.async {
-                completion(.success(result))
-            }
-        }
+        let requestedDateComponents = Calendar.current.dateComponents([.day, .year], from: date)
+        makeAverageReport({Calendar.current.dateComponents([.day, .year], from: $0.data.date) == requestedDateComponents}, completion: completion)
     }
     
     func makeAverageReport(for start: Date, to end: Date, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
+        makeAverageReport({$0.data.date.dayIsBetween(start, and: end)}, completion: completion)
+    }
+    
+    func makeAverageReport(forName: String, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
+        makeAverageReport({$0.name == forName}, completion: completion)
+    }
+    
+    private func makeAverageReport(_ isIncluded: @escaping (Reflection) -> Bool, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
-            let relevantReflections = self!.reflections.filter{$0.data.date.dayIsBetween(start, and: end)}
+            let relevantReflections = self!.reflections.filter{isIncluded($0)}
             let result = Reflection.Averaged.make(from: relevantReflections)
             DispatchQueue.main.async {
                 completion(.success(result))

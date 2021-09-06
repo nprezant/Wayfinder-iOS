@@ -6,13 +6,15 @@ struct NameView: View {
     @Binding var name: String
     @State var originalName: String
     let nameOptions: [String]
+    let canCreate: Bool
     
     @Environment(\.presentationMode) var presentationMode
     
-    init(name: Binding<String>, nameOptions: [String]) {
+    init(name: Binding<String>, nameOptions: [String], canCreate: Bool = true) {
         self._name = name
         self._originalName = State(initialValue: name.wrappedValue)
         self.nameOptions = nameOptions
+        self.canCreate = canCreate
     }
     
     var body: some View {
@@ -33,14 +35,22 @@ struct NameView: View {
                     }
                 }
                 if filteredNames.isEmpty {
-                    Button(action: {
-                        self.presentationMode.wrappedValue.dismiss()
-                    }) {
-                        HStack {
-                            Image(systemName: "plus.circle")
-                            Text("Create \"\(name)\"")
+                    if canCreate {
+                        Button(action: {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }) {
+                            HStack {
+                                Image(systemName: "plus.circle")
+                                Text("Create \"\(name)\"")
+                            }
+                            .foregroundColor(.green)
                         }
-                        .foregroundColor(.green)
+                    } else {
+                        HStack {
+                            Image(systemName: "xmark.circle")
+                            Text("No matches found")
+                        }
+                        .foregroundColor(.red)
                     }
                 }
             }

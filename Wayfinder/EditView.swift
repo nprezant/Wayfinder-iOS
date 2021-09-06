@@ -47,15 +47,14 @@ struct EditView: View {
     
     var body: some View {
         List {
+            // TODO fix issue with tappable area too small
             Section() {
                 NavigationLink(
                     destination: NameView(name: $data.name, nameOptions: existingNames)
                 ) {
                     NameFieldView(name: data.name)
+                        .contentShape(Rectangle())
                 }
-            }
-            .onTapGesture {
-                self.endEditing()
             }
             
             Section() {
