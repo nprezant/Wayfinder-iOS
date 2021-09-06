@@ -3,8 +3,22 @@
 import SwiftUI
 
 struct DailyReportView: View {
+    @ObservedObject var dbData: DbData
+    
     @State var selectedDay: Date = Date()
-    var result: Reflection.Averaged = Reflection.Averaged.exampleData()
+    @State var averagedResult: Reflection.Averaged? = nil
+    
+    private func updateResult(date: Date) {
+        dbData.report(for: date) { results in
+            switch results {
+            case .failure(let error):
+                print(error.localizedDescription)
+                
+            case .success(let averagedResult):
+                self.averagedResult = averagedResult
+            }
+        }
+    }
     
     var body: some View {
         VStack {
@@ -21,31 +35,49 @@ struct DailyReportView: View {
                 )
                 .id(selectedDay)
                 .labelsHidden()
+                .onChange(of: selectedDay, perform: { newDate in
+                    updateResult(date: newDate)
+                })
                 Spacer()
             }
-            HStack {
-                Label("Flow State?", systemImage: "wind")
-                Spacer()
-                Text("\(result.flowStateYes) of \(result.flowStateYes + result.flowStateNo)")
+            List {
+            if averagedResult != nil {
+                let result = averagedResult!
+                HStack {
+                    Label("Observations", systemImage: "calendar")
+                    Spacer()
+                    Text("\(result.ids.count)")
+                }
+                HStack {
+                    Label("Flow States", systemImage: "wind")
+                    Spacer()
+                    Text("\(result.flowStateYes) of \(result.flowStateYes + result.flowStateNo)")
+                }
+                HStack {
+                    Label("Average Engagement", systemImage: "sparkles")
+                    Spacer()
+                    Text("\(result.engagement)")
+                }
+                HStack {
+                    Label("Average Energy", systemImage: "bolt")
+                    Spacer()
+                    Text("\(result.energy)")
+                }
+            } else {
+                Text("No reflections recorded on this day")
             }
-            HStack {
-                Label("Engagement", systemImage: "sparkles")
-                Spacer()
-                Text("\(result.engagement)")
-            }
-            HStack {
-                Label("Energy", systemImage: "bolt")
-                Spacer()
-                Text("\(result.energy)")
             }
             Spacer()
         }
         .padding()
+        .onAppear(perform: {
+            updateResult(date: selectedDay)
+        })
     }
 }
 
 struct DailyReportView_Previews: PreviewProvider {
     static var previews: some View {
-        DailyReportView()
+        DailyReportView(dbData: DbData.createExample())
     }
 }

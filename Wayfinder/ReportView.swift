@@ -6,7 +6,7 @@ struct ReportView: View {
     @ObservedObject var dbData: DbData
     var body: some View {
         TabView {
-            DailyReportView()
+            DailyReportView(dbData: dbData)
             WeeklyReportView()
             Text("Tag/activity report view")
         }

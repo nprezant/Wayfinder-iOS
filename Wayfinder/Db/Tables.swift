@@ -78,13 +78,25 @@ extension Reflection {
     // TODO retreive this from the database for a particular date range
     struct Averaged {
         var ids: [Int64]
-        var flowStateYes: Int64
-        var flowStateNo: Int64
-        var engagement: Int64
-        var energy: Int64
+        var flowStateYes: Int
+        var flowStateNo: Int
+        var engagement: Int
+        var energy: Int
         
         static func exampleData() -> Averaged {
             return Averaged(ids: [1], flowStateYes: 1, flowStateNo: 2, engagement: 25, energy: -10)
+        }
+        
+        static func make(from reflections: [Reflection]) -> Averaged? {
+            if reflections.isEmpty {
+                return nil
+            }
+            let ids = reflections.map{$0.id}
+            let flowStateYes = reflections.filter{$0.isFlowState.boolValue}.count
+            let flowStateNo = reflections.count - flowStateYes
+            let averageEngagement = reflections.map{Int($0.engagement)}.reduce(0, +) / reflections.count
+            let averageEnergy = reflections.map{Int($0.energy)}.reduce(0, +) / reflections.count
+            return Averaged(ids: ids, flowStateYes: flowStateYes, flowStateNo: flowStateNo, engagement: averageEngagement, energy: averageEnergy)
         }
     }
 }
