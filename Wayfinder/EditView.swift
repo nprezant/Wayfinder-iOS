@@ -6,7 +6,7 @@ struct ReflectionSlider: View {
     let label: String
     @Binding var value: Int64
     var range: ClosedRange<Double>
-
+    
     var body: some View {
         VStack {
             HStack {
@@ -28,6 +28,19 @@ struct ReflectionSlider: View {
     }
 }
 
+extension UIApplication {
+    func endEditing() {
+        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+
+extension View {
+    func endEditing() {
+        UIApplication.shared.endEditing()
+    }
+}
+
+
 struct EditView: View {
     @Binding var data: Reflection.Data
     let existingNames: [String]
@@ -41,6 +54,9 @@ struct EditView: View {
                     NameFieldView(name: data.name)
                 }
             }
+            .onTapGesture {
+                self.endEditing()
+            }
             
             Section() {
                 Toggle("Flow state", isOn: $data.isFlowState)
@@ -49,7 +65,9 @@ struct EditView: View {
                 ReflectionSlider(label: "Engagement", value: $data.engagement, range: 0...100)
                 ReflectionSlider(label: "Energy", value: $data.energy, range: -100...100)
             }
-            
+            .onTapGesture {
+                self.endEditing()
+            }
             
             Section() {
                 DatePicker(
@@ -63,7 +81,7 @@ struct EditView: View {
                 
                 // TODO no placeholder text available yet...
                 TextEditor(text: $data.note)
-                    .frame(maxHeight: 100)
+                    .frame(height: 100)
             }
         }
         .listStyle(InsetGroupedListStyle())
