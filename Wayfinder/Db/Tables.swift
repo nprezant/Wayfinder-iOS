@@ -73,6 +73,22 @@ extension Reflection {
     }
 }
 
+extension Reflection {
+    
+    // TODO retreive this from the database for a particular date range
+    struct Averaged {
+        var ids: [Int64]
+        var flowStateYes: Int64
+        var flowStateNo: Int64
+        var engagement: Int64
+        var energy: Int64
+        
+        static func exampleData() -> Averaged {
+            return Averaged(ids: [1], flowStateYes: 1, flowStateNo: 2, engagement: 25, energy: -10)
+        }
+    }
+}
+
 extension Bool {
     var intValue: Int64 { self ? 1 : 0 }
 }

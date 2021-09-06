@@ -5,9 +5,12 @@ import SwiftUI
 struct ReportView: View {
     @ObservedObject var dbData: DbData
     var body: some View {
-        VStack {
-            Text("Under construction")
+        TabView {
+            DailyReportView()
+            WeeklyReportView()
+            Text("Tag/activity report view")
         }
+        .tabViewStyle(PageTabViewStyle())
     }
 }
 
