@@ -37,7 +37,7 @@ struct WeeklyReportView: View {
                 .id(selectedStartDay)
                 .labelsHidden()
                 .onChange(of: selectedStartDay, perform: { newStartDay in
-                    selectedEndDay = selectedEndDay.plusOneWeek
+                    selectedEndDay = newStartDay.plusOneWeek
                     updateAverages(start: newStartDay, end: selectedEndDay)
                 })
                 Spacer()
@@ -59,7 +59,7 @@ struct WeeklyReportView: View {
         }
         .padding()
         .onAppear(perform: {
-            selectedEndDay = selectedEndDay.plusOneWeek
+            selectedEndDay = selectedStartDay.plusOneWeek
             updateAverages(start: selectedStartDay, end: selectedEndDay)
         })
     }
