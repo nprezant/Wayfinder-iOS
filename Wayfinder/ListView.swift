@@ -62,16 +62,16 @@ struct ListView: View {
             }
             .navigationTitle("Reflections")
             .navigationBarItems(
-                trailing: HStack {
+                leading:
                     Button(action: shareSheet) {
                         Image(systemName: "square.and.arrow.up")
-                    }
+                    },
+                trailing:
                     Button(action: {
                         isNewReflectionPresented = true
                     }) {
                         Image(systemName: "plus")
                     }
-                }
             )
             .listStyle(GroupedListStyle())
         }
