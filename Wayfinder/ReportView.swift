@@ -3,12 +3,12 @@
 import SwiftUI
 
 struct ReportView: View {
-    @ObservedObject var dbData: DbData
+    @ObservedObject var dataStore: DataStore
     var body: some View {
         TabView {
-            DailyReportView(dbData: dbData)
-            WeeklyReportView(dbData: dbData)
-            ActivityReportView(dbData: dbData)
+            DailyReportView(dataStore: dataStore)
+            WeeklyReportView(dataStore: dataStore)
+            ActivityReportView(dataStore: dataStore)
         }
         .tabViewStyle(PageTabViewStyle())
     }
@@ -16,6 +16,6 @@ struct ReportView: View {
 
 struct ReportView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportView(dbData: DbData())
+        ReportView(dataStore: DataStore())
     }
 }

@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		4F03BE1C26DD3F65001E61E5 /* SqliteDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE1B26DD3F65001E61E5 /* SqliteDatabase.swift */; };
 		4F03BE2226DD4F33001E61E5 /* Tables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2126DD4F33001E61E5 /* Tables.swift */; };
-		4F03BE2426DD728E001E61E5 /* DbData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2326DD728E001E61E5 /* DbData.swift */; };
+		4F03BE2426DD728E001E61E5 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2326DD728E001E61E5 /* DataStore.swift */; };
 		4F03BE2826DED59B001E61E5 /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2726DED59B001E61E5 /* EditView.swift */; };
 		4F03BE2C26DED710001E61E5 /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2B26DED710001E61E5 /* ListView.swift */; };
 		4F03BE2E26DED7AC001E61E5 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2D26DED7AC001E61E5 /* DetailView.swift */; };
@@ -51,7 +51,7 @@
 		4F03BE1B26DD3F65001E61E5 /* SqliteDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqliteDatabase.swift; sourceTree = "<group>"; };
 		4F03BE1F26DD4EB4001E61E5 /* Wayfinder-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Wayfinder-Bridging-Header.h"; sourceTree = "<group>"; };
 		4F03BE2126DD4F33001E61E5 /* Tables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tables.swift; sourceTree = "<group>"; };
-		4F03BE2326DD728E001E61E5 /* DbData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbData.swift; sourceTree = "<group>"; };
+		4F03BE2326DD728E001E61E5 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		4F03BE2726DED59B001E61E5 /* EditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
 		4F03BE2B26DED710001E61E5 /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		4F03BE2D26DED7AC001E61E5 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
@@ -108,7 +108,7 @@
 			children = (
 				4F03BE1B26DD3F65001E61E5 /* SqliteDatabase.swift */,
 				4F03BE2126DD4F33001E61E5 /* Tables.swift */,
-				4F03BE2326DD728E001E61E5 /* DbData.swift */,
+				4F03BE2326DD728E001E61E5 /* DataStore.swift */,
 			);
 			path = Db;
 			sourceTree = "<group>";
@@ -324,7 +324,7 @@
 				4FCE948926E5ABE100BD636C /* WeeklyReportView.swift in Sources */,
 				4FCE948326E5849600BD636C /* NameFieldView.swift in Sources */,
 				4F03BE2826DED59B001E61E5 /* EditView.swift in Sources */,
-				4F03BE2426DD728E001E61E5 /* DbData.swift in Sources */,
+				4F03BE2426DD728E001E61E5 /* DataStore.swift in Sources */,
 				4FCE948126E582F100BD636C /* NameView.swift in Sources */,
 				4F38668126E1EB74006AD6AC /* ReportView.swift in Sources */,
 				4F03BE2C26DED710001E61E5 /* ListView.swift in Sources */,

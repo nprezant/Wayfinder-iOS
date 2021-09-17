@@ -3,14 +3,14 @@
 import SwiftUI
 
 struct WeeklyReportView: View {
-    @ObservedObject var dbData: DbData
+    @ObservedObject var dataStore: DataStore
     
     @State var selectedStartDay: Date = Date()
     @State var selectedEndDay: Date = Date()
     @State var averagedResult: Reflection.Averaged? = nil
     
     private func updateAverages(start: Date, end: Date) {
-        dbData.makeAverageReport(for: start, to: end) { results in
+        dataStore.makeAverageReport(for: start, to: end) { results in
             switch results {
             case .failure(let error):
                 print(error.localizedDescription)
@@ -67,6 +67,6 @@ struct WeeklyReportView: View {
 
 struct WeeklyReportView_Previews: PreviewProvider {
     static var previews: some View {
-        WeeklyReportView(dbData: DbData.createExample())
+        WeeklyReportView(dataStore: DataStore.createExample())
     }
 }

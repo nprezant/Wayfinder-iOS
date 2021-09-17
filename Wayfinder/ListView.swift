@@ -3,14 +3,14 @@
 import SwiftUI
 
 struct ListView: View {
-    @ObservedObject var dbData: DbData
+    @ObservedObject var dataStore: DataStore
     
     @State private var isNewReflectionPresented = false
     
     var reflectionsByDate: [Date: [Reflection]] {
         // TODO consider setting standard time of day when creating/editing instead of converting on the fly
         // Converts all datetimes to be at the same time of day to simulate grouping by day
-        Dictionary(grouping: dbData.reflections, by: { Calendar.current.startOfDay(for: $0.data.date) })
+        Dictionary(grouping: dataStore.reflections, by: { Calendar.current.startOfDay(for: $0.data.date) })
     }
     
     var dates: [Date] {
@@ -18,15 +18,15 @@ struct ListView: View {
     }
     
     func updateAction(reflection: Reflection) -> Void {
-        dbData.update(reflection: reflection)
+        dataStore.update(reflection: reflection)
     }
     
     func deleteAction(ids: [Int64]) -> Void {
-        dbData.delete(reflectionIds: ids)
+        dataStore.delete(reflectionIds: ids)
     }
     
     func shareSheet() {
-        let csv = dbData.ExportCsv()
+        let csv = dataStore.ExportCsv()
         let activityVC = UIActivityViewController(
             activityItems: [csv],
             applicationActivities: nil
@@ -43,15 +43,15 @@ struct ListView: View {
                     Section(header: Text(date, style: .date)) {
                         let reflectionsThisDate = reflectionsByDate[date]!
                         ForEach(reflectionsThisDate) { r in
-                            let index = dbData.reflections.firstIndex(where: {$0.id == r.id})!
+                            let index = dataStore.reflections.firstIndex(where: {$0.id == r.id})!
                             NavigationLink(
                                 destination: DetailView(
-                                    reflection: $dbData.reflections[index],
-                                    existingNames: dbData.uniqueReflectionNames,
+                                    reflection: $dataStore.reflections[index],
+                                    existingNames: dataStore.uniqueReflectionNames,
                                     saveAction: updateAction
                                 )
                             ) {
-                                CardView(reflection: dbData.reflections[index])
+                                CardView(reflection: dataStore.reflections[index])
                             }
                         }
                         .onDelete{
@@ -77,7 +77,7 @@ struct ListView: View {
         }
         .sheet(isPresented: $isNewReflectionPresented) {
             EditViewSheet(
-                dbData: dbData,
+                dataStore: dataStore,
                 isPresented: $isNewReflectionPresented
             )
         }
@@ -86,6 +86,6 @@ struct ListView: View {
 
 struct ListView_Previews: PreviewProvider {
     static var previews: some View {
-        ListView(dbData: DbData.createExample())
+        ListView(dataStore: DataStore.createExample())
     }
 }

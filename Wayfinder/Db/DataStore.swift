@@ -2,7 +2,7 @@
 
 import Foundation
 
-class DbData: ObservableObject {
+class DataStore: ObservableObject {
     private static var documentsFolder: URL {
         do {
             return try FileManager.default.url(
@@ -34,23 +34,23 @@ class DbData: ObservableObject {
     
     public init(inMemory: Bool = false) {
         do {
-            try db = inMemory ? SqliteDatabase.openInMemory() : SqliteDatabase.open(at: DbData.dbUrl)
+            try db = inMemory ? SqliteDatabase.openInMemory() : SqliteDatabase.open(at: DataStore.dbUrl)
         } catch {
-            fatalError("Cannot open database: \(DbData.dbUrl)")
+            fatalError("Cannot open database: \(DataStore.dbUrl)")
         }
     }
     
-    public static func createExample() -> DbData {
-        let dbData = DbData(inMemory: true)
+    public static func createExample() -> DataStore {
+        let dataStore = DataStore(inMemory: true)
         for r in Reflection.exampleData {
             do {
-                let _ = try dbData.db.insert(reflection: r)
+                let _ = try dataStore.db.insert(reflection: r)
             } catch {
-                fatalError("Could not create example data. \(dbData.db.errorMessage)")
+                fatalError("Could not create example data. \(dataStore.db.errorMessage)")
             }
         }
-        dbData.reflections = dbData.db.reflections()
-        return dbData
+        dataStore.reflections = dataStore.db.reflections()
+        return dataStore
     }
 
     func loadReflections() {
@@ -124,12 +124,12 @@ class DbData: ObservableObject {
         }
         
         do {
-            try s.write(to: DbData.exportUrl, atomically: true, encoding: .utf8)
+            try s.write(to: DataStore.exportUrl, atomically: true, encoding: .utf8)
         } catch let e {
-            fatalError("Can't write to csv export file at \(DbData.exportUrl). Error: \(e)")
+            fatalError("Can't write to csv export file at \(DataStore.exportUrl). Error: \(e)")
         }
         
-        return DbData.exportUrl;
+        return DataStore.exportUrl;
     }
     
     func nextUniqueReflectionId() -> Int64 {

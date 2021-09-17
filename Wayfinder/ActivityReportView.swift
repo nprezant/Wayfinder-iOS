@@ -3,14 +3,14 @@
 import SwiftUI
 
 struct ActivityReportView: View {
-    @ObservedObject var dbData: DbData
+    @ObservedObject var dataStore: DataStore
     
     @State private var selectedActivity: String = ""
     @State private var averagedResult: Reflection.Averaged? = nil
     @State private var isPresented: Bool = false
     
     private func updateAverages() {
-        dbData.makeAverageReport(forName: selectedActivity) { results in
+        dataStore.makeAverageReport(forName: selectedActivity) { results in
             switch results {
             case .failure(let error):
                 print(error.localizedDescription)
@@ -47,7 +47,7 @@ struct ActivityReportView: View {
         .padding()
         .onAppear(perform: updateAverages)
         .sheet(isPresented: $isPresented, onDismiss: updateAverages) {
-            NameView(name: $selectedActivity, nameOptions: dbData.uniqueReflectionNames, canCreate: false)
+            NameView(name: $selectedActivity, nameOptions: dataStore.uniqueReflectionNames, canCreate: false)
         }
     }
 }
@@ -55,6 +55,6 @@ struct ActivityReportView: View {
 
 struct ActivityReportView_Previews: PreviewProvider {
     static var previews: some View {
-        ActivityReportView(dbData: DbData.createExample())
+        ActivityReportView(dataStore: DataStore.createExample())
     }
 }

@@ -91,7 +91,7 @@ struct EditView_Previews: PreviewProvider {
     static var previews: some View {
         EditView(
             data: .constant(Reflection.exampleData[0].data),
-            existingNames: DbData.createExample().uniqueReflectionNames
+            existingNames: DataStore.createExample().uniqueReflectionNames
         )
     }
 }

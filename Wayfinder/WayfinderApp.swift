@@ -5,7 +5,7 @@ import SwiftUI
 @main
 struct WayfinderApp: App {
     
-    @StateObject private var dbData = DbData()
+    @StateObject private var dataStore = DataStore()
     @State private var selectedItem = 0
     @State private var lastSelectedItem = 0
     @State private var isPresented = false
@@ -13,7 +13,7 @@ struct WayfinderApp: App {
     var body: some Scene {
         WindowGroup {
             TabView(selection: $selectedItem) {
-                ListView(dbData: dbData)
+                ListView(dataStore: dataStore)
                     .tabItem {
                         Image(systemName: "list.bullet")
                         Text("Reflections")
@@ -26,7 +26,7 @@ struct WayfinderApp: App {
                     }
                     .font(.title)
                     .tag(1)
-                ReportView(dbData: dbData)
+                ReportView(dataStore: dataStore)
                     .tabItem {
                         Image(systemName: "chart.bar.xaxis")
                         Text("Reports")
@@ -34,7 +34,7 @@ struct WayfinderApp: App {
                     .tag(2)
             }
             .onAppear {
-                dbData.loadReflections()
+                dataStore.loadReflections()
             }
             .onChange(of: selectedItem) {
                 if selectedItem == 1 {
@@ -45,7 +45,7 @@ struct WayfinderApp: App {
             }
             .sheet(isPresented: $isPresented, onDismiss: {self.selectedItem = lastSelectedItem}) {
                 EditViewSheet(
-                    dbData: dbData,
+                    dataStore: dataStore,
                     isPresented: $isPresented,
                     dismissAction: {
                         self.selectedItem = lastSelectedItem

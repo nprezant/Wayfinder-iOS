@@ -67,7 +67,7 @@ struct DetailView_Previews: PreviewProvider {
         NavigationView {
             DetailView(
                 reflection: .constant(Reflection.exampleData[0]),
-                existingNames: DbData.createExample().uniqueReflectionNames,
+                existingNames: DataStore.createExample().uniqueReflectionNames,
                 saveAction: saveAction
             )
         }
