@@ -64,6 +64,10 @@ class WayfinderTests: XCTestCase {
         // Verify reflection was deleted
         XCTAssert(db.reflections().isEmpty)
     }
+    
+    func testDeleteReflections() throws {
+        // TODO implement
+    }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
