@@ -37,6 +37,10 @@ class SqliteDatabase {
         }
     }
     
+    static func openInMemory() throws -> SqliteDatabase {
+        return try createNew(atPath: "file::memory:")
+    }
+    
     private static func openExisting(atPath: String) throws -> SqliteDatabase {
         var db: OpaquePointer?
         

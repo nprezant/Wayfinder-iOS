@@ -10,7 +10,7 @@ protocol SqlTable {
     static var createStatement: String { get }
 }
 
-struct Reflection : Identifiable, SqlTable {
+struct Reflection : Identifiable, Equatable, SqlTable {
     static var createStatement: String {
         return """
         CREATE TABLE reflection(
@@ -32,6 +32,8 @@ struct Reflection : Identifiable, SqlTable {
     var energy: Int64
     var date: Int64 // Unix epoch time
     var note: String
+    
+    // NOTE: no need to implement static func ==(lhs, rhs). By default all properties are compared
 }
 
 extension Reflection {

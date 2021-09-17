@@ -33,9 +33,8 @@ class DbData: ObservableObject {
     private var db: SqliteDatabase
     
     public init(inMemory: Bool = false) {
-        let p = inMemory ? URL(string: "file::memory:")! : DbData.dbUrl
         do {
-            try db = SqliteDatabase.open(at: p)
+            try db = inMemory ? SqliteDatabase.openInMemory() : SqliteDatabase.open(at: DbData.dbUrl)
         } catch {
             fatalError("Cannot open database: \(DbData.dbUrl)")
         }
