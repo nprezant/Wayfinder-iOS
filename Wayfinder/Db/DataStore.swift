@@ -114,22 +114,30 @@ class DataStore: ObservableObject {
         }
     }
     
-    func ExportCsv() -> URL {
-        let reflections = self.db.reflections()
-        
-        var s: String = "name\tisFlowState\tengagement\tenergy\tdate\tnote\n"
-        
-        for r in reflections {
-            s.append("\(r.name)\t\(r.isFlowState)\t\(r.engagement)\t\(r.energy)\t\(r.date)\t\(r.note)\n")
+    func ExportCsv(completion: @escaping (Result<URL, Error>) -> Void) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard (self != nil) else { fatalError("Self out of scope") }
+            let reflections = self!.db.reflections()
+            
+            var s: String = "name\tisFlowState\tengagement\tenergy\tdate\tnote\n"
+            
+            for r in reflections {
+                s.append("\(r.name)\t\(r.isFlowState)\t\(r.engagement)\t\(r.energy)\t\(r.date)\t\(r.note)\n")
+            }
+            
+            var result: Result<URL, Error>
+            
+            do {
+                try s.write(to: DataStore.exportUrl, atomically: true, encoding: .utf8)
+                result = .success(DataStore.exportUrl)
+            } catch let e {
+                result = .failure("Can't write to csv export file at \(DataStore.exportUrl). Error: \(e)" as! Error) // TODO not sure this cast is safe...
+            }
+            
+            DispatchQueue.main.async {
+                completion(result)
+            }
         }
-        
-        do {
-            try s.write(to: DataStore.exportUrl, atomically: true, encoding: .utf8)
-        } catch let e {
-            fatalError("Can't write to csv export file at \(DataStore.exportUrl). Error: \(e)")
-        }
-        
-        return DataStore.exportUrl;
     }
     
     func nextUniqueReflectionId() -> Int64 {

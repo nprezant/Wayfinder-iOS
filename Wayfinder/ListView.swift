@@ -2,10 +2,18 @@
 
 import SwiftUI
 
+struct ErrorMessage: Identifiable {
+    var id: String { title + message }
+    let title: String
+    let message: String
+}
+
 struct ListView: View {
     @ObservedObject var dataStore: DataStore
     
     @State private var isNewReflectionPresented = false
+    @State private var isCreatingExport = false
+    @State private var errorMessage: ErrorMessage?
     
     var reflectionsByDate: [Date: [Reflection]] {
         // TODO consider setting standard time of day when creating/editing instead of converting on the fly
@@ -26,14 +34,25 @@ struct ListView: View {
     }
     
     func shareSheet() {
-        let csv = dataStore.ExportCsv()
-        let activityVC = UIActivityViewController(
-            activityItems: [csv],
-            applicationActivities: nil
-        )
-        UIApplication.shared.windows.first?.rootViewController?.present(
-            activityVC, animated: true, completion: nil
-        )
+        isCreatingExport = true
+        defer {
+            isCreatingExport = false
+        }
+        dataStore.ExportCsv() { result in
+            switch result {
+            case .failure(let error):
+                errorMessage = ErrorMessage(title: "Export Error", message: error.localizedDescription)
+                
+            case .success(let csv):
+                let activityVC = UIActivityViewController(
+                    activityItems: [csv],
+                    applicationActivities: nil
+                )
+                UIApplication.shared.windows.first?.rootViewController?.present(
+                    activityVC, animated: true, completion: nil
+                )
+            }
+        }
     }
     
     var body: some View {
@@ -65,7 +84,8 @@ struct ListView: View {
                 leading:
                     Button(action: shareSheet) {
                         Image(systemName: "square.and.arrow.up")
-                    },
+                    }
+                    .disabled(isCreatingExport),
                 trailing:
                     Button(action: {
                         isNewReflectionPresented = true
@@ -80,6 +100,9 @@ struct ListView: View {
                 dataStore: dataStore,
                 isPresented: $isNewReflectionPresented
             )
+        }
+        .alert(item: $errorMessage) { msg in
+            Alert(title: Text(msg.title), message: Text(msg.message), dismissButton: .cancel())
         }
     }
 }
