@@ -21,9 +21,8 @@ struct EditViewSheet: View {
             switch result {
             case .failure(let error):
                 errorMessage = ErrorMessage(title: "Save Error", message: error.localizedDescription)
-                
-            case .success(let dbAssignedId):
-                errorMessage = ErrorMessage(title: "Success", message: "Db assigned id: \(dbAssignedId)")
+            case .success(_):
+                break
             }
         }
         newReflectionData = Reflection.Data()

@@ -8,7 +8,7 @@ struct ErrorMessage: Identifiable {
     let message: String
     
     func toAlert() -> Alert {
-        return Alert(title: Text(title), message: Text(message), dismissButton: .cancel())
+        return Alert(title: Text(title), message: Text(message), dismissButton: .default(Text("Okay")))
     }
 }
 
