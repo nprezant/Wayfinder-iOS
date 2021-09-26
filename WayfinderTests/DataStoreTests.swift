@@ -23,7 +23,7 @@ class DataStoreTests: XCTestCase {
     
     func populatedDataStore() throws -> DataStore {
         let dataStore = DataStore(inMemory: true)
-//        dataStore.add(reflections: testData) // TODO implement
+        dataStore.add(reflections: &testData)
         return dataStore
     }
 
@@ -59,7 +59,17 @@ class DataStoreTests: XCTestCase {
     }
     
     func testAddReflections() throws {
-        // TODO implement
+        let dataStore = DataStore(inMemory: true)
+        dataStore.add(reflections: &testData)
+        
+        let expectation = XCTestExpectation(description: "Add many reflections")
+        
+        dataStore.loadReflections() { [testData] reflections in
+            XCTAssertEqual(testData, reflections)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 2000)
     }
     
     func testDeleteReflection() throws {

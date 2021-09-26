@@ -114,6 +114,15 @@ class DataStore: ObservableObject {
         }
     }
     
+    // Adds many reflections (not async...) and updates the ids to match the those in the inserted database
+    func add(reflections: inout [Reflection]) {
+        for i in reflections.indices {
+            let dbId = try! self.db.insert(reflection: reflections[i])
+            reflections[i].id = dbId
+            self.reflections.append(reflections[i])
+        }
+    }
+    
     // Updates the reflection with the matching ID to contain new data
     func update(reflection: Reflection) {
         DispatchQueue.global(qos: .background).async { [weak self] in
