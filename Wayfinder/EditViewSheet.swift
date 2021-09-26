@@ -10,17 +10,22 @@ struct EditViewSheet: View {
     
     @ObservedObject var dataStore: DataStore
     @Binding var isPresented: Bool
+    @Binding var errorMessage: ErrorMessage?
     var dismissAction: (() -> Void) = {}
     var addAction: (() -> Void) = {}
     
     @State private var newReflectionData = Reflection.Data()
     
     func saveAction() -> Void {
-        // The default id is 0, and will be re-assigned when it is inserted into the database
-        // After the data is inserted into the database, that insertion id needs to be pushed back to the list in memory
-        // To find this reflection in memory, we give it a unique id
-        newReflectionData.id = dataStore.nextUniqueReflectionId()
-        dataStore.saveReflection(reflection: newReflectionData.reflection)
+        dataStore.add(reflection: newReflectionData.reflection) { result in
+            switch result {
+            case .failure(let error):
+                errorMessage = ErrorMessage(title: "Save Error", message: error.localizedDescription)
+                
+            case .success(let dbAssignedId):
+                errorMessage = ErrorMessage(title: "Success", message: "Db assigned id: \(dbAssignedId)")
+            }
+        }
         newReflectionData = Reflection.Data()
     }
     
@@ -44,6 +49,6 @@ struct EditViewSheet: View {
 
 struct EditViewSheet_Previews: PreviewProvider {
     static var previews: some View {
-        EditViewSheet(dataStore: DataStore(), isPresented: .constant(true))
+        EditViewSheet(dataStore: DataStore(), isPresented: .constant(true), errorMessage: .constant(nil))
     }
 }

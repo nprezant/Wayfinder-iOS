@@ -53,51 +53,75 @@ class DataStore: ObservableObject {
         return dataStore
     }
 
-    func loadReflections() {
-        // Read the database on the background thread
+    // Read the database on the background thread
+    // `reflections` property is updated automatically
+    func loadReflections(_ completion: @escaping ([Reflection])->() = {_ in }) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             
-            guard let reflections = self?.db.reflections() else {
-                fatalError("Can't read saved reflection data.")
-            }
+            guard let self = self else { return }
+            
+            let reflections = self.db.reflections()
             
             // Do any UI work on the main thread
             DispatchQueue.main.async {
-                self?.reflections = reflections
+                self.reflections = reflections
+                completion(reflections)
             }
         }
     }
     
-    // TODO handle async better... perhaps with Result<T>... completion: @escaping (Result<Any, SqliteError>)->())  {
-    func saveReflection(reflection: Reflection) {
+    // Returns the new inserted ID.
+    // No action necessary with the ID; the data store list is updated automatically
+    func add(reflection: Reflection, completion: @escaping (Result<Int64, SqliteError>)->()) {
+        
+        // The default id is 0, and will be re-assigned when it is inserted into the database
+        // After the data is inserted into the database, that insertion id needs to be pushed back to the list in memory
+        // To find this reflection in memory, we give it a unique id
+        let uniqueId = self.nextUniqueReflectionId()
+        var reflection = reflection // Make modifyable copy
+        reflection.id = uniqueId
+        
+        // Add data to the list shown in the UI
         self.reflections.append(reflection)
         self.reflections.sort(by: {$0.date > $1.date})
+        
+        // Database logic on background thread
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
+            
+            var result: Result<Int64, SqliteError>
             
             // Database assigns a new id on insert
             var dbId: Int64?
             do {
-                dbId = try self?.db.insert(reflection: reflection)
-            } catch {
-                fatalError("Can't insert reflection data. \(self?.db.errorMessage ?? "No db message provided")")
+                dbId = try self!.db.insert(reflection: reflection)
+                result = .success(dbId!)
+            } catch let e as SqliteError {
+                result = .failure(e)
+            } catch let e {
+                result = .failure(SqliteError.Unspecified(message: "Can't add reflection data. \(e)"))
             }
             
-            // Update the last inserted reflection to use the database assigned id
+            // Any UI logic must be done on main thread
             DispatchQueue.main.async {
-                let location = self?.reflections.firstIndex(where: {$0.id == reflection.id})
-                self?.reflections[location!].id = dbId!
+                if let unwrappedDbId = dbId {
+                    // Reflection was properly inserted so the database assigned id needs to be applied to the in memory UI list
+                    let location = self!.reflections.firstIndex(where: {$0.id == uniqueId})
+                    self!.reflections[location!].id = unwrappedDbId
+                }
+                completion(result)
             }
         }
     }
     
+    // Updates the reflection with the matching ID to contain new data
     func update(reflection: Reflection) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
             do {
                 try self?.db.update(reflection: reflection)
             } catch {
-                fatalError("Can't update reflection data. \(self?.db.errorMessage ?? "No db message provided")")
+                fatalError("Can't update reflection data. \(self!.db.errorMessage)")
             }
         }
     }
@@ -109,7 +133,7 @@ class DataStore: ObservableObject {
             do {
                 try self?.db.delete(reflectionsIds: reflectionIds)
             } catch {
-                fatalError("Can't delete reflection data. \(self?.db.errorMessage ?? "No db message provided")")
+                fatalError("Can't delete reflection data. \(self!.db.errorMessage)")
             }
         }
     }

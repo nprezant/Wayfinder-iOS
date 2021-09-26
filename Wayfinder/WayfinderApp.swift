@@ -9,6 +9,7 @@ struct WayfinderApp: App {
     @State private var selectedItem = 0
     @State private var lastSelectedItem = 0
     @State private var isPresented = false
+    @State private var errorMessage: ErrorMessage?
     
     var body: some Scene {
         WindowGroup {
@@ -47,6 +48,7 @@ struct WayfinderApp: App {
                 EditViewSheet(
                     dataStore: dataStore,
                     isPresented: $isPresented,
+                    errorMessage: $errorMessage,
                     dismissAction: {
                         self.selectedItem = lastSelectedItem
                     },
@@ -54,6 +56,9 @@ struct WayfinderApp: App {
                         self.selectedItem = lastSelectedItem
                     }
                 )
+            }
+            .alert(item: $errorMessage) { msg in
+                msg.toAlert()
             }
         }
     }

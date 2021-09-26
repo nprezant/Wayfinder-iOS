@@ -7,6 +7,7 @@ enum SqliteError: Error {
     case Prepare(message: String)
     case Step(message: String)
     case Bind(message: String)
+    case Unspecified(message: String)
 }
 
 class SqliteDatabase {

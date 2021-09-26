@@ -6,6 +6,10 @@ struct ErrorMessage: Identifiable {
     var id: String { title + message }
     let title: String
     let message: String
+    
+    func toAlert() -> Alert {
+        return Alert(title: Text(title), message: Text(message), dismissButton: .cancel())
+    }
 }
 
 struct ListView: View {
@@ -98,11 +102,12 @@ struct ListView: View {
         .sheet(isPresented: $isNewReflectionPresented) {
             EditViewSheet(
                 dataStore: dataStore,
-                isPresented: $isNewReflectionPresented
+                isPresented: $isNewReflectionPresented,
+                errorMessage: $errorMessage
             )
         }
         .alert(item: $errorMessage) { msg in
-            Alert(title: Text(msg.title), message: Text(msg.message), dismissButton: .cancel())
+            msg.toAlert()
         }
     }
 }
