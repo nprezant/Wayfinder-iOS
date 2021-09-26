@@ -50,7 +50,7 @@ extension Reflection {
         var id: Int64 = 0
         var name: String = ""
         var isFlowState: Bool = false
-        var engagement: Int64 = 50
+        var engagement: Int64 = 0
         var energy: Int64 = 0
         var date: Date = Date()
         var note: String = ""
