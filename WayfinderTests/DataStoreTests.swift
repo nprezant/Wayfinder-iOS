@@ -30,8 +30,10 @@ class DataStoreTests: XCTestCase {
     func testAddReflection() throws {
         let dataStore = DataStore(inMemory: true)
         
+        let expectation = XCTestExpectation(description: "Add two reflections individually")
+        
         // Add first reflection
-        dataStore.add(reflection: testData[0]) { [testData] result in
+        dataStore.add(reflection: testData[0]) { [self] result in
             switch result {
             case .failure(let error):
                 XCTFail(error.localizedDescription)
@@ -40,8 +42,10 @@ class DataStoreTests: XCTestCase {
                 XCTAssertEqual(1, dbAssignedId) // Should be first entry in database
             }
             
+            self.testData[0].id = 1
+            
             // Add second reflection
-            dataStore.add(reflection: testData[1]) { [testData] result in
+            dataStore.add(reflection: testData[1]) { [self] result in
                 switch result {
                 case .failure(let error):
                     XCTFail(error.localizedDescription)
@@ -50,12 +54,17 @@ class DataStoreTests: XCTestCase {
                     XCTAssertEqual(2, dbAssignedId) // Should be second entry in database
                 }
                 
+                self.testData[1].id = 2
+                
                 // Read reflection list and ensure they are equal
                 dataStore.loadReflections() { reflections in
                     XCTAssertEqual(Array(testData[0...1]), reflections)
+                    expectation.fulfill()
                 }
             }
         }
+        
+        wait(for: [expectation], timeout: 5)
     }
     
     func testAddReflections() throws {
@@ -69,7 +78,7 @@ class DataStoreTests: XCTestCase {
             expectation.fulfill()
         }
         
-        wait(for: [expectation], timeout: 2000)
+        wait(for: [expectation], timeout: 5)
     }
     
     func testDeleteReflection() throws {
@@ -81,7 +90,10 @@ class DataStoreTests: XCTestCase {
     }
 
     func testPerformanceExample() throws {
-        // This is an example of a performance test case.
+        // Add a bunch of data
+        for _ in 1...5 {
+            testData += testData
+        }
         self.measure {
             let _ = try! populatedDataStore()
         }
