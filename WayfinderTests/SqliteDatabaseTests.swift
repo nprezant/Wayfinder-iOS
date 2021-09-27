@@ -22,7 +22,16 @@ class SqliteDatabaseTests: XCTestCase {
         testData.removeAll()
     }
     
-    func populatedDb() throws -> SqliteDatabase {
+    func testOpenDatabase() throws {
+        let tempPath = URL(string: NSTemporaryDirectory())!.appendingPathComponent("wayfinder_temp.sqlite3")
+        let _ = try SqliteDatabase.open(at: tempPath)
+    }
+    
+    func testOpenDatabaseInMemory() throws {
+        let _ = try SqliteDatabase.openInMemory()
+    }
+    
+    private func populatedDb() throws -> SqliteDatabase {
         let db = try! SqliteDatabase.openInMemory()
         for idx in testData.indices {
             let insertedId = try! db.insert(reflection: testData[idx])
