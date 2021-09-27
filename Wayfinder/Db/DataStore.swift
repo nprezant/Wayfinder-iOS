@@ -124,25 +124,31 @@ class DataStore: ObservableObject {
     }
     
     // Updates the reflection with the matching ID to contain new data
-    func update(reflection: Reflection) {
+    func update(reflection: Reflection, completion: @escaping (SqliteError?)->() = {_ in}) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
             do {
                 try self?.db.update(reflection: reflection)
-            } catch {
-                fatalError("Can't update reflection data. \(self!.db.errorMessage)")
+                completion(nil)
+            } catch let e as SqliteError {
+                completion(e)
+            } catch let e {
+                completion(SqliteError.Unspecified(message: e.localizedDescription))
             }
         }
     }
     
-    func delete(reflectionIds: [Int64]) {
+    func delete(reflectionIds: [Int64], completion: @escaping (SqliteError?)->() = {_ in}) {
         self.reflections.removeAll(where: {reflectionIds.contains($0.id)})
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard (self != nil) else { fatalError("Self out of scope") }
             do {
                 try self?.db.delete(reflectionsIds: reflectionIds)
-            } catch {
-                fatalError("Can't delete reflection data. \(self!.db.errorMessage)")
+                completion(nil)
+            } catch let e as SqliteError {
+                completion(e)
+            } catch let e {
+                completion(SqliteError.Unspecified(message: e.localizedDescription))
             }
         }
     }

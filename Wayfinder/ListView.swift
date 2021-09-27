@@ -30,11 +30,19 @@ struct ListView: View {
     }
     
     func updateAction(reflection: Reflection) -> Void {
-        dataStore.update(reflection: reflection)
+        dataStore.update(reflection: reflection) { error in
+            if let error = error {
+                errorMessage = ErrorMessage(title: "Update Error", message: error.localizedDescription)
+            }
+        }
     }
     
     func deleteAction(ids: [Int64]) -> Void {
-        dataStore.delete(reflectionIds: ids)
+        dataStore.delete(reflectionIds: ids) { error in
+            if let error = error {
+                errorMessage = ErrorMessage(title: "Delete Error", message: error.localizedDescription)
+            }
+        }
     }
     
     func shareSheet() {

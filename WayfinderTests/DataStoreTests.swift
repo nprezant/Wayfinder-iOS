@@ -67,13 +67,36 @@ class DataStoreTests: XCTestCase {
         wait(for: [expectation], timeout: 5)
     }
     
+    func testAddedReflectionIds() throws {
+        XCTAssertEqual(testData[0].id, 0)
+        XCTAssertEqual(testData[1].id, 0)
+        XCTAssertEqual(testData[2].id, 0)
+        XCTAssertEqual(testData[3].id, 0)
+        
+        let dataStore = DataStore(inMemory: true)
+        dataStore.add(reflections: &testData)
+        
+        let expectation = XCTestExpectation(description: "Add many reflections")
+        
+        dataStore.loadReflections() { reflections in
+            XCTAssertEqual(reflections.count, 4)
+            XCTAssertEqual(reflections[0].id, 1)
+            XCTAssertEqual(reflections[1].id, 2)
+            XCTAssertEqual(reflections[2].id, 3)
+            XCTAssertEqual(reflections[3].id, 4)
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5)
+    }
+    
     func testAddReflections() throws {
         let dataStore = DataStore(inMemory: true)
         dataStore.add(reflections: &testData)
         
         let expectation = XCTestExpectation(description: "Add many reflections")
         
-        dataStore.loadReflections() { [testData] reflections in
+        dataStore.loadReflections() { [testData] reflections in // TODO use async when available
             XCTAssertEqual(testData, reflections)
             expectation.fulfill()
         }
@@ -82,11 +105,77 @@ class DataStoreTests: XCTestCase {
     }
     
     func testDeleteReflection() throws {
-        // TODO implement
+        let dataStore = try! populatedDataStore()
+        
+        let expectation = XCTestExpectation(description: "Delete one reflection")
+        
+        // Delete second reflection
+        dataStore.delete(reflectionIds: [2]) {error in
+            
+            if let error = error {
+                XCTFail(error.localizedDescription)
+            }
+            
+            dataStore.loadReflections() { [self] reflections in
+                testData.remove(at: 1) // Remove second reflection from test data list
+                XCTAssertEqual(testData, reflections)
+                expectation.fulfill()
+            }
+            
+        }
+        
+        wait(for: [expectation], timeout: 5)
     }
     
     func testDeleteReflections() throws {
-        // TODO implement
+        let dataStore = try! populatedDataStore()
+        
+        let expectation = XCTestExpectation(description: "Delete many reflections")
+        
+        // Delete first and second reflection
+        dataStore.delete(reflectionIds: [1, 2]) {error in
+            
+            if let error = error {
+                XCTFail(error.localizedDescription)
+            }
+            
+            dataStore.loadReflections() { [self] reflections in
+                testData.removeAll(where: {[1, 2].contains($0.id)}) // Remove first and second reflection from test data list
+                XCTAssertEqual(testData, reflections)
+                expectation.fulfill()
+            }
+            
+        }
+        
+        wait(for: [expectation], timeout: 5)
+    }
+    
+    func testUpdateReflection() throws {
+        let dataStore = try! populatedDataStore()
+        
+        let expectation = XCTestExpectation(description: "Update a reflection")
+        
+        let newSecondReflection = Reflection.Data(id: 2, name: "Frank", isFlowState: true, engagement: 0, energy: 100, date: Date(), note: "").reflection
+        
+        // Delete first and second reflection
+        dataStore.update(reflection: newSecondReflection) {error in
+            
+            if let error = error {
+                XCTFail(error.localizedDescription)
+            }
+            
+            dataStore.loadReflections() { [self] reflections in
+                XCTAssertEqual(reflections[1], newSecondReflection)
+                
+                testData[1] = newSecondReflection
+                XCTAssertEqual(testData, reflections)
+                
+                expectation.fulfill()
+            }
+            
+        }
+        
+        wait(for: [expectation], timeout: 5)
     }
 
     func testPerformanceExample() throws {
