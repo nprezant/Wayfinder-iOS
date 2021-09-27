@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		4F03BE1C26DD3F65001E61E5 /* SqliteDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE1B26DD3F65001E61E5 /* SqliteDatabase.swift */; };
-		4F03BE2226DD4F33001E61E5 /* Tables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2126DD4F33001E61E5 /* Tables.swift */; };
 		4F03BE2426DD728E001E61E5 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2326DD728E001E61E5 /* DataStore.swift */; };
 		4F03BE2826DED59B001E61E5 /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2726DED59B001E61E5 /* EditView.swift */; };
 		4F03BE2C26DED710001E61E5 /* ListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2B26DED710001E61E5 /* ListView.swift */; };
 		4F03BE2E26DED7AC001E61E5 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2D26DED7AC001E61E5 /* DetailView.swift */; };
 		4F03BE3026DEDAF3001E61E5 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2F26DEDAF3001E61E5 /* CardView.swift */; };
+		4F23566727018BF100906E88 /* ReflectionTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23566627018BF100906E88 /* ReflectionTable.swift */; };
+		4F23566927018E5B00906E88 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23566827018E5B00906E88 /* Utilities.swift */; };
 		4F38668126E1EB74006AD6AC /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F38668026E1EB74006AD6AC /* ReportView.swift */; };
 		4F38668326E1EEE9006AD6AC /* EditViewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */; };
 		4FCE948126E582F100BD636C /* NameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE948026E582F100BD636C /* NameView.swift */; };
@@ -51,12 +52,13 @@
 /* Begin PBXFileReference section */
 		4F03BE1B26DD3F65001E61E5 /* SqliteDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqliteDatabase.swift; sourceTree = "<group>"; };
 		4F03BE1F26DD4EB4001E61E5 /* Wayfinder-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Wayfinder-Bridging-Header.h"; sourceTree = "<group>"; };
-		4F03BE2126DD4F33001E61E5 /* Tables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tables.swift; sourceTree = "<group>"; };
 		4F03BE2326DD728E001E61E5 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		4F03BE2726DED59B001E61E5 /* EditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
 		4F03BE2B26DED710001E61E5 /* ListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListView.swift; sourceTree = "<group>"; };
 		4F03BE2D26DED7AC001E61E5 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		4F03BE2F26DEDAF3001E61E5 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		4F23566627018BF100906E88 /* ReflectionTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReflectionTable.swift; sourceTree = "<group>"; };
+		4F23566827018E5B00906E88 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		4F38668026E1EB74006AD6AC /* ReportView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewSheet.swift; sourceTree = "<group>"; };
 		4FCE948026E582F100BD636C /* NameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameView.swift; sourceTree = "<group>"; };
@@ -108,9 +110,10 @@
 		4F03BE2026DD4EE2001E61E5 /* Db */ = {
 			isa = PBXGroup;
 			children = (
-				4F03BE1B26DD3F65001E61E5 /* SqliteDatabase.swift */,
-				4F03BE2126DD4F33001E61E5 /* Tables.swift */,
 				4F03BE2326DD728E001E61E5 /* DataStore.swift */,
+				4F03BE1B26DD3F65001E61E5 /* SqliteDatabase.swift */,
+				4F23566627018BF100906E88 /* ReflectionTable.swift */,
+				4F23566827018E5B00906E88 /* Utilities.swift */,
 			);
 			path = Db;
 			sourceTree = "<group>";
@@ -320,10 +323,10 @@
 				4FCE948726E5A7AE00BD636C /* DailyReportView.swift in Sources */,
 				4FCE948526E5896B00BD636C /* SearchBar.swift in Sources */,
 				4FCE948B26E5BA4A00BD636C /* ReportListView.swift in Sources */,
-				4F03BE2226DD4F33001E61E5 /* Tables.swift in Sources */,
 				4F03BE3026DEDAF3001E61E5 /* CardView.swift in Sources */,
 				4F03BE2E26DED7AC001E61E5 /* DetailView.swift in Sources */,
 				4FCE948D26E5CCED00BD636C /* ActivityReportView.swift in Sources */,
+				4F23566927018E5B00906E88 /* Utilities.swift in Sources */,
 				4FCE948926E5ABE100BD636C /* WeeklyReportView.swift in Sources */,
 				4FCE948326E5849600BD636C /* NameFieldView.swift in Sources */,
 				4F03BE2826DED59B001E61E5 /* EditView.swift in Sources */,
@@ -333,6 +336,7 @@
 				4F03BE2C26DED710001E61E5 /* ListView.swift in Sources */,
 				4F03BE1C26DD3F65001E61E5 /* SqliteDatabase.swift in Sources */,
 				4F38668326E1EEE9006AD6AC /* EditViewSheet.swift in Sources */,
+				4F23566727018BF100906E88 /* ReflectionTable.swift in Sources */,
 				5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

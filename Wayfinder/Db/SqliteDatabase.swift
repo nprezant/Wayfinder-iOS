@@ -10,6 +10,14 @@ enum SqliteError: Error {
     case Unspecified(message: String)
 }
 
+// https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Statement.swift#L179
+// https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Database.swift#L14
+let SQLITE_TRANSIENT = unsafeBitCast(OpaquePointer(bitPattern: -1), to: sqlite3_destructor_type.self)
+
+protocol SqlTable {
+    static var createStatement: String { get }
+}
+
 class SqliteDatabase {
     
     private let dbPointer: OpaquePointer? // C pointer

@@ -2,14 +2,7 @@
 
 import Foundation
 
-// https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Statement.swift#L179
-// https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Database.swift#L14
-let SQLITE_TRANSIENT = unsafeBitCast(OpaquePointer(bitPattern: -1), to: sqlite3_destructor_type.self)
-
-protocol SqlTable {
-    static var createStatement: String { get }
-}
-
+/// The table itself
 struct Reflection : Identifiable, Equatable, SqlTable {
     static var createStatement: String {
         return """
@@ -36,6 +29,7 @@ struct Reflection : Identifiable, Equatable, SqlTable {
     // NOTE: no need to implement static func ==(lhs, rhs). By default all properties are compared
 }
 
+/// Example data, useful for previews
 extension Reflection {
     static var exampleData: [Reflection] {
         [
@@ -45,6 +39,7 @@ extension Reflection {
     }
 }
 
+/// A friendlier version of the table data (e.g. bool instead of int, Date instead of int time since 1970, etc.)
 extension Reflection {
     struct Data {
         var id: Int64 = 0
@@ -75,9 +70,8 @@ extension Reflection {
     }
 }
 
+/// A way to combine and average multiple reflections into a single summary
 extension Reflection {
-    
-    // TODO retreive this from the database for a particular date range
     struct Averaged {
         var ids: [Int64]
         var flowStateYes: Int
@@ -103,16 +97,7 @@ extension Reflection {
     }
 }
 
-extension Bool {
-    var intValue: Int64 { self ? 1 : 0 }
-}
-
-extension Int64 {
-    var boolValue: Bool {
-        return self != 0
-    }
-}
-
+/// Database operations that involve the reflection table
 extension SqliteDatabase {
     
     func insert(reflection: Reflection) throws -> Int64 {
