@@ -203,7 +203,7 @@ extension SqliteDatabase {
         }
     }
     
-    func reflectionStep(stmt: OpaquePointer?) -> Reflection? {
+    private func reflectionStep(stmt: OpaquePointer?) -> Reflection? {
         guard sqlite3_step(stmt) == SQLITE_ROW else {
             return nil
         }

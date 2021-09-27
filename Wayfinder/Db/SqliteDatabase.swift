@@ -108,5 +108,29 @@ class SqliteDatabase {
     func lastInsertedRowId() -> Int64 {
         return sqlite3_last_insert_rowid(dbPointer)
     }
+    
+    // The database version
+    var version: Int32 {
+        get {
+            let stmt = try! prepare(sql: "PRAGMA user_version;")
+            defer {
+                sqlite3_finalize(stmt)
+            }
+            guard sqlite3_step(stmt) == SQLITE_ROW else {
+                fatalError("Could not read database version: \(errorMessage)")
+            }
+            return sqlite3_column_int(stmt, 0)
+        }
+        set(newVersion) {
+            // Prepare seems to fail with "?" involved
+            let stmt = try! prepare(sql: "PRAGMA user_version = \(newVersion);")
+            defer {
+                sqlite3_finalize(stmt)
+            }
+            guard sqlite3_step(stmt) == SQLITE_DONE else {
+                fatalError("Could not set database version to \(newVersion): \(errorMessage)")
+            }
+        }
+    }
 }
 

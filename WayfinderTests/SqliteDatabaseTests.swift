@@ -147,4 +147,27 @@ class SqliteDatabaseTests: XCTestCase {
         }
     }
 
+    func testGetVersion() throws {
+        let db = try! populatedDb()
+        
+        let version = db.version
+        
+        XCTAssertEqual(version, 0)
+    }
+    
+    func testSetVersionDoesNotThrow() throws {
+        let db = try! populatedDb()
+        
+        db.version = 2
+    }
+    
+    func testSetVersionSetsProperly() throws {
+        let db = try! populatedDb()
+        
+        db.version = 2
+        
+        let gotVersion = db.version
+        
+        XCTAssertEqual(gotVersion, 2)
+    }
 }
