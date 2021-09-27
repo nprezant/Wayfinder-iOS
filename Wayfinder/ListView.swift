@@ -107,6 +107,7 @@ struct ListView: View {
             )
             .listStyle(GroupedListStyle())
         }
+        .navigationViewStyle(StackNavigationViewStyle())
         .sheet(isPresented: $isNewReflectionPresented) {
             EditViewSheet(
                 dataStore: dataStore,
