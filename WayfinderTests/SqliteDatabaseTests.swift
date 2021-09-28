@@ -22,9 +22,14 @@ class SqliteDatabaseTests: XCTestCase {
         testData.removeAll()
     }
     
+    static func makeTempPath() -> URL {
+        return URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+    }
+    
     func testOpenDatabase() throws {
-        let tempPath = URL(string: NSTemporaryDirectory())!.appendingPathComponent("wayfinder_temp.sqlite3")
+        let tempPath = SqliteDatabaseTests.makeTempPath()
         let _ = try SqliteDatabase.open(at: tempPath)
+        try FileManager.default.removeItem(at: tempPath)
     }
     
     func testOpenDatabaseInMemory() throws {
@@ -161,7 +166,7 @@ class SqliteDatabaseTests: XCTestCase {
         
         let version = db.version
         
-        XCTAssertEqual(version, 0)
+        XCTAssertEqual(version, SqliteDatabase.latestVersion)
     }
     
     func testSetVersionDoesNotThrow() throws {

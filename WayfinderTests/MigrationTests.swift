@@ -21,10 +21,6 @@ extension Array where Element == String {
 }
 
 class MigrationTests: XCTestCase {
-    
-    static func makeTempPath() -> URL {
-        return URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-    }
 
     override func setUpWithError() throws {
         
@@ -35,12 +31,12 @@ class MigrationTests: XCTestCase {
     }
     
     func testCreateNewDatabaseMigratesAllTheWay() throws {
-        let db = try! SqliteDatabase.open(at: MigrationTests.makeTempPath())
+        let db = try! SqliteDatabase.openInMemory()
         XCTAssertEqual(db.version, SqliteDatabase.latestVersion)
     }
     
     func testOriginal() throws {
-        let db = try! SqliteDatabase.open(at: MigrationTests.makeTempPath())
+        let db = try! SqliteDatabase.openInMemory()
         let schemaShouldBe: [String] = ["""
         CREATE TABLE reflection(
             id INTEGER PRIMARY KEY,
