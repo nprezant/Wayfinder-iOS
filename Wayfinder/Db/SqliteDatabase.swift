@@ -31,7 +31,7 @@ class SqliteDatabase {
     }
     
     /// Sqlite3 user version is stored as a 32 bit integer I think
-    static var version: Int32 = 0
+    static var latestVersion: Int32 = 0
     
     /// Open a database connection to a transient in memory database (generally for testing or migrating)
     static func openInMemory() throws -> SqliteDatabase {
@@ -56,30 +56,32 @@ class SqliteDatabase {
         let dbVersion = db.version
         
         // Sanity checks
-        if dbVersion > version {
-            fatalError("Cannot migrate database backwards! Database at path \(url) has version \(dbVersion), while the application is only version \(version)")
+        if dbVersion > latestVersion {
+            fatalError("Cannot migrate database backwards! Database at path \(url) has version \(dbVersion), while the latest version is only \(latestVersion)")
         }
         
         // Nothing to do if this is the correct version
-        if dbVersion == version {
+        if dbVersion == latestVersion {
             return db
         }
         
+        // This is an old database version and it needs to be migrated. Save yourself a backup.
+        if !isNewFile {
+            try FileManager.default.copyItem(at: url, to: url.appendingPathExtension(".before-migration"))
+        }
+        
         // Migrate database to current version
-        for stepVersion in dbVersion...version {
+        for stepVersion in dbVersion...latestVersion {
             switch stepVersion {
             case 0:
                 // Migrate 0 --> 1
+                try db.createTable(table: Tag.self)
+                db.version = 1
                 break
             default:
                 // No schema changes
                 break
             }
-        }
-        
-        while db.version < version {
-            
-            db.version += 1
         }
         
         return db
@@ -88,25 +90,31 @@ class SqliteDatabase {
     /// Open a database file. File does not need to exist
     private static func openDatabase(at path: String) throws -> SqliteDatabase {
         
-        // Attempt to open database
-        var db: OpaquePointer?
+        var dbPointer: OpaquePointer?
         
-        // Return database if possible
-        if sqlite3_open(path, &db) == SQLITE_OK {
-            return SqliteDatabase(dbPointer: db)
+        // Attempt to open the database connection
+        if sqlite3_open(path, &dbPointer) == SQLITE_OK {
+            
+            // Wrap C pointer
+            let db = SqliteDatabase(dbPointer: dbPointer)
+            
+            // Enable foreign keys. Required for each connection.
+            try db.enableForeignKeys()
+            
+            return db
         }
         
         // There must be some problem.
         // Clean up database if possible when this closure goes out of scope
         defer {
-            if db != nil {
-                sqlite3_close(db)
+            if dbPointer != nil {
+                sqlite3_close(dbPointer)
             }
         }
         
         // Attempt to report error message
         var message: String
-        if let errorPointer = sqlite3_errmsg(db) {
+        if let errorPointer = sqlite3_errmsg(dbPointer) {
             message = String(cString: errorPointer)
         } else {
             message = "No error message provided from sqlite."
@@ -170,6 +178,38 @@ class SqliteDatabase {
             guard sqlite3_step(stmt) == SQLITE_DONE else {
                 fatalError("Could not set database version to \(newVersion): \(errorMessage)")
             }
+        }
+    }
+    
+    private func enableForeignKeys() throws {
+        let stmt = try prepare(sql: "PRAGMA foreign_keys = ON;")
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: "Could not enable foreign keys: \(errorMessage)")
+        }
+    }
+    
+    private var filepath: String? {
+        get {
+            guard let filenamePtr = sqlite3_db_filename(dbPointer, "main") else { return nil }
+            return String(cString: filenamePtr)
+        }
+    }
+    
+    var tableSchemas: [String] {
+        get {
+            let stmt = try! prepare(sql: "SELECT sql FROM sqlite_master;")
+            defer {
+                sqlite3_finalize(stmt)
+            }
+            var tableSchemas: [String] = []
+            while sqlite3_step(stmt) == SQLITE_ROW {
+                let tableSchema = String(cString: sqlite3_column_text(stmt, 0))
+                tableSchemas.append(tableSchema)
+            }
+            return tableSchemas
         }
     }
 }

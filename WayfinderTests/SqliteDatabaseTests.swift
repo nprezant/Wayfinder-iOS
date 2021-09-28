@@ -179,4 +179,28 @@ class SqliteDatabaseTests: XCTestCase {
         
         XCTAssertEqual(gotVersion, 2)
     }
+    
+    func testFetchAllTags() throws {
+        
+    }
+    
+    func testFetchAllTagsWhenNonePresent() throws {
+        
+    }
+    
+    func testFetchTagsForReflection() throws {
+        
+    }
+    
+    func testFetchTagsForReflectionThrowsForNoMatch() throws {
+        
+    }
+    
+    func testDeleteReflectionCascadesToTags() throws {
+        
+    }
+    
+    func testUpdateReflectionCascadesToTags() throws {
+        
+    }
 }
