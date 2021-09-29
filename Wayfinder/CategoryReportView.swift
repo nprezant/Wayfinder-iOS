@@ -16,6 +16,15 @@ enum Category: String, CaseIterable, Identifiable {
             return "Choose Tag"
         }
     }
+    
+    func makeInclusionComparator(_ value: String) -> ((Reflection) -> Bool) {
+        switch self {
+        case .activity:
+            return {$0.name == value}
+        case .tag:
+            return {$0.tags.contains(value)}
+        }
+    }
 }
 
 struct CategoryReportView: View {
@@ -38,12 +47,8 @@ struct CategoryReportView: View {
             
         }
         
-        switch selectedCategory {
-        case .activity:
-            dataStore.makeAverageReport(forName: selectedCategoryValue, completion: processResult)
-        case .tag:
-            dataStore.makeAverageReport(forTag: selectedCategoryValue, completion: processResult)
-        }
+        let inclusionComparator = selectedCategory.makeInclusionComparator(selectedCategoryValue)
+        dataStore.makeAverageReport(inclusionComparator, completion: processResult)
     }
     
     var body: some View {

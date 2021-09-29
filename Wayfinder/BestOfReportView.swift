@@ -58,12 +58,8 @@ struct BestOfReportView: View {
             }
         }
         
-        switch selectedCategory {
-        case .activity:
-            dataStore.makeBestOfReport(forName: selectedCategoryValue, by: selectedMetric, direction: selectedBestWorst, completion: processResult)
-        case .tag:
-            dataStore.makeBestOfReport(forTag: selectedCategoryValue, by: selectedMetric, direction: selectedBestWorst, completion: processResult)
-        }
+        let inclusionComparator = selectedCategory.makeInclusionComparator(selectedCategoryValue)
+        dataStore.makeBestOfReport(inclusionComparator, by: selectedMetric, direction: selectedBestWorst, completion: processResult)
     }
     
     var body: some View {
