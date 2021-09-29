@@ -199,7 +199,7 @@ extension SqliteDatabase {
     }
     
     func reflections() -> [Reflection] {
-        let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection"
+        let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection ORDER BY date DESC"
         
         let stmt = try? prepare(sql: querySql)
         defer {
