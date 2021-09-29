@@ -34,7 +34,7 @@ struct ActivityReportView: View {
                 }) {
                     // TODO if view is dismissed via swiping with an invalid selection
                     // nothing stops it from passing through
-                    NameFieldView(name: selectedActivity)
+                    NameFieldView(name: selectedActivity, style: .Activity)
                         .onChange(of: selectedActivity, perform: {_ in updateAverages()})
                         .padding()
                         .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color.secondary.opacity(0.15)))
@@ -47,7 +47,7 @@ struct ActivityReportView: View {
         .padding()
         .onAppear(perform: updateAverages)
         .sheet(isPresented: $isPresented, onDismiss: updateAverages) {
-            NameView($selectedActivity, nameOptions: dataStore.uniqueReflectionNames, canCreate: false)
+            NameView($selectedActivity, nameOptions: dataStore.uniqueReflectionNames, nameType: .Activity, canCreate: false)
         }
     }
 }

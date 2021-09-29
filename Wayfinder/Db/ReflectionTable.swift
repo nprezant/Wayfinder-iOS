@@ -165,6 +165,8 @@ extension SqliteDatabase {
         guard sqlite3_step(stmt) == SQLITE_DONE else {
             throw SqliteError.Step(message: errorMessage)
         }
+        
+        try insertTags(for: reflection.id, tags: reflection.tags) // TODO should the whole block be wrapped in a transaction?
     }
     
     // Delete reflections with matching IDs

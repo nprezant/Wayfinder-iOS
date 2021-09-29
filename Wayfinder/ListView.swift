@@ -79,6 +79,7 @@ struct ListView: View {
                                 destination: DetailView(
                                     reflection: $dataStore.reflections[index],
                                     existingReflections: dataStore.uniqueReflectionNames,
+                                    existingTags: dataStore.uniqueTagNames,
                                     saveAction: updateAction
                                 )
                             ) {

@@ -25,10 +25,13 @@ class DataStore: ObservableObject {
     @Published var reflections: [Reflection] = [] {
         didSet {
             uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <)
+            uniqueTagNames = db.fetchAllUniqueTags().sorted(by: <)
         }
     }
     
     @Published var uniqueReflectionNames: [String] = []
+    
+    @Published var uniqueTagNames: [String] = []
     
     private var db: SqliteDatabase
     

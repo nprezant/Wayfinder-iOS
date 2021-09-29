@@ -44,17 +44,18 @@ extension View {
 struct EditView: View {
     @Binding var data: Reflection.Data
     let existingReflections: [String]
+    let existingTags: [String]
     
-    @State var newTagName: String = ""
+    @State var newTag: String = ""
     
     var body: some View {
         List {
             // TODO fix issue with tappable area too small
             Section() {
                 NavigationLink(
-                    destination: NameView($data.name, nameOptions: existingReflections)
+                    destination: NameView($data.name, nameOptions: existingReflections, nameType: .Activity)
                 ) {
-                    NameFieldView(name: data.name)
+                    NameFieldView(name: data.name, style: .Activity)
                         .contentShape(Rectangle())
                 }
             }
@@ -88,16 +89,24 @@ struct EditView: View {
                     data.tags.remove(atOffsets: indices)
                 }
                 HStack {
-                    TextField("New Tag", text: $newTagName)
+                    TextField("New Tag", text: $newTag)
                     Button(action: {
                         withAnimation {
-                            data.tags.append(newTagName)
-                            newTagName = ""
+                            data.tags.append(newTag)
+                            newTag = ""
                         }
                     }) {
                         Image(systemName: "plus.circle.fill")
                     }
-                    .disabled(newTagName.isEmpty)
+                    .disabled(newTag.isEmpty)
+                }
+            }
+            Section() {
+                NavigationLink(
+                    destination: NameView($newTag, nameOptions: existingTags, nameType: .Tag)
+                ) {
+                    NameFieldView(name: newTag, style: .Tag)
+                        .contentShape(Rectangle())
                 }
             }
             Section() {
@@ -114,7 +123,8 @@ struct EditView_Previews: PreviewProvider {
     static var previews: some View {
         EditView(
             data: .constant(Reflection.exampleData[0].data),
-            existingReflections: DataStore.createExample().uniqueReflectionNames
+            existingReflections: DataStore.createExample().uniqueReflectionNames,
+            existingTags: ["tag 1", "tag 2", "tag 3"]
         )
     }
 }
