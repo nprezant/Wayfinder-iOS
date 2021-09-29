@@ -22,12 +22,8 @@ class SqliteDatabaseTests: XCTestCase {
         testData.removeAll()
     }
     
-    static func makeTempPath() -> URL {
-        return URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-    }
-    
     func testOpenDatabase() throws {
-        let tempPath = SqliteDatabaseTests.makeTempPath()
+        let tempPath = TestUtils.makeTempPath()
         let _ = try SqliteDatabase.open(at: tempPath)
         try FileManager.default.removeItem(at: tempPath)
     }
@@ -35,134 +31,9 @@ class SqliteDatabaseTests: XCTestCase {
     func testOpenDatabaseInMemory() throws {
         let _ = try SqliteDatabase.openInMemory()
     }
-    
-    private func populatedDb() throws -> SqliteDatabase {
-        let db = try! SqliteDatabase.openInMemory()
-        for idx in testData.indices {
-            let insertedId = try! db.insert(reflection: testData[idx])
-            testData[idx].id = insertedId
-        }
-        return db
-    }
-
-    func testInsertReflection() throws {
-        // Create database in memory. No data should be loaded yet
-        let db = try! SqliteDatabase.openInMemory()
-        XCTAssert(db.reflections().isEmpty)
-        
-        // Insert reflection
-        let insertedId = try! db.insert(reflection: testData[0])
-        XCTAssertEqual(insertedId, 1)
-        testData[0].id = insertedId
-        
-        // Verify inserted reflection
-        let loadedReflections = db.reflections()
-        XCTAssertEqual(loadedReflections.count, 1)
-        XCTAssertEqual(loadedReflections[0], testData[0])
-        
-        // Insert another reflection
-        let insertedId2 = try! db.insert(reflection: testData[1])
-        XCTAssertEqual(insertedId2, 2)
-        testData[1].id = insertedId2
-        
-        let loadedReflections2 = db.reflections()
-        XCTAssertEqual(loadedReflections2.count, 2)
-        XCTAssertEqual(loadedReflections2.sorted(by: {$0.id < $1.id}), [testData[0], testData[1]])
-    }
-    
-    func testDeleteReflection() throws {
-        // Create database in memory. No data should be loaded yet
-        let db = try! SqliteDatabase.openInMemory()
-        XCTAssert(db.reflections().isEmpty)
-        
-        // Insert reflection
-        let insertedId = try! db.insert(reflection: testData[0])
-        XCTAssertEqual(insertedId, 1)
-        testData[0].id = insertedId
-        
-        // Verify inserted reflection
-        let loadedReflections = db.reflections()
-        XCTAssertEqual(loadedReflections.count, 1)
-        XCTAssertEqual(loadedReflections[0], testData[0])
-        
-        // Delete reflection
-        try db.delete(reflectionsIds: [testData[0].id])
-        
-        // Verify reflection was deleted
-        XCTAssert(db.reflections().isEmpty)
-    }
-    
-    func testDeleteFirstReflection() throws {
-        let db = try! populatedDb()
-        
-        // Remove the first entry
-        try! db.delete(reflectionsIds: [testData.first!.id])
-        
-        // Update test data to match
-        testData.remove(at: 0)
-        
-        // Verify entry was removed
-        let loadedReflections = db.reflections()
-        XCTAssertEqual(loadedReflections, testData)
-    }
-    
-    func testDeleteLastReflection() throws {
-        let db = try! populatedDb()
-        
-        // Remove the first entry
-        try! db.delete(reflectionsIds: [testData.last!.id])
-        
-        // Update test data to match
-        testData.remove(at: testData.count - 1)
-        
-        // Verify entry was removed
-        let loadedReflections = db.reflections()
-        XCTAssertEqual(loadedReflections, testData)
-    }
-    
-    func testDeleteOneOfManyReflections() throws {
-        let db = try! populatedDb()
-        
-        // Remove the second entry
-        try! db.delete(reflectionsIds: [testData[1].id])
-        
-        // Update test data to match
-        testData.remove(at: 1)
-        
-        // Verify entry was removed
-        let loadedReflections = db.reflections()
-        XCTAssertEqual(loadedReflections, testData)
-    }
-    
-    func testDeleteManyReflections() throws {
-        let db = try! populatedDb()
-        
-        // Setup values to remove (first and third entity)
-        let toRemove = [0, 2]
-        let idsToRemove = toRemove.map{testData[$0].id}
-        
-        // Remove from database
-        for id in idsToRemove {
-            try! db.delete(reflectionsIds: [id])
-        }
-        
-        // Remove from test data
-        testData.removeAll(where: {idsToRemove.contains($0.id)})
-        
-        // Verify entry was removed
-        let loadedReflections = db.reflections()
-        XCTAssertEqual(loadedReflections, testData)
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
 
     func testGetVersion() throws {
-        let db = try! populatedDb()
+        let db = try! TestUtils.makeDatabase(with: &testData)
         
         let version = db.version
         
@@ -170,54 +41,18 @@ class SqliteDatabaseTests: XCTestCase {
     }
     
     func testSetVersionDoesNotThrow() throws {
-        let db = try! populatedDb()
+        let db = try! TestUtils.makeDatabase(with: &testData)
         
         db.version = 2
     }
     
     func testSetVersionSetsProperly() throws {
-        let db = try! populatedDb()
+        let db = try! TestUtils.makeDatabase(with: &testData)
         
         db.version = 2
         
         let gotVersion = db.version
         
         XCTAssertEqual(gotVersion, 2)
-    }
-    
-    func testFetchAllUniqueTags() throws {
-        let db = try populatedDb()
-        let dbTags = db.fetchAllUniqueTags()
-        let expectedTags: [String] = [] // TODO add tags
-        XCTAssertEqual(dbTags, expectedTags)
-    }
-    
-    func testFetchAllUniqueTagsWhenNonePresent() throws {
-        let db = try populatedDb()
-        let dbTags = db.fetchAllUniqueTags()
-        let expectedTags: [String] = []
-        XCTAssertEqual(dbTags, expectedTags)
-    }
-    
-    func testFetchTagsForReflection() throws {
-        let db = try populatedDb()
-        let dbTags = try db.fetchTags(for: 1)
-        let expectedTags: [String] = []
-        XCTAssertEqual(dbTags, expectedTags)
-    }
-    
-    func testFetchTagsForReflectionNoMatch() throws {
-        let db = try populatedDb()
-        let dbTags = try db.fetchTags(for: 1000)
-        let expectedTags: [String] = []
-        XCTAssertEqual(dbTags, expectedTags)
-    }
-    
-    func testDeleteReflectionCascadesToTags() throws {
-        
-    }
-    
-    func testUpdateReflectionCascadesToTags() throws {
-        
     }
 }
