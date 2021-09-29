@@ -17,9 +17,11 @@ struct Tag : Identifiable {
         """
     }
     static var dropStatement: String {
+        // NOTE: index is automatically dropped with the table
+        // "All indices and triggers associated with the table are also deleted"
+        // https://sqlite.org/lang_droptable.html
         return """
         DROP TABLE tag;
-        DROP INDEX tagindex;
         """
     }
     

@@ -83,11 +83,11 @@ class SqliteDatabase {
             case 1:
                 if goingUp {
                     // Migrate 0 --> 1
-                    try execute(sql: Tag.createStatement)
+                    try executeMany(sql: Tag.createStatement)
                     version = 1
                 } else {
                     // Migrate 1 --> 0
-                    try execute(sql: Tag.dropStatement)
+                    try executeMany(sql: Tag.dropStatement)
                     version = 0
                 }
                 break
@@ -152,7 +152,12 @@ class SqliteDatabase {
     }
     
     /// Execute sql command
+    /// Only executes a single command. Subsequent commands in the string are ignored.
+    /// Issues warning if multiple commands are provided.
     func execute(sql: String) throws {
+        guard sql.split(separator: ";").count == 1 else {
+            throw SqliteError.Unspecified(message: "Cannot `execute` sql statement contains multiple commands. Please use `executeMany` to run multiple commands")
+        }
         let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
@@ -161,6 +166,26 @@ class SqliteDatabase {
         guard sqlite3_step(stmt) == SQLITE_DONE else {
             throw SqliteError.Step(message: errorMessage)
         }
+    }
+    
+    /// Execute many sql commands
+    func executeMany(sql: String) throws {
+        let commands = sql.split(separator: ";")
+        try beginTransaction()
+        for command in commands {
+            try execute(sql: String(command))
+        }
+        try endTransaction()
+    }
+    
+    /// Begin a transaction
+    func beginTransaction() throws {
+        try execute(sql: "BEGIN TRANSACTION;")
+    }
+    
+    /// End a transaction
+    func endTransaction() throws {
+        try execute(sql: "END TRANSACTION;")
     }
     
     /// Create a sql table

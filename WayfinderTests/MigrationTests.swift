@@ -75,6 +75,9 @@ class MigrationTests: XCTestCase {
                 ON UPDATE CASCADE
                 ON DELETE CASCADE
         )
+        """,
+        """
+        CREATE INDEX tagindex ON tag(reflection)
         """].withCondensedWhitespace()
     
     func testVersion0() throws {
