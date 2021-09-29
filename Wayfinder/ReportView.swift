@@ -9,6 +9,7 @@ struct ReportView: View {
             DailyReportView(dataStore: dataStore)
             WeeklyReportView(dataStore: dataStore)
             ActivityReportView(dataStore: dataStore)
+            TagReportView(dataStore: dataStore)
         }
         .tabViewStyle(PageTabViewStyle())
     }

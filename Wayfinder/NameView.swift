@@ -2,38 +2,21 @@
 
 import SwiftUI
 
-struct NamePickerStyle {
-    let nameSpecifier: String
-    let cardFont: Font
-    
-    static var Activity: NamePickerStyle {
-        get {
-            return NamePickerStyle(nameSpecifier: "Choose Activity", cardFont: .title2)
-        }
-    }
-    
-    static var Tag: NamePickerStyle {
-        get {
-            return NamePickerStyle(nameSpecifier: "Add Tag", cardFont: .body)
-        }
-    }
-}
-
 struct NameView: View {
     @Binding var name: String
     @State var originalName: String
     let nameOptions: [String]
-    let style: NamePickerStyle
+    let prompt: String
     let canCreate: Bool
     let completion: ()->Void
     
     @Environment(\.presentationMode) var presentationMode
     
-    init(_ name: Binding<String>, nameOptions: [String], nameType: NamePickerStyle, canCreate: Bool = true, completion: @escaping ()->Void = {}) {
+    init(_ name: Binding<String>, nameOptions: [String], prompt: String, canCreate: Bool = true, completion: @escaping ()->Void = {}) {
         self._name = name
         self._originalName = State(initialValue: name.wrappedValue)
         self.nameOptions = nameOptions
-        self.style = nameType
+        self.prompt = prompt
         self.canCreate = canCreate
         self.completion = completion
     }
@@ -80,7 +63,7 @@ struct NameView: View {
             .listStyle(PlainListStyle())
         }
         .navigationBarBackButtonHidden(true)
-        .navigationTitle("\(style.nameSpecifier)")
+        .navigationTitle("\(prompt)")
         .navigationBarItems(
             leading: Button(action: {
                 name = originalName
@@ -88,9 +71,9 @@ struct NameView: View {
             }) {
                 HStack {
                     Image(systemName: "chevron.backward")
-                        .font(.title2)
+                        .font(.title2.bold())
                     Text("Cancel")
-                        .font(.title3)
+                        .font(.body)
                 }
             }
         )
@@ -100,11 +83,13 @@ struct NameView: View {
 struct NameView_Previews: PreviewProvider {
     static var previews: some View {
         let names = ["Stata PYD/YAS", "Florida dashboard", "Florida YAS dashboard", "Fred", "PYD/YAS", "Florida"]
-        NavigationView {
-            NameView(.constant("dashboard"), nameOptions: names, nameType: .Activity)
-        }
-        NavigationView {
-            NameView(.constant("My new name"), nameOptions: names, nameType: .Tag)
+        Group {
+            NavigationView {
+                NameView(.constant("dashboard"), nameOptions: names, prompt: "Choose Activity")
+            }
+            NavigationView {
+                NameView(.constant("dashboard"), nameOptions: names, prompt: "Choose Activity")
+            }
         }
     }
 }

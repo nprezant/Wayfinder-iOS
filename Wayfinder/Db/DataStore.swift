@@ -196,8 +196,12 @@ class DataStore: ObservableObject {
         makeAverageReport({$0.data.date.dayIsBetween(start, and: end)}, completion: completion)
     }
     
-    func makeAverageReport(forName: String, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
-        makeAverageReport({$0.name == forName}, completion: completion)
+    func makeAverageReport(forName name: String, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
+        makeAverageReport({$0.name == name}, completion: completion)
+    }
+    
+    func makeAverageReport(forTag tag: String, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
+        makeAverageReport({$0.tags.contains(tag)}, completion: completion)
     }
     
     private func makeAverageReport(_ isIncluded: @escaping (Reflection) -> Bool, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {

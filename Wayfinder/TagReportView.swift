@@ -2,15 +2,15 @@
 
 import SwiftUI
 
-struct ActivityReportView: View {
+struct TagReportView: View {
     @ObservedObject var dataStore: DataStore
     
-    @State private var selectedActivity: String = ""
+    @State private var selectedTag: String = ""
     @State private var averagedResult: Reflection.Averaged? = nil
     @State private var isPresented: Bool = false
     
     private func updateAverages() {
-        dataStore.makeAverageReport(forName: selectedActivity) { results in
+        dataStore.makeAverageReport(forTag: selectedTag) { results in
             switch results {
             case .failure(let error):
                 print(error.localizedDescription)
@@ -24,7 +24,7 @@ struct ActivityReportView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("Activity Averages")
+                Text("Tag Averages")
                     .font(.title)
                 Spacer()
             }
@@ -34,8 +34,8 @@ struct ActivityReportView: View {
                 }) {
                     // TODO if view is dismissed via swiping with an invalid selection
                     // nothing stops it from passing through
-                    NameFieldView(name: selectedActivity, prompt: "Choose Activity", font: .title2)
-                        .onChange(of: selectedActivity, perform: {_ in updateAverages()})
+                    NameFieldView(name: selectedTag, prompt: "Choose Tag", font: .title2)
+                        .onChange(of: selectedTag, perform: {_ in updateAverages()})
                         .padding()
                         .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color.secondary.opacity(0.15)))
                 }
@@ -47,14 +47,14 @@ struct ActivityReportView: View {
         .padding()
         .onAppear(perform: updateAverages)
         .sheet(isPresented: $isPresented, onDismiss: updateAverages) {
-            NameView($selectedActivity, nameOptions: dataStore.uniqueReflectionNames, prompt: "Choose Activity", canCreate: false)
+            NameView($selectedTag, nameOptions: dataStore.uniqueTagNames, prompt: "Choose Tag", canCreate: false)
         }
     }
 }
 
 
-struct ActivityReportView_Previews: PreviewProvider {
+struct TagReportView_Previews: PreviewProvider {
     static var previews: some View {
-        ActivityReportView(dataStore: DataStore.createExample())
+        TagReportView(dataStore: DataStore.createExample())
     }
 }
