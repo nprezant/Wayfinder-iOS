@@ -15,10 +15,6 @@ enum SqliteError: Error {
 // https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Database.swift#L14
 let SQLITE_TRANSIENT = unsafeBitCast(OpaquePointer(bitPattern: -1), to: sqlite3_destructor_type.self)
 
-protocol SqlTable {
-    static var createStatement: String { get }
-}
-
 class SqliteDatabase {
     
     private let dbPointer: OpaquePointer? // C pointer
@@ -50,7 +46,7 @@ class SqliteDatabase {
         
         // If this is a new file, create the initial tables
         if isNewFile {
-            try db.createTable(table: Reflection.self)
+            try db.execute(sql: Reflection.createStatement)
         }
         
         // Nothing to do if this is the correct version
@@ -87,11 +83,12 @@ class SqliteDatabase {
             case 1:
                 if goingUp {
                     // Migrate 0 --> 1
-                    try createTable(table: Tag.self)
+                    try execute(sql: Tag.createStatement)
                     version = 1
                 } else {
                     // Migrate 1 --> 0
-                    try dropTable(name: "tag")
+                    try execute(sql: Tag.dropStatement)
+                    version = 0
                 }
                 break
             default:
@@ -154,9 +151,21 @@ class SqliteDatabase {
         return statement
     }
     
+    /// Execute sql command
+    func execute(sql: String) throws {
+        let stmt = try prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
+    }
+    
     /// Create a sql table
-    func createTable(table: SqlTable.Type) throws {
-        let stmt = try prepare(sql: table.createStatement)
+    func createTable(sql: String) throws {
+        let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
         }

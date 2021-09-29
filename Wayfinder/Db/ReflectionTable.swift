@@ -3,7 +3,7 @@
 import Foundation
 
 /// The table itself
-struct Reflection : Identifiable, Equatable, SqlTable {
+struct Reflection : Identifiable, Equatable {
     static var createStatement: String {
         return """
         CREATE TABLE reflection(

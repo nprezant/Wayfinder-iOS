@@ -3,18 +3,25 @@
 import Foundation
 
 /// The tag table
-struct Tag : Identifiable, SqlTable {
+struct Tag : Identifiable {
     static var createStatement: String {
         return """
         CREATE TABLE tag(
             id INTEGER PRIMARY KEY,
-            reflectionId INT REFERENCES reflection(id)
+            name TEXT,
+            reflection INT REFERENCES reflection
                 ON UPDATE CASCADE
-                ON DELETE CASCADE,
-            name TEXT
+                ON DELETE CASCADE
         );
+        CREATE INDEX tagindex ON tag(reflection);
         """
-    } // TODO need index
+    }
+    static var dropStatement: String {
+        return """
+        DROP TABLE tag;
+        DROP INDEX tagindex;
+        """
+    }
     
     var id: Int64
     var name: String
@@ -48,7 +55,7 @@ extension SqliteDatabase {
     }
     
     func fetchTags(for reflectionId: Int64) throws -> [String] {
-        let sql = "SELECT name FROM tag WHERE reflectionId = ?"
+        let sql = "SELECT name FROM tag WHERE reflection = ?"
         
         let stmt = try! prepare(sql: sql)
         defer {
@@ -83,7 +90,7 @@ extension SqliteDatabase {
         // (1, 'dev'), (1, 'meeting'), (2, 'dev'), etc.
         let questionMarkTuples = [String](repeating: "(?, ?)", count: tags.count)
         let sql = """
-            INSERT INTO tag (reflectionId, name)
+            INSERT INTO tag (reflection, name)
             VALUES \(questionMarkTuples.joined(separator: ","))
         """
         
@@ -114,7 +121,7 @@ extension SqliteDatabase {
         let questionMarks = [String](repeating: "?", count: tags.count)
         let sql = """
             DELETE FROM tag
-            WHERE reflectionId = ? AND name IN (\(questionMarks.joined(separator: ",")));
+            WHERE reflection = ? AND name IN (\(questionMarks.joined(separator: ",")));
         """
         
         let stmt = try prepare(sql: sql)

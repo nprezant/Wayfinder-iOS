@@ -35,8 +35,8 @@ class DataStore: ObservableObject {
     public init(inMemory: Bool = false) {
         do {
             try db = inMemory ? SqliteDatabase.openInMemory() : SqliteDatabase.open(at: DataStore.dbUrl)
-        } catch {
-            fatalError("Cannot open database: \(DataStore.dbUrl)")
+        } catch let e {
+            fatalError("Cannot open database: \(DataStore.dbUrl). Error: \(e.localizedDescription)")
         }
     }
     
