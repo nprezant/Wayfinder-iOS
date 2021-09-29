@@ -35,8 +35,25 @@ struct DetailView: View {
                     Image(systemName: "calendar")
                     Text(Date(timeIntervalSince1970: TimeInterval(reflection.date)), style: .date)
                 }
-                Text(reflection.note)
-                    .lineLimit(3)
+            }
+            Section() {
+                if reflection.tags.isEmpty {
+                    Text("No tags")
+                } else {
+                    ForEach(reflection.tags, id: \.self) { tagName in
+                        Text(tagName)
+                    }
+                }
+            }
+            Section() {
+                if reflection.note.isEmpty {
+                    Text("No additional notes")
+                        .frame(minHeight: 100, alignment: .topLeading)
+                } else {
+                    Text(reflection.note)
+                        .lineLimit(3)
+                        .frame(minHeight: 100, alignment: .topLeading)
+                }
             }
 
         }

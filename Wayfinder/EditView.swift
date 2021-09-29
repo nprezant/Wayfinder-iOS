@@ -45,6 +45,8 @@ struct EditView: View {
     @Binding var data: Reflection.Data
     let existingNames: [String]
     
+    @State var newTagName: String = ""
+    
     var body: some View {
         List {
             // TODO fix issue with tappable area too small
@@ -77,7 +79,28 @@ struct EditView: View {
                 // Force a rebuild on date change; there is a bug that changes the short/medium style randomly otherwise
                 // https://stackoverflow.com/questions/66090210/swiftui-datepicker-jumps-between-short-and-medium-date-formats-when-changing-the
                 .id(data.date)
-                
+            }
+            Section() {
+                ForEach(data.tags, id: \.self) { tagName in
+                    Text(tagName)
+                }
+                .onDelete { indices in
+                    data.tags.remove(atOffsets: indices)
+                }
+                HStack {
+                    TextField("New Tag", text: $newTagName)
+                    Button(action: {
+                        withAnimation {
+                            data.tags.append(newTagName)
+                            newTagName = ""
+                        }
+                    }) {
+                        Image(systemName: "plus.circle.fill")
+                    }
+                    .disabled(newTagName.isEmpty)
+                }
+            }
+            Section() {
                 // TODO no placeholder text available yet...
                 TextEditor(text: $data.note)
                     .frame(height: 100)
