@@ -88,32 +88,14 @@ struct EditView: View {
                 .onDelete { indices in
                     data.tags.remove(atOffsets: indices)
                 }
-                HStack {
-                    TextField("New Tag", text: $newTag)
-                    Button(action: {
-                        withAnimation {
-                            data.tags.append(newTag)
-                            newTag = ""
-                        }
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                    }
-                    .disabled(newTag.isEmpty)
-                }
-            }
-            Section() {
-                ForEach(data.tags, id: \.self) { tagName in
-                    Text(tagName)
-                }
-                .onDelete { indices in
-                    data.tags.remove(atOffsets: indices)
-                }
                 // Include in the list options that have not yet been commited to the db
                 let tagOptions = Array(Set((existingTags + data.tags).map{$0})).sorted(by: <)
                 NavigationLink(
                     destination: NameView($newTag, nameOptions: tagOptions, nameType: .Tag) {
-                        data.tags.append(newTag)
-                        newTag = ""
+                        withAnimation {
+                            data.tags.append(newTag)
+                            newTag = ""
+                        }
                     }
                 ) {
                     NameFieldView(name: newTag, style: .Tag)
