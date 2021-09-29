@@ -47,7 +47,7 @@ struct ActivityReportView: View {
         .padding()
         .onAppear(perform: updateAverages)
         .sheet(isPresented: $isPresented, onDismiss: updateAverages) {
-            NameView(name: $selectedActivity, nameOptions: dataStore.uniqueReflectionNames, canCreate: false)
+            NameView($selectedActivity, nameOptions: dataStore.uniqueReflectionNames, canCreate: false)
         }
     }
 }

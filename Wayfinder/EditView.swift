@@ -43,7 +43,7 @@ extension View {
 
 struct EditView: View {
     @Binding var data: Reflection.Data
-    let existingNames: [String]
+    let existingReflections: [String]
     
     @State var newTagName: String = ""
     
@@ -52,7 +52,7 @@ struct EditView: View {
             // TODO fix issue with tappable area too small
             Section() {
                 NavigationLink(
-                    destination: NameView(name: $data.name, nameOptions: existingNames)
+                    destination: NameView($data.name, nameOptions: existingReflections)
                 ) {
                     NameFieldView(name: data.name)
                         .contentShape(Rectangle())
@@ -114,7 +114,7 @@ struct EditView_Previews: PreviewProvider {
     static var previews: some View {
         EditView(
             data: .constant(Reflection.exampleData[0].data),
-            existingNames: DataStore.createExample().uniqueReflectionNames
+            existingReflections: DataStore.createExample().uniqueReflectionNames
         )
     }
 }

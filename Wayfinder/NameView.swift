@@ -10,7 +10,7 @@ struct NameView: View {
     
     @Environment(\.presentationMode) var presentationMode
     
-    init(name: Binding<String>, nameOptions: [String], canCreate: Bool = true) {
+    init(_ name: Binding<String>, nameOptions: [String], canCreate: Bool = true) {
         self._name = name
         self._originalName = State(initialValue: name.wrappedValue)
         self.nameOptions = nameOptions
@@ -78,10 +78,10 @@ struct NameView_Previews: PreviewProvider {
     static var previews: some View {
         let names = ["Stata PYD/YAS", "Florida dashboard", "Florida YAS dashboard", "Fred", "PYD/YAS", "Florida"]
         NavigationView {
-            NameView(name: .constant("dashboard"), nameOptions: names)
+            NameView(.constant("dashboard"), nameOptions: names)
         }
         NavigationView {
-            NameView(name: .constant("My new name"), nameOptions: names)
+            NameView(.constant("My new name"), nameOptions: names)
         }
     }
 }
