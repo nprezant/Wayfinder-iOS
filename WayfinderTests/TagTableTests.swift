@@ -137,7 +137,20 @@ class TagTableTests: XCTestCase {
     }
     
     func testUpdateReflectionCascadesToTags() throws {
+        let db = try! TestUtils.makeDatabase(with: &testDataNoTags)
         
+        let reflectionId = testDataNoTags[0].id
+        
+        let tagsToInsert: [String] = ["insertedTag", "insertedTag2", "insertedTag3"]
+        try db.insertTags(for: reflectionId, tags: tagsToInsert)
+        
+        var thisReflectionTags = try db.fetchTags(for: reflectionId)
+        XCTAssertEqual(thisReflectionTags, tagsToInsert)
+        
+        try db.execute(sql: "UPDATE reflection SET id = 100 WHERE name = 'First Reflection';")
+        
+        thisReflectionTags = try db.fetchTags(for: 100)
+        XCTAssertEqual(thisReflectionTags, tagsToInsert)
     }
 
 }
