@@ -24,7 +24,7 @@ struct WeeklyReportView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("Weekly Averages")
+                Text("Weekly Average")
                     .font(.title)
                 Spacer()
             }

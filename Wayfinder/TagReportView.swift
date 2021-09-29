@@ -24,7 +24,7 @@ struct TagReportView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("Tag Averages")
+                Text("Tag Average")
                     .font(.title)
                 Spacer()
             }

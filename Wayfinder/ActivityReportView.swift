@@ -24,7 +24,7 @@ struct ActivityReportView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("Activity Averages")
+                Text("Activity Average")
                     .font(.title)
                 Spacer()
             }

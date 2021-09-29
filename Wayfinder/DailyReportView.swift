@@ -23,7 +23,7 @@ struct DailyReportView: View {
     var body: some View {
         VStack {
             HStack {
-                Text("Daily Averages")
+                Text("Daily Average")
                     .font(.title)
                 Spacer()
             }
