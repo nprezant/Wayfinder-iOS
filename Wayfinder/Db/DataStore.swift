@@ -156,8 +156,8 @@ class DataStore: ObservableObject {
     
     func ExportCsv(completion: @escaping (Result<URL, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
-            guard (self != nil) else { fatalError("Self out of scope") }
-            let reflections = self!.db.reflections()
+            guard let self = self else { return }
+            let reflections = self.db.reflections()
             
             var s: String = "name\tisFlowState\tengagement\tenergy\tdate\tnote\n"
             
@@ -206,11 +206,30 @@ class DataStore: ObservableObject {
     
     private func makeAverageReport(_ isIncluded: @escaping (Reflection) -> Bool, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
-            guard (self != nil) else { fatalError("Self out of scope") }
-            let relevantReflections = self!.reflections.filter{isIncluded($0)}
+            guard let self = self else { return }
+            let relevantReflections = self.reflections.filter{isIncluded($0)}
             let result = Reflection.Averaged.make(from: relevantReflections)
             DispatchQueue.main.async {
                 completion(.success(result))
+            }
+        }
+    }
+    
+    func makeBestOfReport(forName name: String, by metric: Metric, direction bestWorst: BestWorst, completion: @escaping (Result<[Reflection], Error>) -> Void) {
+        makeBestOfReport({$0.name == name}, by: metric, direction: bestWorst, completion: completion)
+    }
+    
+    func makeBestOfReport(forTag tag: String, by metric: Metric, direction bestWorst: BestWorst, completion: @escaping (Result<[Reflection], Error>) -> Void) {
+        makeBestOfReport({$0.tags.contains(tag)}, by: metric, direction: bestWorst, completion: completion)
+    }
+    
+    private func makeBestOfReport(_ isIncluded: @escaping (Reflection) -> Bool, by metric: Metric, direction bestWorst: BestWorst, completion: @escaping (Result<[Reflection], Error>) -> Void) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else { return }
+            let sortComparator = metric.makeComparator(direction: bestWorst)
+            let relevantReflections = self.reflections.filter{isIncluded($0)}.sorted(by: sortComparator)
+            DispatchQueue.main.async {
+                completion(.success(relevantReflections))
             }
         }
     }

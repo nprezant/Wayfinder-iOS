@@ -8,8 +8,8 @@ struct ReportView: View {
         TabView {
             DailyReportView(dataStore: dataStore)
             WeeklyReportView(dataStore: dataStore)
-            ActivityReportView(dataStore: dataStore)
-            TagReportView(dataStore: dataStore)
+            CategoryReportView(dataStore: dataStore)
+            BestOfReportView(dataStore: dataStore)
         }
         .tabViewStyle(PageTabViewStyle())
     }
