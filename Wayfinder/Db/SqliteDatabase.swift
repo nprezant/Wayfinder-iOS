@@ -8,6 +8,7 @@ enum SqliteError: Error {
     case Step(message: String)
     case Bind(message: String)
     case Unspecified(message: String)
+    case Migrate(message: String)
 }
 
 // https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Statement.swift#L179
@@ -34,12 +35,12 @@ class SqliteDatabase {
     static var latestVersion: Int32 = 0
     
     /// Open a database connection to a transient in memory database (generally for testing or migrating)
-    static func openInMemory() throws -> SqliteDatabase {
-        return try open(at: URL(string: "file::memory:")!)
+    static func openInMemory(targetVersion: Int32 = latestVersion) throws -> SqliteDatabase {
+        return try open(at: URL(string: "file::memory:")!, targetVersion: targetVersion)
     }
     
     /// Open database connection. Creates tables or migrate as needed.
-    static func open(at url: URL) throws -> SqliteDatabase {
+    static func open(at url: URL, targetVersion: Int32 = latestVersion) throws -> SqliteDatabase {
         
         // Is this a new file?
         let isNewFile = !FileManager.default.fileExists(atPath: url.path)
@@ -52,39 +53,52 @@ class SqliteDatabase {
             try db.createTable(table: Reflection.self)
         }
         
-        // Get current version
-        let dbVersion = db.version
-        
-        // Sanity checks
-        if dbVersion > latestVersion {
-            fatalError("Cannot migrate database backwards! Database at path \(url) has version \(dbVersion), while the latest version is only \(latestVersion)")
-        }
-        
         // Nothing to do if this is the correct version
-        if dbVersion == latestVersion {
+        if db.version == targetVersion {
             return db
         }
         
         // This is an old database version and it needs to be migrated. Save yourself a backup.
         if !isNewFile {
-            try FileManager.default.copyItem(at: url, to: url.appendingPathExtension(".before-migration"))
+            let backupUrl = url.appendingPathExtension(".before-migration")
+            try? FileManager.default.removeItem(at: backupUrl)
+            try FileManager.default.copyItem(at: url, to: backupUrl)
         }
         
+        // Migrate database to latest version
+        try db.migrate()
+        
+        return db
+    }
+    
+    func migrate(to targetVersion: Int32 = latestVersion) throws {
+        
+        // Nothing to do if this is the current version
+        if version == targetVersion {
+            return
+        }
+        
+        // Can migrate either up or down
+        let goingUp = targetVersion > version ? true : false
+        
         // Migrate database to current version
-        for stepVersion in dbVersion...latestVersion {
+        for stepVersion in stride(from: version, through: targetVersion, by: goingUp ? 1 : -1) {
             switch stepVersion {
-            case 0:
-                // Migrate 0 --> 1
-                try db.createTable(table: Tag.self)
-                db.version = 1
+            case 1:
+                if goingUp {
+                    // Migrate 0 --> 1
+                    try createTable(table: Tag.self)
+                    version = 1
+                } else {
+                    // Migrate 1 --> 0
+                    try dropTable(name: "tag")
+                }
                 break
             default:
                 // No schema changes
                 break
             }
         }
-        
-        return db
     }
     
     /// Open a database file. File does not need to exist
@@ -143,6 +157,49 @@ class SqliteDatabase {
     /// Create a sql table
     func createTable(table: SqlTable.Type) throws {
         let stmt = try prepare(sql: table.createStatement)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
+    }
+    
+    /// List of all existing tables
+    var tableNames: [String] {
+        get {
+            let sql = """
+                SELECT
+                    name
+                FROM
+                    sqlite_master
+                WHERE
+                    type ='table' AND
+                    name NOT LIKE 'sqlite_%';
+            """
+            let stmt = try! prepare(sql: sql)
+            defer {
+                sqlite3_finalize(stmt)
+            }
+            
+            var names: [String] = []
+            while sqlite3_step(stmt) == SQLITE_ROW {
+                let name = String(cString: sqlite3_column_text(stmt, 0))
+                names.append(name)
+            }
+            return names
+        }
+    }
+    
+    /// Drop a sql table
+    /// The sql table name cannot be parameterized using prepare() and bind(), so it is instead sanitized by ensuring beforehand
+    /// that the requested table name to drop is indeed a table name in the database
+    func dropTable(name: String) throws {
+        guard tableNames.contains(name) else {
+            throw SqliteError.Prepare(message: "Cannot drop non-existent table '\(name)'")
+        }
+        let stmt = try prepare(sql: "DROP TABLE \(name);")
         defer {
             sqlite3_finalize(stmt)
         }

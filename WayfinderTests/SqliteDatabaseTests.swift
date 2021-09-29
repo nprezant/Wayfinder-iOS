@@ -185,20 +185,30 @@ class SqliteDatabaseTests: XCTestCase {
         XCTAssertEqual(gotVersion, 2)
     }
     
-    func testFetchAllTags() throws {
-        
+    func testFetchAllUniqueTags() throws {
+        let db = try populatedDb()
+        let dbTags = db.fetchAllUniqueTags()
+        let expectedTags: [String] = [] // TODO add tags
+        XCTAssertEqual(dbTags, expectedTags)
     }
     
-    func testFetchAllTagsWhenNonePresent() throws {
-        
+    func testFetchAllUniqueTagsWhenNonePresent() throws {
+        let db = try populatedDb()
+        let dbTags = db.fetchAllUniqueTags()
+        let expectedTags: [String] = []
+        XCTAssertEqual(dbTags, expectedTags)
     }
     
     func testFetchTagsForReflection() throws {
-        
+        let db = try populatedDb()
+        let dbTags = try db.fetchTags(for: 1)
+        let expectedTags: [String] = []
+        XCTAssertEqual(dbTags, expectedTags)
     }
     
-    func testFetchTagsForReflectionThrowsForNoMatch() throws {
-        
+    func testFetchTagsForReflectionNoMatch() throws {
+//        let db = try populatedDb()
+//        XCTAssertThrowsError(try db.fetchTags(for: 100))
     }
     
     func testDeleteReflectionCascadesToTags() throws {
