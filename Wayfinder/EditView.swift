@@ -91,14 +91,14 @@ struct EditView: View {
                 // Include in the list options that have not yet been commited to the db
                 let tagOptions = Array(Set((existingTags + data.tags).map{$0})).sorted(by: <)
                 NavigationLink(
-                    destination: NameView($newTag, nameOptions: tagOptions, prompt: "New Tag") {
+                    destination: NameView($newTag, nameOptions: tagOptions, prompt: "Add Tag") {
                         withAnimation {
                             data.tags.append(newTag)
                             newTag = ""
                         }
                     }
                 ) {
-                    NameFieldView(name: newTag, prompt: "New Tag")
+                    NameFieldView(name: newTag, prompt: "Add Tag")
                         .contentShape(Rectangle())
                 }
             }
