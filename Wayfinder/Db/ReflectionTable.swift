@@ -26,6 +26,8 @@ struct Reflection : Identifiable, Equatable, SqlTable {
     var date: Int64 // Unix epoch time
     var note: String
     
+    var tags: [String] // References tag table
+    
     // NOTE: no need to implement static func ==(lhs, rhs). By default all properties are compared
 }
 
@@ -33,8 +35,8 @@ struct Reflection : Identifiable, Equatable, SqlTable {
 extension Reflection {
     static var exampleData: [Reflection] {
         [
-            Reflection(id: 1, name: "iOS dev", isFlowState: true.intValue, engagement: 70, energy: -20, date: Int64(Date().timeIntervalSince1970), note: "Exhausting"),
-            Reflection(id: 2, name: "Sleeping", isFlowState: false.intValue, engagement: 50, energy: 60, date: Int64(Date().timeIntervalSince1970), note: "Not long enough"),
+            Reflection(id: 1, name: "iOS dev", isFlowState: true.intValue, engagement: 70, energy: -20, date: Int64(Date().timeIntervalSince1970), note: "Exhausting", tags: []),
+            Reflection(id: 2, name: "Sleeping", isFlowState: false.intValue, engagement: 50, energy: 60, date: Int64(Date().timeIntervalSince1970), note: "Not long enough", tags: []),
         ]
     }
 }
@@ -49,9 +51,10 @@ extension Reflection {
         var energy: Int64 = 0
         var date: Date = Date()
         var note: String = ""
+        var tags: [String] = []
         
         var reflection: Reflection {
-            return Reflection(id: id, name: name, isFlowState: isFlowState.intValue, engagement: engagement, energy: energy, date: Int64(date.timeIntervalSince1970), note: note)
+            return Reflection(id: id, name: name, isFlowState: isFlowState.intValue, engagement: engagement, energy: energy, date: Int64(date.timeIntervalSince1970), note: note, tags: tags)
         }
     }
 
@@ -188,39 +191,6 @@ extension SqliteDatabase {
         }
     }
     
-    private func reflectionStep(stmt: OpaquePointer?) -> Reflection? {
-        guard sqlite3_step(stmt) == SQLITE_ROW else {
-            return nil
-        }
-        
-        // TODO verify rows exist? Or is that guarded by the SQLITE_ROW check?
-        
-        let id = sqlite3_column_int64(stmt, 0)
-        let name = String(cString: sqlite3_column_text(stmt, 1))
-        let isFlowState = sqlite3_column_int64(stmt, 2)
-        let engagement = sqlite3_column_int64(stmt, 3)
-        let energy = sqlite3_column_int64(stmt, 4)
-        let date = sqlite3_column_int64(stmt, 5)
-        let note = String(cString: sqlite3_column_text(stmt, 6))
-        
-        return Reflection(id: id, name: name, isFlowState: isFlowState, engagement: engagement, energy: energy, date: date, note: note)
-    }
-    
-    func reflection(id: Int64) -> Reflection? {
-        let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection WHERE id = ?;"
-        
-        let stmt = try? prepare(sql: querySql)
-        defer {
-            sqlite3_finalize(stmt)
-        }
-        
-        guard sqlite3_bind_int64(stmt, 1, id) == SQLITE_OK else {
-            return nil
-        }
-        
-        return reflectionStep(stmt: stmt)
-    }
-    
     func reflections() -> [Reflection] {
         let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection"
         
@@ -232,12 +202,23 @@ extension SqliteDatabase {
         var reflections: [Reflection] = []
         
         while (true) {
-            let reflection = reflectionStep(stmt: stmt)
-            if reflection != nil {
-                reflections.append(reflection!)
-            } else {
+            guard sqlite3_step(stmt) == SQLITE_ROW else {
                 break
             }
+            
+            let id = sqlite3_column_int64(stmt, 0)
+            let name = String(cString: sqlite3_column_text(stmt, 1))
+            let isFlowState = sqlite3_column_int64(stmt, 2)
+            let engagement = sqlite3_column_int64(stmt, 3)
+            let energy = sqlite3_column_int64(stmt, 4)
+            let date = sqlite3_column_int64(stmt, 5)
+            let note = String(cString: sqlite3_column_text(stmt, 6))
+            
+            let tags = (try? fetchTags(for: id)) ?? []
+            
+            let reflection = Reflection(id: id, name: name, isFlowState: isFlowState, engagement: engagement, energy: energy, date: date, note: note, tags: tags)
+
+            reflections.append(reflection)
         }
         
         return reflections

@@ -70,10 +70,10 @@ class MigrationTests: XCTestCase {
         """
         CREATE TABLE tag(
             id INTEGER PRIMARY KEY,
-            name TEXT,
-            reflection INT REFERENCES reflection(id)
+            reflectionId INT REFERENCES reflection(id)
                 ON UPDATE CASCADE
-                ON DELETE CASCADE
+                ON DELETE CASCADE,
+            name TEXT
         )
         """].withCondensedWhitespace()
     

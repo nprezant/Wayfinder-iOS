@@ -207,8 +207,10 @@ class SqliteDatabaseTests: XCTestCase {
     }
     
     func testFetchTagsForReflectionNoMatch() throws {
-//        let db = try populatedDb()
-//        XCTAssertThrowsError(try db.fetchTags(for: 100))
+        let db = try populatedDb()
+        let dbTags = try db.fetchTags(for: 1000)
+        let expectedTags: [String] = []
+        XCTAssertEqual(dbTags, expectedTags)
     }
     
     func testDeleteReflectionCascadesToTags() throws {

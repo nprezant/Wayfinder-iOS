@@ -32,7 +32,7 @@ class SqliteDatabase {
     }
     
     /// Sqlite3 user version is stored as a 32 bit integer I think
-    static var latestVersion: Int32 = 0
+    static var latestVersion: Int32 = 1
     
     /// Open a database connection to a transient in memory database (generally for testing or migrating)
     static func openInMemory(targetVersion: Int32 = latestVersion) throws -> SqliteDatabase {
@@ -65,8 +65,8 @@ class SqliteDatabase {
             try FileManager.default.copyItem(at: url, to: backupUrl)
         }
         
-        // Migrate database to latest version
-        try db.migrate()
+        // Migrate database to target version
+        try db.migrate(to: targetVersion)
         
         return db
     }
