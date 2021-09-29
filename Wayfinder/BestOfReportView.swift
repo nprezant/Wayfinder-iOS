@@ -37,6 +37,21 @@ enum BestWorst: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
 }
 
+var MonthShortNames: [Int: String] = [
+    1: "Jan",
+    2: "Feb",
+    3: "Mar",
+    4: "Apr",
+    5: "May",
+    6: "Jun",
+    7: "Jul",
+    8: "Aug",
+    9: "Sep",
+    10: "Oct",
+    11: "Nov",
+    12: "Dec"
+]
+
 struct BestOfReportView: View {
     @ObservedObject var dataStore: DataStore
     
@@ -103,10 +118,24 @@ struct BestOfReportView: View {
             .pickerStyle(SegmentedPickerStyle())
             // TODO add date range toggle. Off = any. On = can choose. Or another picker?
             List {
-                // TODO Show nice message if none can be found
-                // TODO make this a nav link
-                ForEach(result) { r in
-                    CardView(reflection: r)
+                if !result.isEmpty {
+                    // TODO make this a nav link
+                    ForEach(result.indices, id: \.self) { index in
+                        HStack {
+                            Text("\(index + 1)")
+                                .font(.caption)
+                            CardView(reflection: result[index])
+                            let date = result[index].data.date
+                            let components = Calendar.current.dateComponents([.month, .day, .year], from: date)
+                            VStack {
+                                Text("\(MonthShortNames[components.month!] ?? "") \(components.day!)")
+                                Text(String(components.year!))
+                            }
+                            .font(.caption)
+                        }
+                    }
+                } else {
+                    Text("No reflections found")
                 }
             }
             Spacer()
