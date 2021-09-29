@@ -129,7 +129,11 @@ extension SqliteDatabase {
             throw SqliteError.Step(message: errorMessage)
         }
         
-        return lastInsertedRowId()
+        let newReflectionId = lastInsertedRowId()
+        
+        try insertTags(for: newReflectionId, tags: reflection.tags) // TODO should the whole block be wrapped in a transaction?
+        
+        return newReflectionId
     }
     
     // Update an existing reflection with a matching ID

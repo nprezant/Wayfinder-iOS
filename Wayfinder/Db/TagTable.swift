@@ -14,7 +14,7 @@ struct Tag : Identifiable, SqlTable {
             name TEXT
         );
         """
-    }
+    } // TODO need index
     
     var id: Int64
     var name: String
@@ -75,6 +75,66 @@ extension SqliteDatabase {
     }
     
     func insertTags(for reflectionId: Int64, tags: [String]) throws {
+        if tags.isEmpty {
+            return
+        }
         
+        // Values are inserted in tuples
+        // (1, 'dev'), (1, 'meeting'), (2, 'dev'), etc.
+        let questionMarkTuples = [String](repeating: "(?, ?)", count: tags.count)
+        let sql = """
+            INSERT INTO tag (reflectionId, name)
+            VALUES \(questionMarkTuples.joined(separator: ","))
+        """
+        
+        let stmt = try prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        for (i, tagName) in tags.enumerated() {
+            let questionMarkIndex = Int32(i) * 2
+            guard sqlite3_bind_int64(stmt, questionMarkIndex + 1, reflectionId) == SQLITE_OK
+                    && sqlite3_bind_text(stmt, questionMarkIndex + 2, tagName, -1, SQLITE_TRANSIENT) == SQLITE_OK
+            else {
+                throw SqliteError.Bind(message: errorMessage)
+            }
+        }
+        
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
+    }
+    
+    func deleteTags(for reflectionId: Int64, tags: [String]) throws {
+        if tags.isEmpty {
+            return
+        }
+        
+        let questionMarks = [String](repeating: "?", count: tags.count)
+        let sql = """
+            DELETE FROM tag
+            WHERE reflectionId = ? AND name IN (\(questionMarks.joined(separator: ",")));
+        """
+        
+        let stmt = try prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        guard sqlite3_bind_int64(stmt, 1, reflectionId) == SQLITE_OK else {
+            throw SqliteError.Bind(message: errorMessage)
+        }
+        
+        for (i, tagName) in tags.enumerated() {
+            let questionMarkIndex = Int32(i) + 1
+            guard sqlite3_bind_text(stmt, questionMarkIndex + 1, tagName, -1, SQLITE_TRANSIENT) == SQLITE_OK else {
+                throw SqliteError.Bind(message: errorMessage)
+            }
+        }
+        
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
     }
 }
