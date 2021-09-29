@@ -57,8 +57,8 @@ class DataStoreTests: XCTestCase {
                 self.testData[1].id = 2
                 
                 // Read reflection list and ensure they are equal
-                dataStore.loadReflections() { reflections in
-                    XCTAssertEqual(Array(testData[0...1]), reflections)
+                dataStore.sync() {
+                    XCTAssertEqual(Array(testData[0...1]), dataStore.reflections)
                     expectation.fulfill()
                 }
             }
@@ -78,12 +78,12 @@ class DataStoreTests: XCTestCase {
         
         let expectation = XCTestExpectation(description: "Add many reflections")
         
-        dataStore.loadReflections() { reflections in
-            XCTAssertEqual(reflections.count, 4)
-            XCTAssertEqual(reflections[0].id, 1)
-            XCTAssertEqual(reflections[1].id, 2)
-            XCTAssertEqual(reflections[2].id, 3)
-            XCTAssertEqual(reflections[3].id, 4)
+        dataStore.sync() {
+            XCTAssertEqual(dataStore.reflections.count, 4)
+            XCTAssertEqual(dataStore.reflections[0].id, 1)
+            XCTAssertEqual(dataStore.reflections[1].id, 2)
+            XCTAssertEqual(dataStore.reflections[2].id, 3)
+            XCTAssertEqual(dataStore.reflections[3].id, 4)
             expectation.fulfill()
         }
         
@@ -96,8 +96,8 @@ class DataStoreTests: XCTestCase {
         
         let expectation = XCTestExpectation(description: "Add many reflections")
         
-        dataStore.loadReflections() { [testData] reflections in // TODO use async when available
-            XCTAssertEqual(testData, reflections)
+        dataStore.sync() { [testData] in
+            XCTAssertEqual(testData, dataStore.reflections)
             expectation.fulfill()
         }
         
@@ -116,9 +116,9 @@ class DataStoreTests: XCTestCase {
                 XCTFail(error.localizedDescription)
             }
             
-            dataStore.loadReflections() { [self] reflections in
+            dataStore.sync() { [self] in
                 testData.remove(at: 1) // Remove second reflection from test data list
-                XCTAssertEqual(testData, reflections)
+                XCTAssertEqual(testData, dataStore.reflections)
                 expectation.fulfill()
             }
             
@@ -139,9 +139,9 @@ class DataStoreTests: XCTestCase {
                 XCTFail(error.localizedDescription)
             }
             
-            dataStore.loadReflections() { [self] reflections in
+            dataStore.sync() { [self] in
                 testData.removeAll(where: {[1, 2].contains($0.id)}) // Remove first and second reflection from test data list
-                XCTAssertEqual(testData, reflections)
+                XCTAssertEqual(testData, dataStore.reflections)
                 expectation.fulfill()
             }
             
@@ -164,11 +164,11 @@ class DataStoreTests: XCTestCase {
                 XCTFail(error.localizedDescription)
             }
             
-            dataStore.loadReflections() { [self] reflections in
-                XCTAssertEqual(reflections[1], newSecondReflection)
+            dataStore.sync() { [self] in
+                XCTAssertEqual(dataStore.reflections[1], newSecondReflection)
                 
                 testData[1] = newSecondReflection
-                XCTAssertEqual(testData, reflections)
+                XCTAssertEqual(testData, dataStore.reflections)
                 
                 expectation.fulfill()
             }

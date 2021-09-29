@@ -22,12 +22,7 @@ class DataStore: ObservableObject {
         return documentsFolder.appendingPathComponent("wayfinder.csv")
     }
     
-    @Published var reflections: [Reflection] = [] {
-        didSet {
-            uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <)
-            uniqueTagNames = db.fetchAllUniqueTags().sorted(by: <)
-        }
-    }
+    @Published var reflections: [Reflection] = []
     
     @Published var uniqueReflectionNames: [String] = []
     
@@ -55,26 +50,29 @@ class DataStore: ObservableObject {
         dataStore.reflections = dataStore.db.reflections()
         return dataStore
     }
-
-    // Read the database on the background thread
-    // `reflections` property is updated automatically
-    func loadReflections(_ completion: @escaping ([Reflection])->() = {_ in }) {
+    
+    /// Syncs published properties with the database (asyncronosly)
+    func sync(_ completion: @escaping ()->Void = {}) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             
             guard let self = self else { return }
             
             let reflections = self.db.reflections()
+            let uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <)
+            let uniqueTagNames = self.db.fetchAllUniqueTags().sorted(by: <)
             
-            // Do any UI work on the main thread
+            // Assigning published properties is UI work, must do on main thread
             DispatchQueue.main.async {
                 self.reflections = reflections
-                completion(reflections)
+                self.uniqueReflectionNames = uniqueReflectionNames
+                self.uniqueTagNames = uniqueTagNames
+                completion()
             }
         }
     }
     
-    // Returns the new inserted ID.
-    // No action necessary with the ID; the data store list is updated automatically
+    /// Returns the new inserted ID.
+    /// No action necessary with the ID; the data store list is updated automatically
     func add(reflection: Reflection, completion: @escaping (Result<Int64, SqliteError>)->()) {
         
         // The default id is 0, and will be re-assigned when it is inserted into the database
@@ -90,14 +88,15 @@ class DataStore: ObservableObject {
         
         // Database logic on background thread
         DispatchQueue.global(qos: .background).async { [weak self] in
-            guard (self != nil) else { fatalError("Self out of scope") }
+            
+            guard let self = self else { return }
             
             var result: Result<Int64, SqliteError>
             
             // Database assigns a new id on insert
             var dbId: Int64?
             do {
-                dbId = try self!.db.insert(reflection: reflection)
+                dbId = try self.db.insert(reflection: reflection)
                 result = .success(dbId!)
             } catch let e as SqliteError {
                 result = .failure(e)
@@ -105,19 +104,14 @@ class DataStore: ObservableObject {
                 result = .failure(SqliteError.Unspecified(message: "Can't add reflection data. \(e)"))
             }
             
-            // Any UI logic must be done on main thread
-            DispatchQueue.main.async {
-                if let unwrappedDbId = dbId {
-                    // Reflection was properly inserted so the database assigned id needs to be applied to the in memory UI list
-                    let location = self!.reflections.firstIndex(where: {$0.id == uniqueId})
-                    self!.reflections[location!].id = unwrappedDbId
-                }
+            // Sync app with database
+            self.sync() {
                 completion(result)
             }
         }
     }
     
-    // Adds many reflections (not async...) and updates the ids to match the those in the inserted database
+    /// Adds many reflections (not async...) and updates the ids to match the those in the inserted database
     func add(reflections: inout [Reflection]) {
         for i in reflections.indices {
             let dbId = try! self.db.insert(reflection: reflections[i])
@@ -126,13 +120,15 @@ class DataStore: ObservableObject {
         }
     }
     
-    // Updates the reflection with the matching ID to contain new data
+    /// Updates the reflection with the matching ID to contain new data
     func update(reflection: Reflection, completion: @escaping (SqliteError?)->() = {_ in}) {
         DispatchQueue.global(qos: .background).async { [weak self] in
-            guard (self != nil) else { fatalError("Self out of scope") }
+            guard let self = self else { return }
             do {
-                try self?.db.update(reflection: reflection)
-                completion(nil)
+                try self.db.update(reflection: reflection)
+                self.sync() {
+                    completion(nil)
+                }
             } catch let e as SqliteError {
                 completion(e)
             } catch let e {
@@ -144,10 +140,12 @@ class DataStore: ObservableObject {
     func delete(reflectionIds: [Int64], completion: @escaping (SqliteError?)->() = {_ in}) {
         self.reflections.removeAll(where: {reflectionIds.contains($0.id)})
         DispatchQueue.global(qos: .background).async { [weak self] in
-            guard (self != nil) else { fatalError("Self out of scope") }
+            guard let self = self else { return }
             do {
-                try self?.db.delete(reflectionsIds: reflectionIds)
-                completion(nil)
+                try self.db.delete(reflectionsIds: reflectionIds)
+                self.sync() {
+                    completion(nil)
+                }
             } catch let e as SqliteError {
                 completion(e)
             } catch let e {
