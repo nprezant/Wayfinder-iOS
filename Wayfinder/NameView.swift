@@ -25,15 +25,17 @@ struct NameView: View {
     let nameOptions: [String]
     let style: NamePickerStyle
     let canCreate: Bool
+    let completion: ()->Void
     
     @Environment(\.presentationMode) var presentationMode
     
-    init(_ name: Binding<String>, nameOptions: [String], nameType: NamePickerStyle, canCreate: Bool = true) {
+    init(_ name: Binding<String>, nameOptions: [String], nameType: NamePickerStyle, canCreate: Bool = true, completion: @escaping ()->Void = {}) {
         self._name = name
         self._originalName = State(initialValue: name.wrappedValue)
         self.nameOptions = nameOptions
         self.style = nameType
         self.canCreate = canCreate
+        self.completion = completion
     }
     
     var body: some View {
@@ -49,6 +51,7 @@ struct NameView: View {
                     Button(action: {
                         name = nameOption
                         self.presentationMode.wrappedValue.dismiss()
+                        completion()
                     }) {
                         Text(nameOption)
                     }
@@ -57,6 +60,7 @@ struct NameView: View {
                     if canCreate {
                         Button(action: {
                             self.presentationMode.wrappedValue.dismiss()
+                            completion()
                         }) {
                             HStack {
                                 Image(systemName: "plus.circle")

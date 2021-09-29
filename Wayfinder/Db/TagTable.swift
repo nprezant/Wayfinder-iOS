@@ -146,4 +146,33 @@ extension SqliteDatabase {
             throw SqliteError.Step(message: errorMessage)
         }
     }
+    
+    /// Delete all tags for a reflection
+    func deleteTags(for reflectionId: Int64) throws {
+        let sql = """
+            DELETE FROM tag
+            WHERE reflection = ?;
+        """
+        
+        let stmt = try prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        guard sqlite3_bind_int64(stmt, 1, reflectionId) == SQLITE_OK else {
+            throw SqliteError.Bind(message: errorMessage)
+        }
+        
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
+    }
+    
+    /// Sync tags for a given reflection
+    func syncTags(for reflectionId: Int64, tags: [String]) throws {
+        // This just deletes all tags for the reflection and adds back in the requested ones.
+        // Could be smarter by only deleting the ones you need and only adding the ones you need
+        try deleteTags(for: reflectionId)
+        try insertTags(for: reflectionId, tags: tags)
+    }
 }

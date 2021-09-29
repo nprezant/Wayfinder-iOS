@@ -102,8 +102,19 @@ struct EditView: View {
                 }
             }
             Section() {
+                ForEach(data.tags, id: \.self) { tagName in
+                    Text(tagName)
+                }
+                .onDelete { indices in
+                    data.tags.remove(atOffsets: indices)
+                }
+                // Include in the list options that have not yet been commited to the db
+                let tagOptions = Array(Set((existingTags + data.tags).map{$0})).sorted(by: <)
                 NavigationLink(
-                    destination: NameView($newTag, nameOptions: existingTags, nameType: .Tag)
+                    destination: NameView($newTag, nameOptions: tagOptions, nameType: .Tag) {
+                        data.tags.append(newTag)
+                        newTag = ""
+                    }
                 ) {
                     NameFieldView(name: newTag, style: .Tag)
                         .contentShape(Rectangle())

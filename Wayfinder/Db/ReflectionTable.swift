@@ -59,7 +59,7 @@ extension Reflection {
     }
 
     var data: Data {
-        return Data(id: id, name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: Date(timeIntervalSince1970: TimeInterval(date)), note: note)
+        return Data(id: id, name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: Date(timeIntervalSince1970: TimeInterval(date)), note: note, tags: tags)
     }
 
     mutating func update(from data: Data) {
@@ -70,6 +70,7 @@ extension Reflection {
         energy = data.energy
         date = Int64(data.date.timeIntervalSince1970)
         note = data.note
+        tags = data.tags
     }
 }
 
@@ -166,7 +167,7 @@ extension SqliteDatabase {
             throw SqliteError.Step(message: errorMessage)
         }
         
-        try insertTags(for: reflection.id, tags: reflection.tags) // TODO should the whole block be wrapped in a transaction?
+        try syncTags(for: reflection.id, tags: reflection.tags) // TODO should the whole block be wrapped in a transaction?
     }
     
     // Delete reflections with matching IDs
