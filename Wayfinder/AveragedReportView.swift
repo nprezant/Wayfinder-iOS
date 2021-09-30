@@ -27,7 +27,7 @@ enum AverageOption : String, CaseIterable, Identifiable {
 struct AveragedReportView: View {
     @ObservedObject var dataStore: DataStore
     
-    @State private var selectedAverageOption: AverageOption = .tag
+    @State private var selectedAverageOption: AverageOption = .activity
     
     var body: some View {
         VStack {

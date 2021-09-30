@@ -19,6 +19,12 @@ enum Report: Int, CaseIterable, Identifiable {
     
     var id: Int { self.rawValue }
     
+    static var addableReports: [Report]{
+        get {
+            return [.bestOfAll, .bestOf, .average]
+        }
+    }
+    
     var stringValue: String {
         get {
             switch self {
@@ -60,7 +66,7 @@ struct ReportView: View {
     @ObservedObject var dataStore: DataStore
     
     @State private var selectedIndex: Int = 0
-    @State private var reports: [Report] = [Report.bestOfAll]
+    @State private var reports: [Report] = [.bestOfAll, .average]
     @State private var addNewPageIsPresented: Bool = false
     
     var body: some View {
@@ -93,7 +99,7 @@ struct ReportView: View {
         }
         .actionSheet(isPresented: $addNewPageIsPresented) {
             var buttons: [ActionSheet.Button] = []
-            for report in Report.allCases {
+            for report in Report.addableReports {
                 buttons.append(
                     .default(Text(report.stringValue.capitalized)) {
                         let insertionIndex = reports.isEmpty || selectedIndex == reports.count ? reports.endIndex : selectedIndex + 1
