@@ -89,55 +89,30 @@ class DataStore: ObservableObject {
         pendingBatchRenames.append(data)
     }
     
-    /// Process pending renames
-    /// TODO be smarter and use DispatchQueue and wait and stuff
+    /// Process pending renames. Blocking.
+    /// Could consider DispatchGroup
     /// https://stackoverflow.com/questions/42484281/waiting-until-the-task-finishes
-    private func processPendingBatchRenames(_ completion: @escaping (SqliteError?)->Void = {_ in}) {
+    private func processPendingBatchRenames() throws {
         if pendingBatchRenames.isEmpty { return }
-        
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            
-            guard let self = self else { return }
-            
-            while !self.pendingBatchRenames.isEmpty {
-                
-                let data = self.pendingBatchRenames.removeFirst()
-                do {
-                    switch data.category {
-                    case .activity:
-                        try self.db.renameReflections(from: data.oldName, to: data.newName)
-                    case .tag:
-                        try self.db.renameTags(from: data.oldName, to: data.newName)
-                    }
-                } catch let e as SqliteError {
-                    completion(e)
-                    return
-                } catch let e {
-                    completion(SqliteError.Unspecified(message: e.localizedDescription))
-                    return
-                }
-            }
-            
-            self.sync() {
-                completion(nil)
-            }
+        while !pendingBatchRenames.isEmpty {
+            let data = pendingBatchRenames.removeFirst()
+            try batchRename(with: data)
+        }
+    }
+    
+    /// Renames reflections. Blocking.
+    private func batchRename(with data: BatchRenameData) throws {
+        switch data.category {
+        case .activity:
+            try db.renameReflections(from: data.oldName, to: data.newName)
+        case .tag:
+            try db.renameTags(from: data.oldName, to: data.newName)
         }
     }
     
     /// Returns the new inserted ID.
     /// No action necessary with the ID; the data store list is updated automatically
     func add(reflection: Reflection, completion: @escaping (Result<Int64, SqliteError>)->()) {
-        
-        // The default id is 0, and will be re-assigned when it is inserted into the database
-        // After the data is inserted into the database, that insertion id needs to be pushed back to the list in memory
-        // To find this reflection in memory, we give it a unique id
-        let uniqueId = self.nextUniqueReflectionId()
-        var reflection = reflection // Make modifyable copy
-        reflection.id = uniqueId
-        
-        // Add data to the list shown in the UI
-        self.reflections.append(reflection)
-        self.reflections.sort(by: {$0.date > $1.date})
         
         // Database logic on background thread
         DispatchQueue.global(qos: .background).async { [weak self] in
@@ -149,6 +124,7 @@ class DataStore: ObservableObject {
             // Database assigns a new id on insert
             var dbId: Int64?
             do {
+                try self.processPendingBatchRenames()
                 dbId = try self.db.insert(reflection: reflection)
                 result = .success(dbId!)
             } catch let e as SqliteError {
@@ -178,29 +154,8 @@ class DataStore: ObservableObject {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
             do {
+                try self.processPendingBatchRenames()
                 try self.db.update(reflection: reflection)
-                self.sync() {
-                    completion(nil)
-                }
-            } catch let e as SqliteError {
-                completion(e)
-            } catch let e {
-                completion(SqliteError.Unspecified(message: e.localizedDescription))
-            }
-        }
-    }
-    
-    /// Renames reflections
-    private func batchRename(with data: BatchRenameData, completion: @escaping (SqliteError?)->() = {_ in}) {
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard let self = self else { return }
-            do {
-                switch data.category {
-                case .activity:
-                    try self.db.renameReflections(from: data.oldName, to: data.newName)
-                case .tag:
-                    try self.db.renameTags(from: data.oldName, to: data.newName)
-                }
                 self.sync() {
                     completion(nil)
                 }
@@ -218,6 +173,7 @@ class DataStore: ObservableObject {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
             do {
+                try self.processPendingBatchRenames()
                 try self.db.delete(reflectionsIds: reflectionIds)
                 self.sync() {
                     completion(nil)
