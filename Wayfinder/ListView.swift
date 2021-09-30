@@ -77,6 +77,7 @@ struct ListView: View {
                             let index = dataStore.reflections.firstIndex(where: {$0.id == r.id})!
                             NavigationLink(
                                 destination: DetailView(
+                                    dataStore: dataStore,
                                     reflection: $dataStore.reflections[index],
                                     existingReflections: dataStore.uniqueReflectionNames,
                                     existingTags: dataStore.uniqueTagNames,

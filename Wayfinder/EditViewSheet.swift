@@ -31,6 +31,7 @@ struct EditViewSheet: View {
     var body: some View {
         NavigationView {
             EditView(
+                dataStore: dataStore,
                 data: $newReflectionData,
                 existingReflections: dataStore.uniqueReflectionNames,
                 existingTags: dataStore.uniqueTagNames

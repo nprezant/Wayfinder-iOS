@@ -57,25 +57,24 @@ struct NamePicker: View {
                         Text(nameOption)
                     }
                 }
-                if filteredNames.isEmpty {
-                    if canCreate {
-                        Button(action: {
-                            self.presentationMode.wrappedValue.dismiss()
-                            completion()
-                        }) {
-                            HStack {
-                                Image(systemName: "plus.circle")
-                                Text("Create \"\(name)\"")
-                            }
-                            .foregroundColor(.green)
-                        }
-                    } else {
+                if canCreate && !nameOptions.contains(name) {
+                    Button(action: {
+                        self.presentationMode.wrappedValue.dismiss()
+                        completion()
+                    }) {
                         HStack {
-                            Image(systemName: "xmark.circle")
-                            Text("No matches found")
+                            Image(systemName: "plus.circle")
+                            Text("Create \"\(name)\"")
                         }
-                        .foregroundColor(.red)
+                        .foregroundColor(.green)
                     }
+                }
+                if filteredNames.isEmpty {
+                    HStack {
+                        Image(systemName: "xmark.circle")
+                        Text("No matches found")
+                    }
+                    .foregroundColor(.red)
                 }
             }
             .listStyle(PlainListStyle())

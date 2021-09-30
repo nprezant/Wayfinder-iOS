@@ -137,6 +137,24 @@ class DataStore: ObservableObject {
         }
     }
     
+    /// Renames reflections
+    func renameReflections(from oldName: String, to newName: String, completion: @escaping (SqliteError?)->() = {_ in}) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else { return }
+            do {
+                try self.db.renameReflections(from: oldName, to: newName)
+                self.sync() {
+                    completion(nil)
+                }
+            } catch let e as SqliteError {
+                completion(e)
+            } catch let e {
+                completion(SqliteError.Unspecified(message: e.localizedDescription))
+            }
+        }
+    }
+    
+    /// Delete reflections based on database id
     func delete(reflectionIds: [Int64], completion: @escaping (SqliteError?)->() = {_ in}) {
         self.reflections.removeAll(where: {reflectionIds.contains($0.id)})
         DispatchQueue.global(qos: .background).async { [weak self] in

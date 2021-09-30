@@ -42,11 +42,15 @@ extension View {
 
 
 struct EditView: View {
+    
+    @ObservedObject var dataStore: DataStore
     @Binding var data: Reflection.Data
     let existingReflections: [String]
     let existingTags: [String]
     
     @State var newTag: String = ""
+    @State private var oldName: String = ""
+    @State private var isRenamePresented: Bool = false
     
     var body: some View {
         List {
@@ -57,6 +61,14 @@ struct EditView: View {
                 ) {
                     NamePickerField(name: data.name, prompt: "Choose Activity", font: .title2)
                         .contentShape(Rectangle())
+                }
+                .contextMenu {
+                    Button {
+                        oldName = data.name
+                        isRenamePresented = true
+                    } label: {
+                        Label("Rename All", systemImage: "pencil")
+                    }
                 }
             }
             
@@ -107,14 +119,24 @@ struct EditView: View {
                 TextEditor(text: $data.note)
                     .frame(height: 100)
             }
+            // Still silly.
+            // https://developer.apple.com/forums/thread/652080
+            Text("\(oldName)")
+                .hidden()
         }
         .listStyle(InsetGroupedListStyle())
+        .sheet(isPresented: $isRenamePresented) {
+            NamePicker($data.name, nameOptions: existingReflections, prompt: "Rename '\(oldName)'", canCreate: true, parentIsPresenting: $isRenamePresented) {
+                dataStore.renameReflections(from: oldName, to: data.name)
+            }
+        }
     }
 }
 
 struct EditView_Previews: PreviewProvider {
     static var previews: some View {
         EditView(
+            dataStore: DataStore.createExample(),
             data: .constant(Reflection.exampleData[0].data),
             existingReflections: DataStore.createExample().uniqueReflectionNames,
             existingTags: ["tag 1", "tag 2", "tag 3"]

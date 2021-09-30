@@ -202,9 +202,9 @@ extension SqliteDatabase {
     
     /// Fetch all reflections
     func fetchReflections() -> [Reflection] {
-        let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection ORDER BY date DESC"
+        let sql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection ORDER BY date DESC"
         
-        let stmt = try? prepare(sql: querySql)
+        let stmt = try? prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
         }
@@ -232,6 +232,27 @@ extension SqliteDatabase {
         }
         
         return reflections
+    }
+    
+    /// Batch rename reflection activities
+    func renameReflections(from oldName: String, to newName: String) throws {
+        let sql = "UPDATE reflection SET name = ? WHERE name = ?"
+        
+        let stmt = try? prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        guard
+            sqlite3_bind_text(stmt, 1, newName, -1, SQLITE_TRANSIENT) == SQLITE_OK
+                && sqlite3_bind_text(stmt, 2, oldName, -1, SQLITE_TRANSIENT) == SQLITE_OK
+        else {
+            throw SqliteError.Bind(message: errorMessage)
+        }
+        
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
     }
     
 }

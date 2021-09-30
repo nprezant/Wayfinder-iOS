@@ -187,6 +187,7 @@ struct BestOfReportView: View {
         .sheet(isPresented: $isDetailPresented, onDismiss: updateEditedReflection) {
             if let dsIndex = dsIndexToEdit {
                 DetailView(
+                    dataStore: dataStore,
                     reflection: $dataStore.reflections[dsIndex],
                     existingReflections: dataStore.uniqueReflectionNames,
                     existingTags: dataStore.uniqueTagNames,

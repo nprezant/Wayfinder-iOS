@@ -3,6 +3,8 @@
 import SwiftUI
 
 struct DetailView: View {
+    
+    @ObservedObject var dataStore: DataStore
     @Binding var reflection: Reflection
     let existingReflections: [String]
     let existingTags: [String]
@@ -88,6 +90,7 @@ struct DetailView: View {
         .fullScreenCover(isPresented: $isPresented) {
             NavigationView {
                 EditView(
+                    dataStore: dataStore,
                     data: $data,
                     existingReflections: existingReflections,
                     existingTags: existingTags
@@ -109,6 +112,7 @@ struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             DetailView(
+                dataStore: DataStore.createExample(),
                 reflection: .constant(Reflection.exampleData[0]),
                 existingReflections: DataStore.createExample().uniqueReflectionNames,
                 existingTags: DataStore.createExample().uniqueTagNames,
