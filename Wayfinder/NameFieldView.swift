@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-struct NameFieldView: View {
+struct NamePickerField: View {
     let name: String
     let prompt: String
     var font: Font = .body
@@ -22,11 +22,11 @@ struct NameFieldView: View {
     }
 }
 
-struct NameFieldView_Previews: PreviewProvider {
+struct NamePickerField_Previews: PreviewProvider {
     static var previews: some View {
-        NameFieldView(name: "", prompt: "Choose Activity", font: .title2)
+        NamePickerField(name: "", prompt: "Choose Activity", font: .title2)
             .previewLayout(.fixed(width: 300, height: 60))
-        NameFieldView(name: "Stata PYD/YAS", prompt: "Add Tag")
+        NamePickerField(name: "Stata PYD/YAS", prompt: "Add Tag")
             .previewLayout(.fixed(width: 300, height: 60))
     }
 }

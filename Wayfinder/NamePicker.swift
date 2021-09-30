@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-struct NameView: View {
+struct NamePicker: View {
     @Binding var name: String
     @State var originalName: String
     let nameOptions: [String]
@@ -98,15 +98,15 @@ struct NameView: View {
     }
 }
 
-struct NameView_Previews: PreviewProvider {
+struct NamePicker_Previews: PreviewProvider {
     static var previews: some View {
         let names = ["Stata PYD/YAS", "Florida dashboard", "Florida YAS dashboard", "Fred", "PYD/YAS", "Florida"]
         Group {
             NavigationView {
-                NameView(.constant("dashboard"), nameOptions: names, prompt: "Choose Activity")
+                NamePicker(.constant("dashboard"), nameOptions: names, prompt: "Choose Activity")
             }
             VStack {
-                NameView(.constant("dashboard"), nameOptions: names, prompt: "Choose Activity", parentIsPresenting: .constant(true))
+                NamePicker(.constant("dashboard"), nameOptions: names, prompt: "Choose Activity", parentIsPresenting: .constant(true))
             }
         }
     }

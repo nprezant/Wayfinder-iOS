@@ -70,7 +70,7 @@ struct CategoryReportView: View {
                 Button(action: {
                     isPresented = true
                 }) {
-                    NameFieldView(name: selectedCategoryValue, prompt: selectedCategory.choicePrompt, font: .title2)
+                    NamePickerField(name: selectedCategoryValue, prompt: selectedCategory.choicePrompt, font: .title2)
                         .onChange(of: selectedCategoryValue, perform: {_ in updateAverages()})
                         .padding()
                         .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color.secondary.opacity(0.15)))
@@ -85,9 +85,9 @@ struct CategoryReportView: View {
         .sheet(isPresented: $isPresented, onDismiss: updateAverages) {
             switch selectedCategory {
             case .activity:
-                NameView($selectedCategoryValue, nameOptions: dataStore.uniqueReflectionNames, prompt: "Choose Activity", canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: dataStore.uniqueReflectionNames, prompt: "Choose Activity", canCreate: false, parentIsPresenting: $isPresented)
             case .tag:
-                NameView($selectedCategoryValue, nameOptions: dataStore.uniqueTagNames, prompt: "Choose Tag", canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: dataStore.uniqueTagNames, prompt: "Choose Tag", canCreate: false, parentIsPresenting: $isPresented)
             }
         }
     }

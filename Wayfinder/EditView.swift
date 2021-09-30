@@ -53,9 +53,9 @@ struct EditView: View {
             // TODO fix issue with tappable area too small
             Section() {
                 NavigationLink(
-                    destination: NameView($data.name, nameOptions: existingReflections, prompt: "Choose Activity")
+                    destination: NamePicker($data.name, nameOptions: existingReflections, prompt: "Choose Activity")
                 ) {
-                    NameFieldView(name: data.name, prompt: "Choose Activity", font: .title2)
+                    NamePickerField(name: data.name, prompt: "Choose Activity", font: .title2)
                         .contentShape(Rectangle())
                 }
             }
@@ -91,14 +91,14 @@ struct EditView: View {
                 // Include in the list options that have not yet been commited to the db
                 let tagOptions = Array(Set((existingTags + data.tags).map{$0})).sorted(by: <)
                 NavigationLink(
-                    destination: NameView($newTag, nameOptions: tagOptions, prompt: "Add Tag") {
+                    destination: NamePicker($newTag, nameOptions: tagOptions, prompt: "Add Tag") {
                         withAnimation {
                             data.tags.append(newTag)
                             newTag = ""
                         }
                     }
                 ) {
-                    NameFieldView(name: newTag, prompt: "Add Tag")
+                    NamePickerField(name: newTag, prompt: "Add Tag")
                         .contentShape(Rectangle())
                 }
             }
