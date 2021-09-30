@@ -111,6 +111,7 @@ struct BestOfReportView: View {
                 Spacer()
             }
             .font(.title)
+            .padding([.top])
             HStack {
                 Button(action: {
                     isPresented = true

@@ -28,6 +28,7 @@ struct WeeklyReportView: View {
                     .font(.title)
                 Spacer()
             }
+            .padding([.top])
             HStack {
                 DatePicker(
                     "Date",

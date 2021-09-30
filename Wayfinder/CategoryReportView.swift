@@ -66,6 +66,7 @@ struct CategoryReportView: View {
                     .font(.title)
                 Spacer()
             }
+            .padding([.top])
             HStack {
                 Button(action: {
                     isPresented = true
