@@ -175,4 +175,25 @@ extension SqliteDatabase {
         try deleteTags(for: reflectionId)
         try insertTags(for: reflectionId, tags: tags)
     }
+    
+    /// Rename all tags with one name to another name
+    func renameTags(from oldName: String, to newName: String) throws {
+        let sql = "UPDATE tag SET name = ? WHERE name = ?"
+        
+        let stmt = try? prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        guard
+            sqlite3_bind_text(stmt, 1, newName, -1, SQLITE_TRANSIENT) == SQLITE_OK
+                && sqlite3_bind_text(stmt, 2, oldName, -1, SQLITE_TRANSIENT) == SQLITE_OK
+        else {
+            throw SqliteError.Bind(message: errorMessage)
+        }
+        
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
+    }
 }

@@ -2,6 +2,18 @@
 
 import Foundation
 
+struct BatchRenameData {
+    var category: Category
+    var oldName: String
+    var newName: String
+    
+    init(category: Category, from oldName: String, to newName: String) {
+        self.category = category
+        self.oldName = oldName
+        self.newName = newName
+    }
+}
+
 class DataStore: ObservableObject {
     private static var documentsFolder: URL {
         do {
@@ -67,6 +79,47 @@ class DataStore: ObservableObject {
                 self.uniqueReflectionNames = uniqueReflectionNames
                 self.uniqueTagNames = uniqueTagNames
                 completion()
+            }
+        }
+    }
+    
+    private var pendingBatchRenames: [BatchRenameData] = []
+    
+    func enqueueBatchRename(_ data: BatchRenameData) {
+        pendingBatchRenames.append(data)
+    }
+    
+    /// Process pending renames
+    /// TODO be smarter and use DispatchQueue and wait and stuff
+    /// https://stackoverflow.com/questions/42484281/waiting-until-the-task-finishes
+    private func processPendingBatchRenames(_ completion: @escaping (SqliteError?)->Void = {_ in}) {
+        if pendingBatchRenames.isEmpty { return }
+        
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            
+            guard let self = self else { return }
+            
+            while !self.pendingBatchRenames.isEmpty {
+                
+                let data = self.pendingBatchRenames.removeFirst()
+                do {
+                    switch data.category {
+                    case .activity:
+                        try self.db.renameReflections(from: data.oldName, to: data.newName)
+                    case .tag:
+                        try self.db.renameTags(from: data.oldName, to: data.newName)
+                    }
+                } catch let e as SqliteError {
+                    completion(e)
+                    return
+                } catch let e {
+                    completion(SqliteError.Unspecified(message: e.localizedDescription))
+                    return
+                }
+            }
+            
+            self.sync() {
+                completion(nil)
             }
         }
     }
@@ -138,11 +191,16 @@ class DataStore: ObservableObject {
     }
     
     /// Renames reflections
-    func renameReflections(from oldName: String, to newName: String, completion: @escaping (SqliteError?)->() = {_ in}) {
+    private func batchRename(with data: BatchRenameData, completion: @escaping (SqliteError?)->() = {_ in}) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
             do {
-                try self.db.renameReflections(from: oldName, to: newName)
+                switch data.category {
+                case .activity:
+                    try self.db.renameReflections(from: data.oldName, to: data.newName)
+                case .tag:
+                    try self.db.renameTags(from: data.oldName, to: data.newName)
+                }
                 self.sync() {
                     completion(nil)
                 }

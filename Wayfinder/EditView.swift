@@ -126,8 +126,8 @@ struct EditView: View {
         }
         .listStyle(InsetGroupedListStyle())
         .sheet(isPresented: $isRenamePresented) {
-            NamePicker($data.name, nameOptions: existingReflections, prompt: "Rename '\(oldName)'", canCreate: true, parentIsPresenting: $isRenamePresented) {
-                dataStore.renameReflections(from: oldName, to: data.name)
+            NamePicker($data.name, nameOptions: existingReflections, prompt: "Rename all of '\(oldName)'", canCreate: true, parentIsPresenting: $isRenamePresented) {
+                dataStore.enqueueBatchRename(BatchRenameData(category: .activity, from: oldName, to: data.name))
             }
         }
     }
