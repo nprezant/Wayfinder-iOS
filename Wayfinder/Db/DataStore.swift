@@ -217,4 +217,36 @@ class DataStore: ObservableObject {
             }
         }
     }
+    
+    func makeBestOfAllReport(for category: Category, by metric: Metric, direction bestWorst: BestWorst, completion: @escaping (Result<[Reflection.Averaged], Error>) -> Void) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else { return }
+            
+            var categoryValues: [String] = []
+            
+            switch category {
+            case .activity:
+                categoryValues = self.uniqueReflectionNames
+            case .tag:
+                categoryValues = self.uniqueTagNames
+            }
+            
+            var allAveraged: [Reflection.Averaged] = []
+            
+            for value in categoryValues {
+                let relevantReflections = self.reflections.filter{category.makeInclusionComparator(value)($0)}
+                let average = Reflection.Averaged.make(from: relevantReflections, label: value)
+                if let unwrappedAverage = average {
+                    allAveraged.append(unwrappedAverage)
+                }
+            }
+            
+            let sortComparator = metric.makeComparator(direction: bestWorst)
+            allAveraged.sort(by: sortComparator)
+            
+            DispatchQueue.main.async {
+                completion(.success(allAveraged))
+            }
+        }
+    }
 }

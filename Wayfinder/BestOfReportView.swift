@@ -2,6 +2,11 @@
 
 import SwiftUI
 
+protocol MetricComparable {
+    var engagement: Int64 { get }
+    var energy: Int64 { get }
+}
+
 enum Metric: String, CaseIterable, Identifiable {
     case engagement
     case energy
@@ -9,7 +14,7 @@ enum Metric: String, CaseIterable, Identifiable {
     
     var id: String { self.rawValue }
     
-    private var areInIncreasingOrder: (Reflection, Reflection) -> Bool {
+    private var areInIncreasingOrder: (MetricComparable, MetricComparable) -> Bool {
         switch self {
         case .engagement:
             return {$0.engagement > $1.engagement}
@@ -20,7 +25,7 @@ enum Metric: String, CaseIterable, Identifiable {
         }
     }
     
-    func makeComparator(direction bestWorst: BestWorst) -> ((Reflection, Reflection) -> Bool) {
+    func makeComparator(direction bestWorst: BestWorst) -> ((MetricComparable, MetricComparable) -> Bool) {
         switch bestWorst {
         case .best:
             return areInIncreasingOrder

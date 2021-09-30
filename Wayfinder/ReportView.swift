@@ -6,10 +6,11 @@ struct ReportView: View {
     @ObservedObject var dataStore: DataStore
     var body: some View {
         TabView {
-            DailyReportView(dataStore: dataStore)
-            WeeklyReportView(dataStore: dataStore)
+            BestOfAllReportView(dataStore: dataStore)
             CategoryReportView(dataStore: dataStore)
             BestOfReportView(dataStore: dataStore)
+            WeeklyReportView(dataStore: dataStore)
+            DailyReportView(dataStore: dataStore)
         }
         .tabViewStyle(PageTabViewStyle())
     }

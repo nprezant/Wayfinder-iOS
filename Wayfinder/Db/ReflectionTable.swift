@@ -3,7 +3,7 @@
 import Foundation
 
 /// The table itself
-struct Reflection : Identifiable, Equatable {
+struct Reflection : Identifiable, Equatable, MetricComparable {
     static var createStatement: String {
         return """
         CREATE TABLE reflection(
@@ -76,27 +76,28 @@ extension Reflection {
 
 /// A way to combine and average multiple reflections into a single summary
 extension Reflection {
-    struct Averaged {
+    struct Averaged : MetricComparable {
         var ids: [Int64]
         var flowStateYes: Int
         var flowStateNo: Int
-        var engagement: Int
-        var energy: Int
+        var engagement: Int64
+        var energy: Int64
+        var label: String?
         
         static func exampleData() -> Averaged {
-            return Averaged(ids: [1], flowStateYes: 1, flowStateNo: 2, engagement: 25, energy: -10)
+            return Averaged(ids: [1], flowStateYes: 1, flowStateNo: 2, engagement: 25, energy: -10, label: nil)
         }
         
-        static func make(from reflections: [Reflection]) -> Averaged? {
+        static func make(from reflections: [Reflection], label: String? = nil) -> Averaged? {
             if reflections.isEmpty {
                 return nil
             }
             let ids = reflections.map{$0.id}
             let flowStateYes = reflections.filter{$0.isFlowState.boolValue}.count
             let flowStateNo = reflections.count - flowStateYes
-            let averageEngagement = reflections.map{Int($0.engagement)}.reduce(0, +) / reflections.count
-            let averageEnergy = reflections.map{Int($0.energy)}.reduce(0, +) / reflections.count
-            return Averaged(ids: ids, flowStateYes: flowStateYes, flowStateNo: flowStateNo, engagement: averageEngagement, energy: averageEnergy)
+            let averageEngagement = Int64(reflections.map{Int($0.engagement)}.reduce(0, +) / reflections.count)
+            let averageEnergy = Int64(reflections.map{Int($0.energy)}.reduce(0, +) / reflections.count)
+            return Averaged(ids: ids, flowStateYes: flowStateYes, flowStateNo: flowStateNo, engagement: averageEngagement, energy: averageEnergy, label: label)
         }
     }
 }

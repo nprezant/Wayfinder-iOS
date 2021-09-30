@@ -17,6 +17,15 @@ enum Category: String, CaseIterable, Identifiable {
         }
     }
     
+    var pluralized: String {
+        switch self {
+        case .activity:
+            return "activities"
+        case .tag:
+            return "tags"
+        }
+    }
+    
     func makeInclusionComparator(_ value: String) -> ((Reflection) -> Bool) {
         switch self {
         case .activity:

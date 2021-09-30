@@ -21,6 +21,7 @@
 		4F23567127042B0A00906E88 /* TagTableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23567027042B0A00906E88 /* TagTableTests.swift */; };
 		4F23567327042C1400906E88 /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23567227042C1400906E88 /* TestUtils.swift */; };
 		4F23567727050F5000906E88 /* BestOfReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23567627050F5000906E88 /* BestOfReportView.swift */; };
+		4F235679270553D700906E88 /* BestOfAllReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F235678270553D700906E88 /* BestOfAllReportView.swift */; };
 		4F38668126E1EB74006AD6AC /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F38668026E1EB74006AD6AC /* ReportView.swift */; };
 		4F38668326E1EEE9006AD6AC /* EditViewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */; };
 		4FCE948126E582F100BD636C /* NamePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE948026E582F100BD636C /* NamePicker.swift */; };
@@ -71,6 +72,7 @@
 		4F23567027042B0A00906E88 /* TagTableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagTableTests.swift; sourceTree = "<group>"; };
 		4F23567227042C1400906E88 /* TestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
 		4F23567627050F5000906E88 /* BestOfReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestOfReportView.swift; sourceTree = "<group>"; };
+		4F235678270553D700906E88 /* BestOfAllReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestOfAllReportView.swift; sourceTree = "<group>"; };
 		4F38668026E1EB74006AD6AC /* ReportView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewSheet.swift; sourceTree = "<group>"; };
 		4FCE948026E582F100BD636C /* NamePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamePicker.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 				4FCE948826E5ABE100BD636C /* WeeklyReportView.swift */,
 				4FCE948C26E5CCED00BD636C /* CategoryReportView.swift */,
 				4F23567627050F5000906E88 /* BestOfReportView.swift */,
+				4F235678270553D700906E88 /* BestOfAllReportView.swift */,
 				4FCE948A26E5BA4A00BD636C /* ReportListView.swift */,
 				4F03BE1F26DD4EB4001E61E5 /* Wayfinder-Bridging-Header.h */,
 				5F74873C2609A5310046B148 /* Assets.xcassets */,
@@ -345,6 +348,7 @@
 				4F03BE3026DEDAF3001E61E5 /* CardView.swift in Sources */,
 				4F03BE2E26DED7AC001E61E5 /* DetailView.swift in Sources */,
 				4FCE948D26E5CCED00BD636C /* CategoryReportView.swift in Sources */,
+				4F235679270553D700906E88 /* BestOfAllReportView.swift in Sources */,
 				4F23566927018E5B00906E88 /* Utilities.swift in Sources */,
 				4FCE948926E5ABE100BD636C /* WeeklyReportView.swift in Sources */,
 				4FCE948326E5849600BD636C /* NamePickerField.swift in Sources */,
