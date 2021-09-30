@@ -6,7 +6,7 @@ struct WeeklyReportView: View {
     @ObservedObject var dataStore: DataStore
     @State var showHeader: Bool = true
     
-    @State private var selectedStartDay: Date = Date()
+    @State private var selectedStartDay: Date = Date().minusOneWeek
     @State private var selectedEndDay: Date = Date()
     @State private var averagedResult: Reflection.Averaged? = nil
     

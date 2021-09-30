@@ -6,6 +6,9 @@ extension Date {
     var plusOneWeek: Date {
         return Calendar.current.date(byAdding: .day, value: 7, to: self)!
     }
+    var minusOneWeek: Date {
+        return Calendar.current.date(byAdding: .day, value: -7, to: self)!
+    }
     
     var startOfDay: Date {
         return Calendar.current.startOfDay(for: self)

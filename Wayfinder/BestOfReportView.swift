@@ -118,14 +118,14 @@ struct BestOfReportView: View {
                     Spacer()
                 }
                 .font(.title)
-                .padding([.top])
+                .padding([.top, .bottom])
                 HStack {
                     Button(action: {
                         isPresented = true
                     }) {
                         NamePickerField(name: selectedCategoryValue, prompt: selectedCategory.choicePrompt, font: .title2)
                             .onChange(of: selectedCategoryValue, perform: {_ in updateBestOf()})
-                            .padding()
+                            .padding([.leading, .trailing])
                             .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color.secondary.opacity(0.15)))
                     }
                     Spacer()
