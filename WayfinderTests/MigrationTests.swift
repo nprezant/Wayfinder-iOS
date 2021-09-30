@@ -109,7 +109,7 @@ class MigrationTests: XCTestCase {
         
         try db.migrate(to: 1)
         
-        let loadedReflections = db.reflections()
+        let loadedReflections = db.fetchReflections()
         XCTAssertEqual(loadedReflections, testData)
     }
 

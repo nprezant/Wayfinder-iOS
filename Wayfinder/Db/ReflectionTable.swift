@@ -105,6 +105,7 @@ extension Reflection {
 /// Database operations that involve the reflection table
 extension SqliteDatabase {
     
+    /// Insert a new reflection
     func insert(reflection: Reflection) throws -> Int64 {
         let sql = """
             INSERT INTO reflection
@@ -138,7 +139,7 @@ extension SqliteDatabase {
         return newReflectionId
     }
     
-    // Update an existing reflection with a matching ID
+    /// Update an existing reflection with a matching ID
     func update(reflection: Reflection) throws {
         let sql = """
             UPDATE reflection
@@ -171,7 +172,7 @@ extension SqliteDatabase {
         try syncTags(for: reflection.id, tags: reflection.tags) // TODO should the whole block be wrapped in a transaction?
     }
     
-    // Delete reflections with matching IDs
+    /// Delete reflections with matching IDs
     func delete(reflectionsIds: [Int64]) throws {
         if reflectionsIds.isEmpty {
             return
@@ -199,7 +200,8 @@ extension SqliteDatabase {
         }
     }
     
-    func reflections() -> [Reflection] {
+    /// Fetch all reflections
+    func fetchReflections() -> [Reflection] {
         let querySql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection ORDER BY date DESC"
         
         let stmt = try? prepare(sql: querySql)

@@ -47,7 +47,7 @@ class DataStore: ObservableObject {
                 fatalError("Could not create example data. \(dataStore.db.errorMessage)")
             }
         }
-        dataStore.reflections = dataStore.db.reflections()
+        dataStore.reflections = dataStore.db.fetchReflections()
         return dataStore
     }
     
@@ -57,7 +57,7 @@ class DataStore: ObservableObject {
             
             guard let self = self else { return }
             
-            let reflections = self.db.reflections()
+            let reflections = self.db.fetchReflections()
             let uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <)
             let uniqueTagNames = self.db.fetchAllUniqueTags().sorted(by: <)
             
@@ -157,7 +157,7 @@ class DataStore: ObservableObject {
     func ExportCsv(completion: @escaping (Result<URL, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
-            let reflections = self.db.reflections()
+            let reflections = self.db.fetchReflections()
             
             var s: String = "name\tisFlowState\tengagement\tenergy\tdate\tnote\n"
             
