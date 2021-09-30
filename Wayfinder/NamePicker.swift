@@ -57,7 +57,7 @@ struct NamePicker: View {
                         Text(nameOption)
                     }
                 }
-                if canCreate && !nameOptions.contains(name) {
+                if canCreate && !name.isEmpty && !nameOptions.contains(name) {
                     Button(action: {
                         self.presentationMode.wrappedValue.dismiss()
                         completion()
@@ -68,13 +68,14 @@ struct NamePicker: View {
                         }
                         .foregroundColor(.green)
                     }
-                }
-                if filteredNames.isEmpty {
-                    HStack {
-                        Image(systemName: "xmark.circle")
-                        Text("No matches found")
+                } else {
+                    if filteredNames.isEmpty {
+                        HStack {
+                            Image(systemName: "xmark.circle")
+                            Text("No matches found")
+                        }
+                        .foregroundColor(.red)
                     }
-                    .foregroundColor(.red)
                 }
             }
             .listStyle(PlainListStyle())
