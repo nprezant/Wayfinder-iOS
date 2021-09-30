@@ -7,15 +7,27 @@ struct DetailView: View {
     let existingReflections: [String]
     let existingTags: [String]
     let saveAction: ((Reflection) -> Void)
-    var showHeader: Bool = false // Shows header. Useful when presenting outside a navigation view
+    var parentIsPresenting: Binding<Bool>? = nil // If supplied (e.g. when using in a sheet) additional header text and buttons are displayed that are otherwise handled by the navigation view
     
     @State private var data: Reflection.Data = Reflection.Data()
     @State private var isPresented = false
     
+    func editAction() {
+        isPresented = true
+        data = reflection.data
+    }
+    
     var body: some View {
+        if parentIsPresenting != nil {
+            HStack {
+                Button("Cancel") { parentIsPresenting?.wrappedValue = false }
+                Spacer()
+                Button("Edit") { editAction() }
+            }
+            .padding()
+        }
         List {
-            if showHeader {
-                // TODO also add cancel/done buttons up here
+            if parentIsPresenting != nil {
                 Text(reflection.name.isEmpty ? "Activity Name" : reflection.name)
                     .font(.title.bold())
             }
@@ -66,8 +78,7 @@ struct DetailView: View {
         }
         .listStyle(InsetGroupedListStyle())
         .navigationBarItems(trailing: Button("Edit") {
-            isPresented = true
-            data = reflection.data
+            editAction()
         })
         .navigationTitle(reflection.name.isEmpty ? "Activity Name" : reflection.name)
         .fullScreenCover(isPresented: $isPresented) {

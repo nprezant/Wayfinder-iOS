@@ -182,7 +182,7 @@ struct BestOfReportView: View {
                     existingReflections: dataStore.uniqueReflectionNames,
                     existingTags: dataStore.uniqueTagNames,
                     saveAction: {_ in updateEditedReflection()},
-                    showHeader: true
+                    parentIsPresenting: $isDetailPresented
                 )
             }
             else {
