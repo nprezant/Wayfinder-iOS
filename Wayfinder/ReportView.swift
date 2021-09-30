@@ -7,8 +7,8 @@ struct ReportView: View {
     var body: some View {
         TabView {
             BestOfAllReportView(dataStore: dataStore)
-            CategoryReportView(dataStore: dataStore)
             BestOfReportView(dataStore: dataStore)
+            CategoryReportView(dataStore: dataStore)
             WeeklyReportView(dataStore: dataStore)
             DailyReportView(dataStore: dataStore)
         }

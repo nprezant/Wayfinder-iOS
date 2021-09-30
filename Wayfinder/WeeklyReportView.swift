@@ -23,42 +23,45 @@ struct WeeklyReportView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Text("Weekly Average")
-                    .font(.title)
-                Spacer()
+            VStack {
+                HStack {
+                    Text("Weekly Average")
+                        .font(.title)
+                    Spacer()
+                }
+                .padding([.top])
+                HStack {
+                    DatePicker(
+                        "Date",
+                        selection: $selectedStartDay,
+                        displayedComponents: [.date]
+                    )
+                    .id(selectedStartDay)
+                    .labelsHidden()
+                    .onChange(of: selectedStartDay, perform: { newStartDay in
+                        selectedEndDay = newStartDay.plusOneWeek
+                        updateAverages(start: newStartDay, end: selectedEndDay)
+                    })
+                    Spacer()
+                    Text("to")
+                    Spacer()
+                    DatePicker(
+                        "Date",
+                        selection: $selectedEndDay,
+                        displayedComponents: [.date]
+                    )
+                    .id(selectedEndDay)
+                    .labelsHidden()
+                    .onChange(of: selectedEndDay, perform: { newEndDay in
+                        updateAverages(start: selectedStartDay, end: newEndDay)
+                    })
+                }
             }
-            .padding([.top])
-            HStack {
-                DatePicker(
-                    "Date",
-                    selection: $selectedStartDay,
-                    displayedComponents: [.date]
-                )
-                .id(selectedStartDay)
-                .labelsHidden()
-                .onChange(of: selectedStartDay, perform: { newStartDay in
-                    selectedEndDay = newStartDay.plusOneWeek
-                    updateAverages(start: newStartDay, end: selectedEndDay)
-                })
-                Spacer()
-                Text("to")
-                Spacer()
-                DatePicker(
-                    "Date",
-                    selection: $selectedEndDay,
-                    displayedComponents: [.date]
-                )
-                .id(selectedEndDay)
-                .labelsHidden()
-                .onChange(of: selectedEndDay, perform: { newEndDay in
-                    updateAverages(start: selectedStartDay, end: newEndDay)
-                })
-            }
+            .padding()
             ReportListView(averagedResult: averagedResult)
+                .edgesIgnoringSafeArea([.leading, .trailing])
             Spacer()
         }
-        .padding()
         .onAppear(perform: {
             selectedEndDay = selectedStartDay.plusOneWeek
             updateAverages(start: selectedStartDay, end: selectedEndDay)

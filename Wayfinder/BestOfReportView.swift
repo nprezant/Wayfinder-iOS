@@ -97,45 +97,48 @@ struct BestOfReportView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Picker("\(selectedBestWorst.rawValue.capitalized)", selection: $selectedBestWorst) {
-                    ForEach(BestWorst.allCases) { bestWorst in
-                        Text(bestWorst.rawValue.capitalized).tag(bestWorst)
+            VStack {
+                HStack {
+                    Picker("\(selectedBestWorst.rawValue.capitalized)", selection: $selectedBestWorst) {
+                        ForEach(BestWorst.allCases) { bestWorst in
+                            Text(bestWorst.rawValue.capitalized).tag(bestWorst)
+                        }
+                    }
+                    .onChange(of: selectedBestWorst, perform: {_ in updateBestOf()})
+                    .pickerStyle(MenuPickerStyle())
+                    Text("of")
+                    Picker("\(selectedCategory.rawValue.capitalized)", selection: $selectedCategory) {
+                        ForEach(Category.allCases) { category in
+                            Text(category.rawValue.capitalized).tag(category)
+                        }
+                    }
+                    .onChange(of: selectedCategory, perform: {_ in updateBestOf()})
+                    .pickerStyle(MenuPickerStyle())
+                    Spacer()
+                }
+                .font(.title)
+                .padding([.top])
+                HStack {
+                    Button(action: {
+                        isPresented = true
+                    }) {
+                        NamePickerField(name: selectedCategoryValue, prompt: selectedCategory.choicePrompt, font: .title2)
+                            .onChange(of: selectedCategoryValue, perform: {_ in updateBestOf()})
+                            .padding()
+                            .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color.secondary.opacity(0.15)))
+                    }
+                    Spacer()
+                }
+                Picker("Metric", selection: $selectedMetric) {
+                    ForEach(Metric.allCases) { metric in
+                        Text(metric.rawValue.capitalized).tag(metric)
                     }
                 }
-                .onChange(of: selectedBestWorst, perform: {_ in updateBestOf()})
-                .pickerStyle(MenuPickerStyle())
-                Text("of")
-                Picker("\(selectedCategory.rawValue.capitalized)", selection: $selectedCategory) {
-                    ForEach(Category.allCases) { category in
-                        Text(category.rawValue.capitalized).tag(category)
-                    }
-                }
-                .onChange(of: selectedCategory, perform: {_ in updateBestOf()})
-                .pickerStyle(MenuPickerStyle())
-                Spacer()
+                .onChange(of: selectedMetric, perform: {_ in updateBestOf()})
+                .pickerStyle(SegmentedPickerStyle())
+                // TODO add date range toggle. Off = any. On = can choose. Or another picker?
             }
-            .font(.title)
-            .padding([.top])
-            HStack {
-                Button(action: {
-                    isPresented = true
-                }) {
-                    NamePickerField(name: selectedCategoryValue, prompt: selectedCategory.choicePrompt, font: .title2)
-                        .onChange(of: selectedCategoryValue, perform: {_ in updateBestOf()})
-                        .padding()
-                        .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color.secondary.opacity(0.15)))
-                }
-                Spacer()
-            }
-            Picker("Metric", selection: $selectedMetric) {
-                ForEach(Metric.allCases) { metric in
-                    Text(metric.rawValue.capitalized).tag(metric)
-                }
-            }
-            .onChange(of: selectedMetric, perform: {_ in updateBestOf()})
-            .pickerStyle(SegmentedPickerStyle())
-            // TODO add date range toggle. Off = any. On = can choose. Or another picker?
+            .padding()
             List {
                 if !result.isEmpty {
                     ForEach(result.indices, id: \.self) { index in
@@ -163,6 +166,7 @@ struct BestOfReportView: View {
                     Text("No reflections found")
                 }
             }
+            .edgesIgnoringSafeArea([.leading, .trailing])
             // Very silly.
             // Seems to be bug with nullable state variables.
             // Value won't stay set without this
@@ -171,7 +175,6 @@ struct BestOfReportView: View {
                 .hidden()
             Spacer()
         }
-        .padding()
         .onAppear(perform: updateBestOf)
         .sheet(isPresented: $isPresented, onDismiss: updateBestOf) {
             switch selectedCategory {

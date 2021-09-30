@@ -22,29 +22,32 @@ struct DailyReportView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Text("Daily Average")
-                    .font(.title)
-                Spacer()
+            VStack {
+                HStack {
+                    Text("Daily Average")
+                        .font(.title)
+                    Spacer()
+                }
+                .padding([.top])
+                HStack {
+                    DatePicker(
+                        "Date",
+                        selection: $selectedDay,
+                        displayedComponents: [.date]
+                    )
+                    .id(selectedDay)
+                    .labelsHidden()
+                    .onChange(of: selectedDay, perform: { newDate in
+                        updateAverages(date: newDate)
+                    })
+                    Spacer()
+                }
             }
-            .padding([.top])
-            HStack {
-                DatePicker(
-                    "Date",
-                    selection: $selectedDay,
-                    displayedComponents: [.date]
-                )
-                .id(selectedDay)
-                .labelsHidden()
-                .onChange(of: selectedDay, perform: { newDate in
-                    updateAverages(date: newDate)
-                })
-                Spacer()
-            }
+            .padding()
             ReportListView(averagedResult: averagedResult)
+                .edgesIgnoringSafeArea([.leading, .trailing])
             Spacer()
         }
-        .padding()
         .onAppear(perform: {
             updateAverages(date: selectedDay)
         })

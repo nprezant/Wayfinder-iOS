@@ -62,35 +62,38 @@ struct CategoryReportView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Picker("\(selectedCategory.rawValue.capitalized)", selection: $selectedCategory) {
-                    ForEach(Category.allCases) { category in
-                        Text(category.rawValue.capitalized).tag(category)
+            VStack {
+                HStack {
+                    Picker("\(selectedCategory.rawValue.capitalized)", selection: $selectedCategory) {
+                        ForEach(Category.allCases) { category in
+                            Text(category.rawValue.capitalized).tag(category)
+                        }
                     }
-                }
-                .onChange(of: selectedCategory, perform: {_ in updateAverages()})
-                .pickerStyle(MenuPickerStyle())
-                .font(.title)
-                Text("Average")
+                    .onChange(of: selectedCategory, perform: {_ in updateAverages()})
+                    .pickerStyle(MenuPickerStyle())
                     .font(.title)
-                Spacer()
-            }
-            .padding([.top])
-            HStack {
-                Button(action: {
-                    isPresented = true
-                }) {
-                    NamePickerField(name: selectedCategoryValue, prompt: selectedCategory.choicePrompt, font: .title2)
-                        .onChange(of: selectedCategoryValue, perform: {_ in updateAverages()})
-                        .padding()
-                        .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color.secondary.opacity(0.15)))
+                    Text("Average")
+                        .font(.title)
+                    Spacer()
                 }
-                Spacer()
+                .padding([.top])
+                HStack {
+                    Button(action: {
+                        isPresented = true
+                    }) {
+                        NamePickerField(name: selectedCategoryValue, prompt: selectedCategory.choicePrompt, font: .title2)
+                            .onChange(of: selectedCategoryValue, perform: {_ in updateAverages()})
+                            .padding()
+                            .background(RoundedRectangle(cornerRadius: 8).foregroundColor(Color.secondary.opacity(0.15)))
+                    }
+                    Spacer()
+                }
             }
+            .padding()
             ReportListView(averagedResult: averagedResult)
+                .edgesIgnoringSafeArea([.leading, .trailing])
             Spacer()
         }
-        .padding()
         .onAppear(perform: updateAverages)
         .sheet(isPresented: $isPresented, onDismiss: updateAverages) {
             switch selectedCategory {
