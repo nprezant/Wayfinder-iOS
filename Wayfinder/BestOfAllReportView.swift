@@ -10,19 +10,18 @@ struct BestOfAllReportView: View {
     @State private var selectedMetric: Metric = .engagement
     @State private var result: [Reflection.Averaged] = []
     @State private var errorMessage: ErrorMessage?
+    @State private var isBestOfPresented: Bool = false
+    @State private var selectedAverage: Reflection.Averaged?
     
     private func updateBestOf() {
-        func processResult(results: Result<[Reflection.Averaged], Error>) {
+        dataStore.makeBestOfAllReport(for: selectedCategory, by: selectedMetric, direction: selectedBestWorst) { results in
             switch results {
             case .failure(let error):
                 print(error.localizedDescription)
-                
             case .success(let result):
                 self.result = result
             }
         }
-        
-        dataStore.makeBestOfAllReport(for: selectedCategory, by: selectedMetric, direction: selectedBestWorst, completion: processResult)
     }
     
     var body: some View {
@@ -55,6 +54,9 @@ struct BestOfAllReportView: View {
                 }
                 .onChange(of: selectedMetric, perform: {_ in updateBestOf()})
                 .pickerStyle(SegmentedPickerStyle())
+                // Still silly.
+                // https://developer.apple.com/forums/thread/652080
+                Text("\(selectedAverage?.label ?? "none")").hidden()
                 // TODO add date range toggle. Off = any. On = can choose. Or another picker?
             }
             .padding()
@@ -62,10 +64,15 @@ struct BestOfAllReportView: View {
                 if !result.isEmpty {
                     ForEach(result.indices, id: \.self) { index in
                         let r = result[index]
-                        HStack {
-                            Text("\(index + 1)")
-                                .font(.caption)
-                            CardViewAveraged(averaged: r)
+                        Button {
+                            selectedAverage = r
+                            isBestOfPresented = true
+                        } label: {
+                            HStack {
+                                Text("\(index + 1)")
+                                    .font(.caption)
+                                CardViewAveraged(averaged: r)
+                            }
                         }
                     }
                 } else {
@@ -78,6 +85,11 @@ struct BestOfAllReportView: View {
         .onAppear(perform: updateBestOf)
         .alert(item: $errorMessage) { msg in
             msg.toAlert()
+        }
+        .sheet(isPresented: $isBestOfPresented) {
+            if selectedAverage != nil {
+                BestOfReportView(dataStore: dataStore, selectedBestWorst: selectedBestWorst, selectedCategory: selectedCategory, selectedCategoryValue: selectedAverage!.label ?? "[No group label]")
+            }
         }
     }
 }

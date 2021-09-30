@@ -60,10 +60,11 @@ var MonthShortNames: [Int: String] = [
 struct BestOfReportView: View {
     @ObservedObject var dataStore: DataStore
     
-    @State private var selectedBestWorst: BestWorst = .best
-    @State private var selectedCategory: Category = .activity
-    @State private var selectedCategoryValue: String = ""
-    @State private var selectedMetric: Metric = .engagement
+    @State public var selectedBestWorst: BestWorst = .best
+    @State public var selectedCategory: Category = .activity
+    @State public var selectedCategoryValue: String = ""
+    @State public var selectedMetric: Metric = .engagement
+
     @State private var result: [Reflection] = []
     @State private var errorMessage: ErrorMessage?
     @State private var isPresented: Bool = false
@@ -171,8 +172,7 @@ struct BestOfReportView: View {
             // Seems to be bug with nullable state variables.
             // Value won't stay set without this
             // https://developer.apple.com/forums/thread/652080
-            Text("\(dsIndexToEdit ?? 1)")
-                .hidden()
+            Text("\(dsIndexToEdit ?? 1)").hidden()
             Spacer()
         }
         .onAppear(perform: updateBestOf)
