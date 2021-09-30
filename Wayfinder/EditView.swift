@@ -50,7 +50,9 @@ struct EditView: View {
     
     @State var newTag: String = ""
     @State private var oldName: String = ""
-    @State private var isRenamePresented: Bool = false
+    @State private var tagIndexToRename: Int?
+    @State private var isActivityRenamePresented: Bool = false
+    @State private var isTagRenamePresented: Bool = false
     
     var body: some View {
         List {
@@ -65,7 +67,7 @@ struct EditView: View {
                 .contextMenu {
                     Button {
                         oldName = data.name
-                        isRenamePresented = true
+                        isActivityRenamePresented = true
                     } label: {
                         Label("Rename All", systemImage: "pencil")
                     }
@@ -94,8 +96,16 @@ struct EditView: View {
                 .id(data.date)
             }
             Section() {
-                ForEach(data.tags, id: \.self) { tagName in
-                    Text(tagName)
+                ForEach(data.tags.indices, id: \.self) { index in
+                    Text(data.tags[index])
+                        .contextMenu {
+                            Button {
+                                tagIndexToRename = index
+                                isTagRenamePresented = true
+                            } label: {
+                                Label("Rename All", systemImage: "pencil")
+                            }
+                        }
                 }
                 .onDelete { indices in
                     data.tags.remove(atOffsets: indices)
@@ -121,13 +131,24 @@ struct EditView: View {
             }
             // Still silly.
             // https://developer.apple.com/forums/thread/652080
-            Text("\(oldName)")
+            Text("\(oldName), \(tagIndexToRename ?? 1)")
                 .hidden()
         }
         .listStyle(InsetGroupedListStyle())
-        .sheet(isPresented: $isRenamePresented) {
-            NamePicker($data.name, nameOptions: existingReflections, prompt: "Rename all of '\(oldName)'", canCreate: true, parentIsPresenting: $isRenamePresented) {
+        .sheet(isPresented: $isActivityRenamePresented) {
+            NamePicker($data.name, nameOptions: existingReflections, prompt: "Rename all of '\(oldName)'", canCreate: true, parentIsPresenting: $isActivityRenamePresented) {
                 dataStore.enqueueBatchRename(BatchRenameData(category: .activity, from: oldName, to: data.name))
+                oldName = ""
+            }
+        }
+        .sheet(isPresented: $isTagRenamePresented) {
+            if tagIndexToRename != nil {
+                let oldTag = data.tags[tagIndexToRename!]
+                NamePicker($newTag, nameOptions: existingTags, prompt: "Rename all of '\(oldTag)'", canCreate: true, parentIsPresenting: $isTagRenamePresented) {
+                    dataStore.enqueueBatchRename(BatchRenameData(category: .tag, from: oldTag, to: newTag))
+                    data.tags[tagIndexToRename!] = newTag
+                    newTag = ""
+                }
             }
         }
     }
