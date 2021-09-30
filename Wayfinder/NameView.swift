@@ -9,20 +9,38 @@ struct NameView: View {
     let prompt: String
     let canCreate: Bool
     let completion: ()->Void
+    var parentIsPresenting: Binding<Bool>? = nil // If supplied (e.g. when using in a sheet) additional header text and buttons are displayed that are otherwise handled by the navigation view
     
     @Environment(\.presentationMode) var presentationMode
     
-    init(_ name: Binding<String>, nameOptions: [String], prompt: String, canCreate: Bool = true, completion: @escaping ()->Void = {}) {
+    init(_ name: Binding<String>, nameOptions: [String], prompt: String, canCreate: Bool = true, parentIsPresenting: Binding<Bool>? = nil, completion: @escaping ()->Void = {}) {
         self._name = name
         self._originalName = State(initialValue: name.wrappedValue)
         self.nameOptions = nameOptions
         self.prompt = prompt
         self.canCreate = canCreate
+        self.parentIsPresenting = parentIsPresenting
         self.completion = completion
     }
     
     var body: some View {
         VStack {
+            if parentIsPresenting != nil {
+                HStack {
+                    Button("Dismiss") {
+                        name = originalName
+                        parentIsPresenting?.wrappedValue = false
+                    }
+                    Spacer()
+                }
+                .padding(/*@START_MENU_TOKEN@*/[.top, .leading, .trailing]/*@END_MENU_TOKEN@*/)
+                HStack {
+                    Text(prompt)
+                        .font(.title.bold())
+                    Spacer()
+                }
+                .padding()
+            }
             SearchBar(text: $name)
             List {
                 let filteredNames =
@@ -63,7 +81,7 @@ struct NameView: View {
             .listStyle(PlainListStyle())
         }
         .navigationBarBackButtonHidden(true)
-        .navigationTitle("\(prompt)")
+        .navigationTitle(prompt)
         .navigationBarItems(
             leading: Button(action: {
                 name = originalName
@@ -87,8 +105,8 @@ struct NameView_Previews: PreviewProvider {
             NavigationView {
                 NameView(.constant("dashboard"), nameOptions: names, prompt: "Choose Activity")
             }
-            NavigationView {
-                NameView(.constant("dashboard"), nameOptions: names, prompt: "Choose Activity")
+            VStack {
+                NameView(.constant("dashboard"), nameOptions: names, prompt: "Choose Activity", parentIsPresenting: .constant(true))
             }
         }
     }

@@ -24,12 +24,16 @@ struct DetailView: View {
                 Spacer()
                 Button("Edit") { editAction() }
             }
+            .padding([.top, .leading, .trailing])
+            HStack {
+                Text(reflection.name.isEmpty ? "Activity Name" : reflection.name)
+                    .font(.title.bold())
+                Spacer()
+            }
             .padding()
         }
         List {
             if parentIsPresenting != nil {
-                Text(reflection.name.isEmpty ? "Activity Name" : reflection.name)
-                    .font(.title.bold())
             }
             Section() {
                 HStack {
