@@ -60,7 +60,10 @@ struct BestOfReportView: View {
     @State private var selectedCategoryValue: String = ""
     @State private var selectedMetric: Metric = .engagement
     @State private var result: [Reflection] = []
+    @State private var errorMessage: ErrorMessage?
     @State private var isPresented: Bool = false
+    @State private var isDetailPresented: Bool = false
+    @State private var dsIndexToEdit: Int?
     
     private func updateBestOf() {
         func processResult(results: Result<[Reflection], Error>) {
@@ -75,6 +78,16 @@ struct BestOfReportView: View {
         
         let inclusionComparator = selectedCategory.makeInclusionComparator(selectedCategoryValue)
         dataStore.makeBestOfReport(inclusionComparator, by: selectedMetric, direction: selectedBestWorst, completion: processResult)
+    }
+    
+    func updateEditedReflection() -> Void {
+        guard let index = dsIndexToEdit else { return }
+        let reflection = dataStore.reflections[index]
+        dataStore.update(reflection: reflection) { error in
+            if let error = error {
+                errorMessage = ErrorMessage(title: "Update Error", message: error.localizedDescription)
+            }
+        }
     }
     
     var body: some View {
@@ -119,25 +132,37 @@ struct BestOfReportView: View {
             // TODO add date range toggle. Off = any. On = can choose. Or another picker?
             List {
                 if !result.isEmpty {
-                    // TODO make this a nav link
                     ForEach(result.indices, id: \.self) { index in
-                        HStack {
-                            Text("\(index + 1)")
+                        let r = result[index]
+                        let dataStoreIndex = dataStore.reflections.firstIndex(where: {$0.id == r.id})!
+                        Button(action: {
+                            dsIndexToEdit = dataStoreIndex
+                            isDetailPresented = true
+                        }) {
+                            HStack {
+                                Text("\(index + 1)")
+                                    .font(.caption)
+                                CardView(reflection: r)
+                                let date = r.data.date
+                                let components = Calendar.current.dateComponents([.month, .day, .year], from: date)
+                                VStack {
+                                    Text("\(MonthShortNames[components.month!] ?? "") \(components.day!)")
+                                    Text(String(components.year!))
+                                }
                                 .font(.caption)
-                            CardView(reflection: result[index])
-                            let date = result[index].data.date
-                            let components = Calendar.current.dateComponents([.month, .day, .year], from: date)
-                            VStack {
-                                Text("\(MonthShortNames[components.month!] ?? "") \(components.day!)")
-                                Text(String(components.year!))
                             }
-                            .font(.caption)
                         }
                     }
                 } else {
                     Text("No reflections found")
                 }
             }
+            // Very silly.
+            // Seems to be bug with nullable state variables.
+            // Value won't stay set without this
+            // https://developer.apple.com/forums/thread/652080
+            Text("\(dsIndexToEdit ?? 1)")
+                .hidden()
             Spacer()
         }
         .padding()
@@ -149,6 +174,23 @@ struct BestOfReportView: View {
             case .tag:
                 NameView($selectedCategoryValue, nameOptions: dataStore.uniqueTagNames, prompt: "Choose Tag", canCreate: false)
             }
+        }
+        .sheet(isPresented: $isDetailPresented, onDismiss: updateEditedReflection) {
+            if let dsIndex = dsIndexToEdit {
+                DetailView(
+                    reflection: $dataStore.reflections[dsIndex],
+                    existingReflections: dataStore.uniqueReflectionNames,
+                    existingTags: dataStore.uniqueTagNames,
+                    saveAction: {_ in updateEditedReflection()},
+                    showHeader: true
+                )
+            }
+            else {
+                EmptyView()
+            }
+        }
+        .alert(item: $errorMessage) { msg in
+            msg.toAlert()
         }
     }
 }

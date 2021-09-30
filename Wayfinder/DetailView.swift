@@ -7,12 +7,18 @@ struct DetailView: View {
     let existingReflections: [String]
     let existingTags: [String]
     let saveAction: ((Reflection) -> Void)
+    var showHeader: Bool = false // Shows header. Useful when presenting outside a navigation view
     
     @State private var data: Reflection.Data = Reflection.Data()
     @State private var isPresented = false
     
     var body: some View {
         List {
+            if showHeader {
+                // TODO also add cancel/done buttons up here
+                Text(reflection.name.isEmpty ? "Activity Name" : reflection.name)
+                    .font(.title.bold())
+            }
             Section() {
                 HStack {
                     Label("Flow State?", systemImage: "wind")
