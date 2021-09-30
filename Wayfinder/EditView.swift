@@ -64,6 +64,7 @@ struct EditView: View {
                     NamePickerField(name: data.name, prompt: "Choose Activity", font: .title2)
                         .contentShape(Rectangle())
                 }
+                // TODO this causes the "disabling recursion trigger logging" message
                 .contextMenu {
                     Button {
                         oldName = data.name
@@ -98,6 +99,7 @@ struct EditView: View {
             Section() {
                 ForEach(data.tags.indices, id: \.self) { index in
                     Text(data.tags[index])
+                        // TODO this causes the "disabling recursion trigger logging" message
                         .contextMenu {
                             Button {
                                 tagIndexToRename = index
