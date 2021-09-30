@@ -15,6 +15,7 @@ enum Report: Int, CaseIterable, Identifiable {
     case categorical
     case weekly
     case daily
+    case average
     
     var id: Int { self.rawValue }
     
@@ -31,6 +32,8 @@ enum Report: Int, CaseIterable, Identifiable {
                 return "Weekly Average"
             case .daily:
                 return "Daily Average"
+            case .average:
+                return "Average"
             }
         }
     }
@@ -47,6 +50,8 @@ enum Report: Int, CaseIterable, Identifiable {
             return AnyView(WeeklyReportView(dataStore: dataStore))
         case .daily:
             return AnyView(DailyReportView(dataStore: dataStore))
+        case .average:
+            return AnyView(AveragedReportView(dataStore: dataStore))
         }
     }
 }

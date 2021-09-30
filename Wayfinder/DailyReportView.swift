@@ -4,9 +4,10 @@ import SwiftUI
 
 struct DailyReportView: View {
     @ObservedObject var dataStore: DataStore
+    @State var showHeader: Bool = true
     
-    @State var selectedDay: Date = Date()
-    @State var averagedResult: Reflection.Averaged? = nil
+    @State private var selectedDay: Date = Date()
+    @State private var averagedResult: Reflection.Averaged? = nil
     
     private func updateAverages(date: Date) {
         dataStore.makeAverageReport(for: date) { results in
@@ -23,12 +24,14 @@ struct DailyReportView: View {
     var body: some View {
         VStack {
             VStack {
-                HStack {
-                    Text("Daily Average")
-                        .font(.title)
-                    Spacer()
+                if showHeader {
+                    HStack {
+                        Text("Daily Average")
+                            .font(.title)
+                        Spacer()
+                    }
+                    .padding([.top])
                 }
-                .padding([.top])
                 HStack {
                     DatePicker(
                         "Date",

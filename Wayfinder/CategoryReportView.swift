@@ -38,8 +38,9 @@ enum Category: String, CaseIterable, Identifiable {
 
 struct CategoryReportView: View {
     @ObservedObject var dataStore: DataStore
-    
-    @State private var selectedCategory: Category = .activity
+    @State var showHeader: Bool = true
+    @State var selectedCategory: Category = .activity
+
     @State private var selectedCategoryValue: String = ""
     @State private var averagedResult: Reflection.Averaged? = nil
     @State private var isPresented: Bool = false
@@ -63,20 +64,22 @@ struct CategoryReportView: View {
     var body: some View {
         VStack {
             VStack {
-                HStack {
-                    Picker("\(selectedCategory.rawValue.capitalized)", selection: $selectedCategory) {
-                        ForEach(Category.allCases) { category in
-                            Text(category.rawValue.capitalized).tag(category)
+                if showHeader {
+                    HStack {
+                        Picker("\(selectedCategory.rawValue.capitalized)", selection: $selectedCategory) {
+                            ForEach(Category.allCases) { category in
+                                Text(category.rawValue.capitalized).tag(category)
+                            }
                         }
-                    }
-                    .onChange(of: selectedCategory, perform: {_ in updateAverages()})
-                    .pickerStyle(MenuPickerStyle())
-                    .font(.title)
-                    Text("Average")
+                        .onChange(of: selectedCategory, perform: {_ in updateAverages()})
+                        .pickerStyle(MenuPickerStyle())
                         .font(.title)
-                    Spacer()
+                        Text("Average")
+                            .font(.title)
+                        Spacer()
+                    }
+                    .padding([.top])
                 }
-                .padding([.top])
                 HStack {
                     Button(action: {
                         isPresented = true
@@ -98,9 +101,9 @@ struct CategoryReportView: View {
         .sheet(isPresented: $isPresented, onDismiss: updateAverages) {
             switch selectedCategory {
             case .activity:
-                NamePicker($selectedCategoryValue, nameOptions: dataStore.uniqueReflectionNames, prompt: "Choose Activity", canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: dataStore.uniqueReflectionNames, prompt: selectedCategory.choicePrompt, canCreate: false, parentIsPresenting: $isPresented)
             case .tag:
-                NamePicker($selectedCategoryValue, nameOptions: dataStore.uniqueTagNames, prompt: "Choose Tag", canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: dataStore.uniqueTagNames, prompt: selectedCategory.choicePrompt, canCreate: false, parentIsPresenting: $isPresented)
             }
         }
     }

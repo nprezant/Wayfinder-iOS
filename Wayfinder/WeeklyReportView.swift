@@ -4,10 +4,11 @@ import SwiftUI
 
 struct WeeklyReportView: View {
     @ObservedObject var dataStore: DataStore
+    @State var showHeader: Bool = true
     
-    @State var selectedStartDay: Date = Date()
-    @State var selectedEndDay: Date = Date()
-    @State var averagedResult: Reflection.Averaged? = nil
+    @State private var selectedStartDay: Date = Date()
+    @State private var selectedEndDay: Date = Date()
+    @State private var averagedResult: Reflection.Averaged? = nil
     
     private func updateAverages(start: Date, end: Date) {
         dataStore.makeAverageReport(for: start, to: end) { results in
@@ -24,12 +25,14 @@ struct WeeklyReportView: View {
     var body: some View {
         VStack {
             VStack {
-                HStack {
-                    Text("Weekly Average")
-                        .font(.title)
-                    Spacer()
+                if showHeader {
+                    HStack {
+                        Text("Weekly Average")
+                            .font(.title)
+                        Spacer()
+                    }
+                    .padding([.top])
                 }
-                .padding([.top])
                 HStack {
                     DatePicker(
                         "Date",

@@ -24,6 +24,7 @@
 		4F235679270553D700906E88 /* BestOfAllReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F235678270553D700906E88 /* BestOfAllReportView.swift */; };
 		4F38668126E1EB74006AD6AC /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F38668026E1EB74006AD6AC /* ReportView.swift */; };
 		4F38668326E1EEE9006AD6AC /* EditViewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */; };
+		4F7E5022270652F6000FDCE6 /* AveragedReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7E5021270652F6000FDCE6 /* AveragedReportView.swift */; };
 		4FCE948126E582F100BD636C /* NamePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE948026E582F100BD636C /* NamePicker.swift */; };
 		4FCE948326E5849600BD636C /* NamePickerField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE948226E5849600BD636C /* NamePickerField.swift */; };
 		4FCE948526E5896B00BD636C /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE948426E5896B00BD636C /* SearchBar.swift */; };
@@ -75,6 +76,7 @@
 		4F235678270553D700906E88 /* BestOfAllReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestOfAllReportView.swift; sourceTree = "<group>"; };
 		4F38668026E1EB74006AD6AC /* ReportView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewSheet.swift; sourceTree = "<group>"; };
+		4F7E5021270652F6000FDCE6 /* AveragedReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AveragedReportView.swift; sourceTree = "<group>"; };
 		4FCE948026E582F100BD636C /* NamePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamePicker.swift; sourceTree = "<group>"; };
 		4FCE948226E5849600BD636C /* NamePickerField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamePickerField.swift; sourceTree = "<group>"; };
 		4FCE948426E5896B00BD636C /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				4FCE948626E5A7AE00BD636C /* DailyReportView.swift */,
 				4FCE948826E5ABE100BD636C /* WeeklyReportView.swift */,
 				4FCE948C26E5CCED00BD636C /* CategoryReportView.swift */,
+				4F7E5021270652F6000FDCE6 /* AveragedReportView.swift */,
 				4F23567627050F5000906E88 /* BestOfReportView.swift */,
 				4F235678270553D700906E88 /* BestOfAllReportView.swift */,
 				4FCE948A26E5BA4A00BD636C /* ReportListView.swift */,
@@ -362,6 +365,7 @@
 				4F38668326E1EEE9006AD6AC /* EditViewSheet.swift in Sources */,
 				4F23566727018BF100906E88 /* ReflectionTable.swift in Sources */,
 				5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */,
+				4F7E5022270652F6000FDCE6 /* AveragedReportView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
