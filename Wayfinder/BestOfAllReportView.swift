@@ -56,7 +56,7 @@ struct BestOfAllReportView: View {
                 .pickerStyle(SegmentedPickerStyle())
                 // Still silly.
                 // https://developer.apple.com/forums/thread/652080
-                Text("\(selectedAverage?.label ?? "none")").hidden()
+                let _ = "\(selectedAverage?.label ?? "none")"
                 // TODO add date range toggle. Off = any. On = can choose. Or another picker?
             }
             .padding()

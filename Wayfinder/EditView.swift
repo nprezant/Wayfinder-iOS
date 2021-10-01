@@ -133,7 +133,7 @@ struct EditView: View {
             }
             // Still silly.
             // https://developer.apple.com/forums/thread/652080
-            Text("\(oldName), \(tagIndexToRename ?? 1)").hidden()
+            let _ = "\(oldName), \(tagIndexToRename ?? 1)"
         }
         .listStyle(InsetGroupedListStyle())
         .sheet(isPresented: $isActivityRenamePresented) {

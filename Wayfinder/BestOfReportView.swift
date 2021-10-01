@@ -172,7 +172,7 @@ struct BestOfReportView: View {
             // Seems to be bug with nullable state variables.
             // Value won't stay set without this
             // https://developer.apple.com/forums/thread/652080
-            Text("\(dsIndexToEdit ?? 1)").hidden()
+            let _ = "\(dsIndexToEdit ?? 1)"
             Spacer()
         }
         .onAppear(perform: updateBestOf)
