@@ -27,15 +27,15 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="px"
      showgrid="false"
-     inkscape:zoom="3.74"
-     inkscape:cx="39.572193"
-     inkscape:cy="45.588235"
+     inkscape:zoom="10.578317"
+     inkscape:cx="21.17539"
+     inkscape:cy="10.25683"
      inkscape:window-width="2074"
      inkscape:window-height="1163"
      inkscape:window-x="95"
-     inkscape:window-y="68"
+     inkscape:window-y="40"
      inkscape:window-maximized="0"
-     inkscape:current-layer="layer8"
+     inkscape:current-layer="layer25"
      width="33px"
      inkscape:snap-global="true"
      inkscape:snap-bbox="true"
@@ -46,6 +46,37 @@
      inkscape:snap-intersection-paths="true" />
   <defs
      id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient35106">
+      <stop
+         style="stop-color:#afdde9;stop-opacity:1"
+         offset="0"
+         id="stop35102" />
+      <stop
+         style="stop-opacity:1;stop-color:#e3dbe2"
+         offset="1"
+         id="stop35104" />
+    </linearGradient>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 20 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="40 : 20 : 1"
+       inkscape:persp3d-origin="20 : 13.333333 : 1"
+       id="perspective24945" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1274">
+      <stop
+         style="stop-color:#afdde9;stop-opacity:1"
+         offset="0"
+         id="stop1270" />
+      <stop
+         style="stop-opacity:1;stop-color:#e3dbe2"
+         offset="1"
+         id="stop1272" />
+    </linearGradient>
     <filter
        style="color-interpolation-filters:sRGB;"
        inkscape:label="Drop Shadow"
@@ -118,6 +149,27 @@
          result="composite2"
          id="feComposite59603-1" />
     </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient35106"
+       id="linearGradient1268"
+       x1="5.5083752"
+       y1="35.027523"
+       x2="35.485035"
+       y2="4.1047993"
+       gradientUnits="userSpaceOnUse"
+       spreadMethod="pad" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1274"
+       id="linearGradient34736"
+       gradientUnits="userSpaceOnUse"
+       x1="5.5083752"
+       y1="35.122059"
+       x2="34.445171"
+       y2="6.3735909"
+       spreadMethod="pad"
+       gradientTransform="translate(43.945299,-42.079727)" />
   </defs>
   <g
      inkscape:groupmode="layer"
@@ -1206,7 +1258,7 @@
        inkscape:groupmode="layer"
        id="layer17"
        inkscape:label="StarR3-ColorOptions 1"
-       style="display:inline">
+       style="display:none">
       <rect
          style="display:inline;fill:#dbe3de;fill-opacity:1;fill-rule:evenodd;stroke-width:0.849517"
          id="rect127365-3"
@@ -2236,12 +2288,22 @@
      inkscape:label="LaunchPad"
      style="display:inline">
     <rect
-       style="display:inline;fill:#afdde9;fill-opacity:1;fill-rule:evenodd;stroke-width:0.849517"
+       style="display:inline;fill:url(#linearGradient1268);fill-opacity:1;fill-rule:evenodd;stroke-width:0.849517"
        id="rect7201"
        width="40"
        height="39.9375"
        x="0"
        y="0.0625"
+       inkscape:export-filename="/Users/noah/projects/Wayfinder-iOS/Wayfinder/rect51.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="display:inline;fill:url(#linearGradient34736);fill-opacity:1;fill-rule:evenodd;stroke-width:0.849517"
+       id="rect7201-7"
+       width="40"
+       height="39.9375"
+       x="43.945297"
+       y="-42.017227"
        inkscape:export-filename="/Users/noah/projects/Wayfinder-iOS/Wayfinder/rect51.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
@@ -2332,104 +2394,6 @@
        id="circle7233"
        cx="20"
        cy="20.0625"
-       r="2.820766" />
-    <rect
-       style="display:inline;fill:#e3dbe2;fill-opacity:1;fill-rule:evenodd;stroke-width:0.849517"
-       id="rect7682"
-       width="40"
-       height="39.9375"
-       x="66.310158"
-       y="34.224598"
-       inkscape:export-filename="/Users/noah/projects/Wayfinder-iOS/Wayfinder/rect51.png"
-       inkscape:export-xdpi="96"
-       inkscape:export-ydpi="96" />
-    <g
-       id="g7692"
-       style="display:inline;fill:none;stroke:#241c22"
-       transform="translate(66.31016,34.224599)">
-      <g
-         id="g7688"
-         transform="rotate(31.4322,-7.8448319,43.065495)"
-         style="fill:none;stroke:#241c22">
-        <path
-           style="display:inline;fill:none;fill-opacity:1;stroke:#241c22;stroke-opacity:1"
-           d="m -17.235728,4.4194174 5.833631,3.4471458"
-           id="path7684" />
-        <path
-           style="display:inline;fill:none;fill-opacity:1;stroke:#241c22;stroke-opacity:1"
-           d="m -12.374369,3.6239223 -3.800699,5.0381359"
-           id="path7686" />
-      </g>
-      <path
-         style="fill:none;fill-opacity:1;stroke:#241c22;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:4, 1;stroke-dashoffset:0;stroke-opacity:1"
-         id="path7690"
-         sodipodi:type="arc"
-         sodipodi:cx="-25.519369"
-         sodipodi:cy="12.195476"
-         sodipodi:rx="17.89864"
-         sodipodi:ry="17.89864"
-         sodipodi:start="0.043553059"
-         sodipodi:end="5.5524967"
-         sodipodi:arc-type="arc"
-         sodipodi:open="true"
-         transform="rotate(-109.4489)"
-         d="M -7.6377025,12.97477 A 17.89864,17.89864 0 0 1 -22.8445,29.893113 17.89864,17.89864 0 0 1 -42.371992,18.224605 a 17.89864,17.89864 0 0 1 7.694413,-21.4073121 17.89864,17.89864 0 0 1 22.487596,3.43294183" />
-    </g>
-    <path
-       style="display:inline;fill:#483745;fill-opacity:1;stroke:none;stroke-opacity:1"
-       d="m 79.625933,47.540371 6.684228,3.036072 6.693466,-3.04531 -3.270554,6.693466 3.174937,6.597849 -6.597849,-3.440102 -6.657774,3.500027 3.009618,-6.657774 z"
-       id="path7694"
-       sodipodi:nodetypes="ccccccccc" />
-    <path
-       style="display:inline;fill:#241c22;fill-opacity:1;stroke:none;stroke-opacity:1"
-       d="m 86.310161,54.224599 6.693466,-6.693466 -3.270554,6.693466 z"
-       id="path7696"
-       sodipodi:nodetypes="cccc" />
-    <path
-       style="display:inline;fill:#241c22;fill-opacity:1;stroke:none;stroke-opacity:1"
-       d="m 86.310161,54.224599 6.597849,6.597849 -6.597849,-3.440102 z"
-       id="path7698"
-       sodipodi:nodetypes="cccc" />
-    <path
-       style="display:inline;fill:#241c22;fill-opacity:1;stroke:none;stroke-opacity:1"
-       d="m 86.310161,54.224599 -6.657774,6.657774 3.009618,-6.657774 z"
-       id="path7700"
-       sodipodi:nodetypes="cccc" />
-    <path
-       style="display:inline;fill:#241c22;fill-opacity:1;stroke:none;stroke-opacity:1"
-       d="m 86.310161,54.224599 -6.684228,-6.684228 6.684228,3.036072 z"
-       id="path7702"
-       sodipodi:nodetypes="cccc" />
-    <path
-       style="display:inline;fill:#6c5367;fill-opacity:1;stroke:none;stroke-opacity:1"
-       d="m 86.310161,34.224599 1.921875,18.078125 18.078124,1.921875 -18.031249,1.96875 -1.96875,18.03125 -1.901808,-18.098192 -18.098192,-1.901808 17.984375,-2.015625 z"
-       id="path7704"
-       sodipodi:nodetypes="ccccccccc" />
-    <path
-       style="display:inline;fill:#241c22;fill-opacity:1;stroke:none;stroke-opacity:1"
-       d="m 86.310161,34.224599 1.921875,18.078125 -1.921875,1.921875 v -20"
-       id="path7706"
-       sodipodi:nodetypes="cccc" />
-    <path
-       style="display:inline;fill:#241c22;fill-opacity:1;stroke:none;stroke-opacity:1"
-       d="m 86.310161,54.224599 h 19.999999 l -18.031249,1.96875 z"
-       id="path7708"
-       sodipodi:nodetypes="cccc" />
-    <path
-       style="display:inline;fill:#241c22;fill-opacity:1;stroke:none;stroke-opacity:1"
-       d="m 86.310161,74.224599 v -20 l -1.901808,1.901808 z"
-       id="path7710"
-       sodipodi:nodetypes="cccc" />
-    <path
-       style="display:inline;fill:#241c22;fill-opacity:1;stroke:none;stroke-opacity:1"
-       d="m 66.310161,54.224599 h 20 l -2.015625,-2.015625 z"
-       id="path7712"
-       sodipodi:nodetypes="cccc" />
-    <circle
-       style="display:inline;fill:#241c22;fill-opacity:1;stroke:none;stroke-opacity:1"
-       id="circle7714"
-       cx="86.310158"
-       cy="54.224598"
        r="2.820766" />
   </g>
 </svg>

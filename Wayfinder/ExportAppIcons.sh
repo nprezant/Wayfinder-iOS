@@ -1,50 +1,78 @@
-#!/bin/sh
+#!/bin/zsh
 
 local SCRIPT_DIR="$(dirname $0)"
 
 local inkscapeBin="/Applications/Inkscape.app/Contents/MacOS/inkscape"
-local saveDir="$SCRIPT_DIR/appIcons"
+local saveDir="$SCRIPT_DIR/Assets.xcassets/AppIcon.appiconset"
 local inkscapeFile="$SCRIPT_DIR/AppIcon.svg"
+local commandFile="$SCRIPT_DIR/exportCmds.txt"
 
 mkdir $saveDir
 
+# Display script info
 echo Inkscape binary: $inkscapeBin
 echo Save directory: $saveDir
 
+# To prevent inkscape from opening and closing with every call,
+# open it in --shell mode and pass commands through standard input
+# Exporting a single file looks like this:
+#     $inkscapeBin -o $saveDir/AppIcon-1024x1024@1x.png -h 1024 $inkscapeFile
+# In shell mode it looks like this:
+#     export-filename: asdf.png; export-height: 100; export-do;
+# https://inkscape.org/doc/inkscape-man.html
+
+# Clear/create the command file
+echo -n > $commandFile
+
+# Function to add an export command of a particular size at a particular scale
+# append_export_command <height> <scale>
+function append_export_command () {
+    readonly idiom=${1:?"The idiom must be specified."}
+    readonly height=${2:?"The export height must be specified."}
+    readonly scale=${3:?"The export scale be specified."}
+    echo "export-filename: $saveDir/AppIcon-${idiom}-${height}x${height}@${scale}x.png; export-height: $(($height * $scale)); export-do;" >> $commandFile
+}
+
 # App Store
-$inkscapeBin -o $saveDir/AppIcon-1024x1024@1x.png -h 1024 $inkscapeFile
+append_export_command ios-marketing 1024 1
 
 # iPhone Notification
-$inkscapeBin -o $saveDir/AppIcon-20x20@2x.png -h 40 $inkscapeFile
-$inkscapeBin -o $saveDir/AppIcon-20x20@3x.png -h 60 $inkscapeFile
+append_export_command iphone 20 2
+append_export_command iphone 20 3
 
 # iPhone Settings
-$inkscapeBin -o $saveDir/AppIcon-29x29@2x.png -h 58 $inkscapeFile
-$inkscapeBin -o $saveDir/AppIcon-29x29@3x.png -h 87 $inkscapeFile
+append_export_command iphone 29 2
+append_export_command iphone 29 3
 
 # iPhone Spotlight
-$inkscapeBin -o $saveDir/AppIcon-40x40@2x.png -h 80 $inkscapeFile
-$inkscapeBin -o $saveDir/AppIcon-40x40@3x.png -h 120 $inkscapeFile
+append_export_command iphone 40 2
+append_export_command iphone 40 3
 
 # iPhone App
-$inkscapeBin -o $saveDir/AppIcon-60x60@2x.png -h 120 $inkscapeFile
-$inkscapeBin -o $saveDir/AppIcon-60x60@3x.png -h 180 $inkscapeFile
+append_export_command iphone 60 2
+append_export_command iphone 60 3
 
 # iPad Notifications
-$inkscapeBin -o $saveDir/AppIcon-20x20@1x.png -h 20 $inkscapeFile
-$inkscapeBin -o $saveDir/AppIcon-20x20@2x.png -h 40 $inkscapeFile
+append_export_command ipad 20 1
+append_export_command ipad 20 2
 
 # iPad Settings
-$inkscapeBin -o $saveDir/AppIcon-29x29@1x.png -h 29 $inkscapeFile
-$inkscapeBin -o $saveDir/AppIcon-29x29@2x.png -h 58 $inkscapeFile
+append_export_command ipad 29 1
+append_export_command ipad 29 2
 
 # iPad Spotlight
-$inkscapeBin -o $saveDir/AppIcon-40x40@1x.png -h 40 $inkscapeFile
-$inkscapeBin -o $saveDir/AppIcon-40x40@2x.png -h 80 $inkscapeFile
+append_export_command ipad 40 1
+append_export_command ipad 40 2
 
 # iPad Pro (12.9 inch) App
-$inkscapeBin -o $saveDir/AppIcon-83.5x40@2x.png -h 167 $inkscapeFile
+append_export_command ipad 83.5 2
 
 # iPad App
-$inkscapeBin -o $saveDir/AppIcon-76x76@1x.png -h 76 $inkscapeFile
-$inkscapeBin -o $saveDir/AppIcon-76x76@2x.png -h 152 $inkscapeFile
+append_export_command ipad 76 1
+append_export_command ipad 76 2
+
+# Call inkscape
+$inkscapeBin --shell $inkscapeFile < $commandFile
+
+# Clean up export commands
+rm $commandFile
