@@ -124,5 +124,11 @@ struct ListView: View {
 struct ListView_Previews: PreviewProvider {
     static var previews: some View {
         ListView(dataStore: DataStore.createExample())
+            .previewDevice(PreviewDevice(rawValue: "iPhone 7"))
+            .previewDisplayName("iPhone 11")
+        ListView(dataStore: DataStore.createExample())
+            .previewDevice(PreviewDevice(rawValue: "iPhone 11 Pro Max"))
+            .previewDisplayName("iPhone 11 Pro Max")
     }
+    // View device options with: xcrun simctl list devicetypes
 }
