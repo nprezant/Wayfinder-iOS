@@ -32,9 +32,7 @@ struct EditViewSheet: View {
         NavigationView {
             EditView(
                 dataStore: dataStore,
-                data: $newReflectionData,
-                existingReflections: dataStore.uniqueReflectionNames,
-                existingTags: dataStore.uniqueTagNames
+                data: $newReflectionData
             )
                 .navigationBarItems(
                     leading: Button("Dismiss") {

@@ -45,8 +45,6 @@ struct EditView: View {
     
     @ObservedObject var dataStore: DataStore
     @Binding var data: Reflection.Data
-    let existingReflections: [String]
-    let existingTags: [String]
     
     @State var newTag: String = ""
     @State private var oldName: String = ""
@@ -59,7 +57,7 @@ struct EditView: View {
             // TODO fix issue with tappable area too small
             Section() {
                 NavigationLink(
-                    destination: NamePicker($data.name, nameOptions: existingReflections, prompt: "Choose Activity")
+                    destination: NamePicker($data.name, nameOptions: dataStore.uniqueReflectionNames, prompt: "Choose Activity")
                 ) {
                     NamePickerField(name: data.name, prompt: "Choose Activity", font: .title2)
                         .contentShape(Rectangle())
@@ -112,8 +110,9 @@ struct EditView: View {
                 .onDelete { indices in
                     data.tags.remove(atOffsets: indices)
                 }
-                // Include in the list options that have not yet been commited to the db
-                let tagOptions = Array(Set((existingTags + data.tags).map{$0})).sorted(by: <)
+                // Remove from the list any tags that are already listed on this reflection
+                var tagOptions = dataStore.uniqueTagNames
+                let _ = tagOptions.removeAll(where: {data.tags.contains($0)})
                 NavigationLink(
                     destination: NamePicker($newTag, nameOptions: tagOptions, prompt: "Add Tag") {
                         withAnimation {
@@ -137,7 +136,7 @@ struct EditView: View {
         }
         .listStyle(InsetGroupedListStyle())
         .sheet(isPresented: $isActivityRenamePresented) {
-            NamePicker($data.name, nameOptions: existingReflections, prompt: "Rename all of '\(oldName)'", canCreate: true, parentIsPresenting: $isActivityRenamePresented) {
+            NamePicker($data.name, nameOptions: dataStore.uniqueReflectionNames, prompt: "Rename all of '\(oldName)'", canCreate: true, parentIsPresenting: $isActivityRenamePresented) {
                 dataStore.enqueueBatchRename(BatchRenameData(category: .activity, from: oldName, to: data.name))
                 oldName = ""
             }
@@ -145,7 +144,7 @@ struct EditView: View {
         .sheet(isPresented: $isTagRenamePresented) {
             if tagIndexToRename != nil {
                 let oldTag = data.tags[tagIndexToRename!]
-                NamePicker($newTag, nameOptions: existingTags, prompt: "Rename all of '\(oldTag)'", canCreate: true, parentIsPresenting: $isTagRenamePresented) {
+                NamePicker($newTag, nameOptions: dataStore.uniqueTagNames, prompt: "Rename all of '\(oldTag)'", canCreate: true, parentIsPresenting: $isTagRenamePresented) {
                     dataStore.enqueueBatchRename(BatchRenameData(category: .tag, from: oldTag, to: newTag))
                     data.tags[tagIndexToRename!] = newTag
                     newTag = ""
@@ -159,9 +158,7 @@ struct EditView_Previews: PreviewProvider {
     static var previews: some View {
         EditView(
             dataStore: DataStore.createExample(),
-            data: .constant(Reflection.exampleData[0].data),
-            existingReflections: DataStore.createExample().uniqueReflectionNames,
-            existingTags: ["tag 1", "tag 2", "tag 3"]
+            data: .constant(Reflection.exampleData[0].data)
         )
     }
 }

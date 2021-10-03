@@ -189,8 +189,6 @@ struct BestOfReportView: View {
                 DetailView(
                     dataStore: dataStore,
                     reflection: $dataStore.reflections[dsIndex],
-                    existingReflections: dataStore.uniqueReflectionNames,
-                    existingTags: dataStore.uniqueTagNames,
                     saveAction: {_ in updateEditedReflection()},
                     parentIsPresenting: $isDetailPresented
                 )
