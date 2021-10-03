@@ -85,6 +85,7 @@
 		4FCE948A26E5BA4A00BD636C /* ReportListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportListView.swift; sourceTree = "<group>"; };
 		4FCE948C26E5CCED00BD636C /* CategoryReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryReportView.swift; sourceTree = "<group>"; };
 		4FCE949026F4650400BD636C /* DataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreTests.swift; sourceTree = "<group>"; };
+		4FF41EDA270926AC00A44044 /* ExportAppIcons.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ExportAppIcons.sh; sourceTree = "<group>"; };
 		5F7487352609A52B0046B148 /* Wayfinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wayfinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7487382609A52B0046B148 /* WayfinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WayfinderApp.swift; sourceTree = "<group>"; };
 		5F74873C2609A5310046B148 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -177,6 +178,7 @@
 				4F235678270553D700906E88 /* BestOfAllReportView.swift */,
 				4FCE948A26E5BA4A00BD636C /* ReportListView.swift */,
 				4F03BE1F26DD4EB4001E61E5 /* Wayfinder-Bridging-Header.h */,
+				4FF41EDA270926AC00A44044 /* ExportAppIcons.sh */,
 				5F74873C2609A5310046B148 /* Assets.xcassets */,
 				5F7487412609A5310046B148 /* Info.plist */,
 				5F74873E2609A5310046B148 /* Preview Content */,
