@@ -60,6 +60,15 @@ struct ListView: View {
                     activityItems: [csv],
                     applicationActivities: nil
                 )
+                if let ppc = activityVC.popoverPresentationController {
+                    let popupWidth = 300
+                    let popupHeight = 350
+                    let x = 0.5 * (UIScreen.main.bounds.width - CGFloat(popupWidth))
+                    let y = 0.5 * (UIScreen.main.bounds.height - CGFloat(popupHeight))
+                    ppc.sourceView = UIApplication.shared.windows.first
+                    ppc.sourceRect = CGRect(x: Int(x), y: Int(y), width: popupWidth, height: popupHeight)
+                    ppc.permittedArrowDirections = []
+                }
                 UIApplication.shared.windows.first?.rootViewController?.present(
                     activityVC, animated: true, completion: nil
                 )
