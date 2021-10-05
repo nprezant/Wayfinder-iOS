@@ -136,6 +136,30 @@
 			path = Db;
 			sourceTree = "<group>";
 		};
+		4FF3093D270D155D00272EBF /* Reports */ = {
+			isa = PBXGroup;
+			children = (
+				4FCE948626E5A7AE00BD636C /* DailyReportView.swift */,
+				4FCE948826E5ABE100BD636C /* WeeklyReportView.swift */,
+				4FCE948C26E5CCED00BD636C /* CategoryReportView.swift */,
+				4F7E5021270652F6000FDCE6 /* AveragedReportView.swift */,
+				4F23567627050F5000906E88 /* BestOfReportView.swift */,
+				4F235678270553D700906E88 /* BestOfAllReportView.swift */,
+				4FCE948A26E5BA4A00BD636C /* ReportListView.swift */,
+			);
+			path = Reports;
+			sourceTree = "<group>";
+		};
+		4FF3093E270D15C200272EBF /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4FCE948026E582F100BD636C /* NamePicker.swift */,
+				4FCE948226E5849600BD636C /* NamePickerField.swift */,
+				4FCE948426E5896B00BD636C /* SearchBar.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		5F74872C2609A52A0046B148 = {
 			isa = PBXGroup;
 			children = (
@@ -160,6 +184,8 @@
 			isa = PBXGroup;
 			children = (
 				4F03BE2026DD4EE2001E61E5 /* Db */,
+				4FF3093D270D155D00272EBF /* Reports */,
+				4FF3093E270D15C200272EBF /* Components */,
 				5F7487382609A52B0046B148 /* WayfinderApp.swift */,
 				4F03BE2726DED59B001E61E5 /* EditView.swift */,
 				4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */,
@@ -167,16 +193,6 @@
 				4F03BE2F26DEDAF3001E61E5 /* CardView.swift */,
 				4F03BE2D26DED7AC001E61E5 /* DetailView.swift */,
 				4F38668026E1EB74006AD6AC /* ReportView.swift */,
-				4FCE948026E582F100BD636C /* NamePicker.swift */,
-				4FCE948226E5849600BD636C /* NamePickerField.swift */,
-				4FCE948426E5896B00BD636C /* SearchBar.swift */,
-				4FCE948626E5A7AE00BD636C /* DailyReportView.swift */,
-				4FCE948826E5ABE100BD636C /* WeeklyReportView.swift */,
-				4FCE948C26E5CCED00BD636C /* CategoryReportView.swift */,
-				4F7E5021270652F6000FDCE6 /* AveragedReportView.swift */,
-				4F23567627050F5000906E88 /* BestOfReportView.swift */,
-				4F235678270553D700906E88 /* BestOfAllReportView.swift */,
-				4FCE948A26E5BA4A00BD636C /* ReportListView.swift */,
 				4F03BE1F26DD4EB4001E61E5 /* Wayfinder-Bridging-Header.h */,
 				4FF41EDA270926AC00A44044 /* ExportAppIcons.sh */,
 				5F74873C2609A5310046B148 /* Assets.xcassets */,
