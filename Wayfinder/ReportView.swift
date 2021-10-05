@@ -2,13 +2,6 @@
 
 import SwiftUI
 
-protocol ReportableView {
-    associatedtype T: View
-    var view: T { get }
-    
-    init(dataStore: DataStore)
-}
-
 enum Report: Int, CaseIterable, Identifiable {
     case bestOfAll
     case bestOf

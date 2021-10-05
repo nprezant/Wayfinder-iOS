@@ -30,9 +30,12 @@
 		4FCE948526E5896B00BD636C /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE948426E5896B00BD636C /* SearchBar.swift */; };
 		4FCE948726E5A7AE00BD636C /* DailyReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE948626E5A7AE00BD636C /* DailyReportView.swift */; };
 		4FCE948926E5ABE100BD636C /* WeeklyReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE948826E5ABE100BD636C /* WeeklyReportView.swift */; };
-		4FCE948B26E5BA4A00BD636C /* ReportListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE948A26E5BA4A00BD636C /* ReportListView.swift */; };
+		4FCE948B26E5BA4A00BD636C /* AveragedResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE948A26E5BA4A00BD636C /* AveragedResultView.swift */; };
 		4FCE948D26E5CCED00BD636C /* CategoryReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE948C26E5CCED00BD636C /* CategoryReportView.swift */; };
 		4FCE949126F4650400BD636C /* DataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE949026F4650400BD636C /* DataStoreTests.swift */; };
+		4FF30940270D16D500272EBF /* LabeledSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF3093F270D16D500272EBF /* LabeledSlider.swift */; };
+		4FF30942270D186900272EBF /* ReportMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF30941270D186900272EBF /* ReportMetrics.swift */; };
+		4FF30944270D1A0400272EBF /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF30943270D1A0400272EBF /* Common.swift */; };
 		5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7487382609A52B0046B148 /* WayfinderApp.swift */; };
 		5F74873D2609A5310046B148 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873C2609A5310046B148 /* Assets.xcassets */; };
 		5F7487402609A5310046B148 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873F2609A5310046B148 /* Preview Assets.xcassets */; };
@@ -82,9 +85,12 @@
 		4FCE948426E5896B00BD636C /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		4FCE948626E5A7AE00BD636C /* DailyReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyReportView.swift; sourceTree = "<group>"; };
 		4FCE948826E5ABE100BD636C /* WeeklyReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyReportView.swift; sourceTree = "<group>"; };
-		4FCE948A26E5BA4A00BD636C /* ReportListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportListView.swift; sourceTree = "<group>"; };
+		4FCE948A26E5BA4A00BD636C /* AveragedResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AveragedResultView.swift; sourceTree = "<group>"; };
 		4FCE948C26E5CCED00BD636C /* CategoryReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryReportView.swift; sourceTree = "<group>"; };
 		4FCE949026F4650400BD636C /* DataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreTests.swift; sourceTree = "<group>"; };
+		4FF3093F270D16D500272EBF /* LabeledSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledSlider.swift; sourceTree = "<group>"; };
+		4FF30941270D186900272EBF /* ReportMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportMetrics.swift; sourceTree = "<group>"; };
+		4FF30943270D1A0400272EBF /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		4FF41EDA270926AC00A44044 /* ExportAppIcons.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ExportAppIcons.sh; sourceTree = "<group>"; };
 		5F7487352609A52B0046B148 /* Wayfinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wayfinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7487382609A52B0046B148 /* WayfinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WayfinderApp.swift; sourceTree = "<group>"; };
@@ -143,9 +149,10 @@
 				4FCE948826E5ABE100BD636C /* WeeklyReportView.swift */,
 				4FCE948C26E5CCED00BD636C /* CategoryReportView.swift */,
 				4F7E5021270652F6000FDCE6 /* AveragedReportView.swift */,
+				4FCE948A26E5BA4A00BD636C /* AveragedResultView.swift */,
 				4F23567627050F5000906E88 /* BestOfReportView.swift */,
 				4F235678270553D700906E88 /* BestOfAllReportView.swift */,
-				4FCE948A26E5BA4A00BD636C /* ReportListView.swift */,
+				4FF30941270D186900272EBF /* ReportMetrics.swift */,
 			);
 			path = Reports;
 			sourceTree = "<group>";
@@ -156,6 +163,8 @@
 				4FCE948026E582F100BD636C /* NamePicker.swift */,
 				4FCE948226E5849600BD636C /* NamePickerField.swift */,
 				4FCE948426E5896B00BD636C /* SearchBar.swift */,
+				4FF3093F270D16D500272EBF /* LabeledSlider.swift */,
+				4FF30943270D1A0400272EBF /* Common.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -365,7 +374,7 @@
 				4FCE948726E5A7AE00BD636C /* DailyReportView.swift in Sources */,
 				4F23566B27019C0A00906E88 /* TagTable.swift in Sources */,
 				4FCE948526E5896B00BD636C /* SearchBar.swift in Sources */,
-				4FCE948B26E5BA4A00BD636C /* ReportListView.swift in Sources */,
+				4FCE948B26E5BA4A00BD636C /* AveragedResultView.swift in Sources */,
 				4F03BE3026DEDAF3001E61E5 /* CardView.swift in Sources */,
 				4F03BE2E26DED7AC001E61E5 /* DetailView.swift in Sources */,
 				4FCE948D26E5CCED00BD636C /* CategoryReportView.swift in Sources */,
@@ -375,13 +384,16 @@
 				4FCE948326E5849600BD636C /* NamePickerField.swift in Sources */,
 				4F03BE2826DED59B001E61E5 /* EditView.swift in Sources */,
 				4F03BE2426DD728E001E61E5 /* DataStore.swift in Sources */,
+				4FF30944270D1A0400272EBF /* Common.swift in Sources */,
 				4FCE948126E582F100BD636C /* NamePicker.swift in Sources */,
 				4F38668126E1EB74006AD6AC /* ReportView.swift in Sources */,
+				4FF30940270D16D500272EBF /* LabeledSlider.swift in Sources */,
 				4F03BE2C26DED710001E61E5 /* ListView.swift in Sources */,
 				4F23567727050F5000906E88 /* BestOfReportView.swift in Sources */,
 				4F03BE1C26DD3F65001E61E5 /* SqliteDatabase.swift in Sources */,
 				4F38668326E1EEE9006AD6AC /* EditViewSheet.swift in Sources */,
 				4F23566727018BF100906E88 /* ReflectionTable.swift in Sources */,
+				4FF30942270D186900272EBF /* ReportMetrics.swift in Sources */,
 				5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */,
 				4F7E5022270652F6000FDCE6 /* AveragedReportView.swift in Sources */,
 			);

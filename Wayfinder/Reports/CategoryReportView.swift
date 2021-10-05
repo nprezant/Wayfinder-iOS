@@ -93,7 +93,7 @@ struct CategoryReportView: View {
                 }
             }
             .padding()
-            ReportListView(averagedResult: averagedResult)
+            AveragedResultView(averagedResult: averagedResult)
                 .edgesIgnoringSafeArea([.leading, .trailing])
             Spacer()
         }

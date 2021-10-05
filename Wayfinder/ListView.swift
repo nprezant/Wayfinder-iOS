@@ -2,16 +2,6 @@
 
 import SwiftUI
 
-struct ErrorMessage: Identifiable {
-    var id: String { title + message }
-    let title: String
-    let message: String
-    
-    func toAlert() -> Alert {
-        return Alert(title: Text(title), message: Text(message), dismissButton: .default(Text("Okay")))
-    }
-}
-
 struct ListView: View {
     @ObservedObject var dataStore: DataStore
     

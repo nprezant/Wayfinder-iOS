@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-struct ReportListView: View {
+struct AveragedResultView: View {
     let averagedResult: Reflection.Averaged?
     
     var body: some View {
@@ -36,8 +36,8 @@ struct ReportListView: View {
     }
 }
 
-struct ReportListView_Previews: PreviewProvider {
+struct AveragedResultView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportListView(averagedResult: Reflection.Averaged.exampleData())
+        AveragedResultView(averagedResult: Reflection.Averaged.exampleData())
     }
 }

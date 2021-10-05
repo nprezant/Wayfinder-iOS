@@ -47,7 +47,7 @@ struct DailyReportView: View {
                 }
             }
             .padding()
-            ReportListView(averagedResult: averagedResult)
+            AveragedResultView(averagedResult: averagedResult)
                 .edgesIgnoringSafeArea([.leading, .trailing])
             Spacer()
         }

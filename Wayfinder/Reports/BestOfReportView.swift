@@ -2,61 +2,6 @@
 
 import SwiftUI
 
-protocol MetricComparable {
-    var engagement: Int64 { get }
-    var energy: Int64 { get }
-}
-
-enum Metric: String, CaseIterable, Identifiable {
-    case engagement
-    case energy
-    case combined
-    
-    var id: String { self.rawValue }
-    
-    private var areInIncreasingOrder: (MetricComparable, MetricComparable) -> Bool {
-        switch self {
-        case .engagement:
-            return {$0.engagement > $1.engagement}
-        case .energy:
-            return {$0.energy > $1.energy}
-        case .combined:
-            return {$0.engagement + $0.energy > $1.engagement + $1.energy}
-        }
-    }
-    
-    func makeComparator(direction bestWorst: BestWorst) -> ((MetricComparable, MetricComparable) -> Bool) {
-        switch bestWorst {
-        case .best:
-            return areInIncreasingOrder
-        case .worst:
-            return {!areInIncreasingOrder($0, $1)}
-        }
-    }
-}
-
-enum BestWorst: String, CaseIterable, Identifiable {
-    case best
-    case worst
-    
-    var id: String { self.rawValue }
-}
-
-var MonthShortNames: [Int: String] = [
-    1: "Jan",
-    2: "Feb",
-    3: "Mar",
-    4: "Apr",
-    5: "May",
-    6: "Jun",
-    7: "Jul",
-    8: "Aug",
-    9: "Sep",
-    10: "Oct",
-    11: "Nov",
-    12: "Dec"
-]
-
 struct BestOfReportView: View {
     @ObservedObject var dataStore: DataStore
     
@@ -202,7 +147,6 @@ struct BestOfReportView: View {
         }
     }
 }
-
 
 struct BestOfReportView_Previews: PreviewProvider {
     static var previews: some View {

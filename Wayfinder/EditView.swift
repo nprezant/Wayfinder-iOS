@@ -2,45 +2,6 @@
 
 import SwiftUI
 
-struct ReflectionSlider: View {
-    let label: String
-    @Binding var value: Int64
-    var range: ClosedRange<Double>
-    
-    var body: some View {
-        VStack {
-            HStack {
-                Text(label)
-                Spacer()
-            }
-            HStack {
-                Slider(
-                    value: Binding<Double>(
-                        get: { return Double(value) },
-                        set: { value = Int64(truncating: $0 as NSNumber) }),
-                    in: range,
-                    step: 1
-                )
-                Text("\(value, specifier: "%+d%%")")
-                    .frame(minWidth: 50)
-            }
-        }
-    }
-}
-
-extension UIApplication {
-    func endEditing() {
-        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
-}
-
-extension View {
-    func endEditing() {
-        UIApplication.shared.endEditing()
-    }
-}
-
-
 struct EditView: View {
     
     @ObservedObject var dataStore: DataStore
@@ -77,8 +38,8 @@ struct EditView: View {
                 Toggle("Flow state", isOn: $data.isFlowState)
                     .padding(.trailing, 5)
                     .toggleStyle(SwitchToggleStyle(tint: Color.accentColor))
-                ReflectionSlider(label: "Engagement", value: $data.engagement, range: 0...100)
-                ReflectionSlider(label: "Energy", value: $data.energy, range: -100...100)
+                LabeledSlider(label: "Engagement", value: $data.engagement, range: 0...100)
+                LabeledSlider(label: "Energy", value: $data.energy, range: -100...100)
             }
             .onTapGesture {
                 self.endEditing()
