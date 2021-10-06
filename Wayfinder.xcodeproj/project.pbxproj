@@ -160,10 +160,14 @@
 		4FF3093E270D15C200272EBF /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4F03BE2F26DEDAF3001E61E5 /* CardView.swift */,
+				4F03BE2D26DED7AC001E61E5 /* DetailView.swift */,
+				4F03BE2726DED59B001E61E5 /* EditView.swift */,
+				4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */,
+				4FF3093F270D16D500272EBF /* LabeledSlider.swift */,
 				4FCE948026E582F100BD636C /* NamePicker.swift */,
 				4FCE948226E5849600BD636C /* NamePickerField.swift */,
 				4FCE948426E5896B00BD636C /* SearchBar.swift */,
-				4FF3093F270D16D500272EBF /* LabeledSlider.swift */,
 				4FF30943270D1A0400272EBF /* Common.swift */,
 			);
 			path = Components;
@@ -196,11 +200,7 @@
 				4FF3093D270D155D00272EBF /* Reports */,
 				4FF3093E270D15C200272EBF /* Components */,
 				5F7487382609A52B0046B148 /* WayfinderApp.swift */,
-				4F03BE2726DED59B001E61E5 /* EditView.swift */,
-				4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */,
 				4F03BE2B26DED710001E61E5 /* ListView.swift */,
-				4F03BE2F26DEDAF3001E61E5 /* CardView.swift */,
-				4F03BE2D26DED7AC001E61E5 /* DetailView.swift */,
 				4F38668026E1EB74006AD6AC /* ReportView.swift */,
 				4F03BE1F26DD4EB4001E61E5 /* Wayfinder-Bridging-Header.h */,
 				4FF41EDA270926AC00A44044 /* ExportAppIcons.sh */,
