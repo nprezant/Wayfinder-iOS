@@ -87,25 +87,25 @@ struct ReportView: View {
                 Button { removeCurrentPage() } label: { Image(systemName: "trash") }
                 Spacer()
                 Button { addNewPageIsPresented = true } label: { Image(systemName: "plus") }
+                .actionSheet(isPresented: $addNewPageIsPresented) {
+                    var buttons: [ActionSheet.Button] = []
+                    for report in Report.addableReports {
+                        buttons.append(
+                            .default(Text(report.stringValue.capitalized)) {
+                                let insertionIndex = reports.isEmpty || selectedIndex == reports.count ? reports.endIndex : selectedIndex + 1
+                                withAnimation {
+                                    reports.insert(report, at: insertionIndex)
+                                    selectedIndex = insertionIndex
+                                }
+                            }
+                        )
+                    }
+                    buttons.append(.cancel())
+                    
+                    return ActionSheet(title: Text("Choose Report to View"), buttons: buttons)
+                }
             }
             .padding([.leading, .trailing, .bottom])
-        }
-        .actionSheet(isPresented: $addNewPageIsPresented) {
-            var buttons: [ActionSheet.Button] = []
-            for report in Report.addableReports {
-                buttons.append(
-                    .default(Text(report.stringValue.capitalized)) {
-                        let insertionIndex = reports.isEmpty || selectedIndex == reports.count ? reports.endIndex : selectedIndex + 1
-                        withAnimation {
-                            reports.insert(report, at: insertionIndex)
-                            selectedIndex = insertionIndex
-                        }
-                    }
-                )
-            }
-            buttons.append(.cancel())
-            
-            return ActionSheet(title: Text("Choose Report to View"), buttons: buttons)
         }
     }
     
