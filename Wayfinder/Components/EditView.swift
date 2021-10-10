@@ -55,7 +55,7 @@ struct EditView: View {
                 // https://stackoverflow.com/questions/66090210/swiftui-datepicker-jumps-between-short-and-medium-date-formats-when-changing-the
                 .id(data.date)
             }
-            Section() {
+            Section(header: Text("Tags")) {
                 ForEach(data.tags.indices, id: \.self) { index in
                     Text(data.tags[index])
                         // TODO this causes the "disabling recursion trigger logging" message
@@ -86,7 +86,7 @@ struct EditView: View {
                         .contentShape(Rectangle())
                 }
             }
-            Section() {
+            Section(header: Text("Notes")) {
                 // TODO no placeholder text available yet...
                 TextEditor(text: $data.note)
                     .frame(height: 100)

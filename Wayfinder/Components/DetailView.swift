@@ -33,8 +33,6 @@ struct DetailView: View {
             .padding()
         }
         List {
-            if parentIsPresenting != nil {
-            }
             Section() {
                 HStack {
                     Label("Flow State?", systemImage: "wind")
@@ -59,26 +57,21 @@ struct DetailView: View {
                     Text(Date(timeIntervalSince1970: TimeInterval(reflection.date)), style: .date)
                 }
             }
-            Section() {
-                if reflection.tags.isEmpty {
-                    Text("No tags")
-                } else {
+            if !reflection.tags.isEmpty {
+                Section(header: Text("Tags")) {
                     ForEach(reflection.tags, id: \.self) { tagName in
                         Text(tagName)
                     }
                 }
             }
-            Section() {
-                if reflection.note.isEmpty {
-                    Text("No additional notes")
-                        .frame(minHeight: 100, alignment: .topLeading)
-                } else {
+            if !reflection.note.isEmpty {
+                Section(header: Text("Notes")) {
                     Text(reflection.note)
                         .lineLimit(3)
                         .frame(minHeight: 100, alignment: .topLeading)
                 }
             }
-
+            
         }
         .listStyle(InsetGroupedListStyle())
         .navigationBarItems(trailing: Button("Edit") {
