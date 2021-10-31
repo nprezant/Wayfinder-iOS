@@ -1,6 +1,7 @@
 // Wayfinder
 
 import Foundation
+import os
 
 enum SqliteError: Error {
     case OpenDatabase(message: String)
@@ -77,16 +78,21 @@ class SqliteDatabase {
         // Can migrate either up or down
         let goingUp = targetVersion > version ? true : false
         
+        // Get the logger
+        let logger = Logger()
+        
         // Migrate database to current version
         for stepVersion in stride(from: version, through: targetVersion, by: goingUp ? 1 : -1) {
             switch stepVersion {
             case 1:
                 if goingUp {
                     // Migrate 0 --> 1
+                    logger.info("Migrating 0 to 1")
                     try executeMany(sql: Tag.createStatement)
                     version = 1
                 } else {
                     // Migrate 1 --> 0
+                    logger.info("Migrating 1 to 0")
                     try executeMany(sql: Tag.dropStatement)
                     version = 0
                 }
