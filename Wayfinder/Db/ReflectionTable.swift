@@ -18,6 +18,23 @@ struct Reflection : Identifiable, Equatable, MetricComparable {
         """
     }
     
+    static var addAxisColumnStatement: String {
+        return """
+        ALTER TABLE reflection
+        ADD COLUMN axis INT REFERENCES axis
+            ON UPDATE CASCADE;
+        CREATE INDEX indexReflectionAxis ON reflection(axis);
+        UPDATE reflection SET axis = 1
+        """
+    }
+    
+    static var dropAxisColumnStatement: String {
+        return """
+        DROP INDEX indexReflectionAxis;
+        ALTER TABLE reflection DROP COLUMN axis;
+        """
+    }
+    
     var id: Int64
     var name: String
     var isFlowState: Int64
@@ -25,6 +42,7 @@ struct Reflection : Identifiable, Equatable, MetricComparable {
     var energy: Int64
     var date: Int64 // Unix epoch time
     var note: String
+    var axis: String // References axis table
     
     var tags: [String] // References tag table
     
@@ -35,8 +53,8 @@ struct Reflection : Identifiable, Equatable, MetricComparable {
 extension Reflection {
     static var exampleData: [Reflection] {
         [
-            Reflection(id: 1, name: "iOS dev", isFlowState: true.intValue, engagement: 70, energy: -20, date: Int64(Date().timeIntervalSince1970), note: "Exhausting", tags: ["dev", "solo"]),
-            Reflection(id: 2, name: "Sleeping", isFlowState: false.intValue, engagement: 50, energy: 60, date: Int64(Date().timeIntervalSince1970), note: "Not long enough", tags: []),
+            Reflection(id: 1, name: "iOS dev", isFlowState: true.intValue, engagement: 70, energy: -20, date: Int64(Date().timeIntervalSince1970), note: "Exhausting", axis: "Work", tags: ["dev", "solo"]),
+            Reflection(id: 2, name: "Sleeping", isFlowState: false.intValue, engagement: 50, energy: 60, date: Int64(Date().timeIntervalSince1970), note: "Not long enough", axis: "Work", tags: []),
         ]
     }
 }
@@ -51,15 +69,16 @@ extension Reflection {
         var energy: Int64 = 0
         var date: Date = Date()
         var note: String = ""
+        var axis: String = "Default Axis"
         var tags: [String] = []
         
         var reflection: Reflection {
-            return Reflection(id: id, name: name, isFlowState: isFlowState.intValue, engagement: engagement, energy: energy, date: Int64(date.timeIntervalSince1970), note: note, tags: tags)
+            return Reflection(id: id, name: name, isFlowState: isFlowState.intValue, engagement: engagement, energy: energy, date: Int64(date.timeIntervalSince1970), note: note, axis: axis, tags: tags)
         }
     }
 
     var data: Data {
-        return Data(id: id, name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: Date(timeIntervalSince1970: TimeInterval(date)), note: note, tags: tags)
+        return Data(id: id, name: name, isFlowState: isFlowState.boolValue, engagement: engagement, energy: energy, date: Date(timeIntervalSince1970: TimeInterval(date)), note: note, axis: axis, tags: tags)
     }
 
     mutating func update(from data: Data) {
@@ -70,6 +89,7 @@ extension Reflection {
         energy = data.energy
         date = Int64(data.date.timeIntervalSince1970)
         note = data.note
+        axis = data.axis
         tags = data.tags
     }
 }
@@ -109,13 +129,20 @@ extension SqliteDatabase {
     func insert(reflection: Reflection) throws -> Int64 {
         let sql = """
             INSERT INTO reflection
-                (name, isFlowState, engagement, energy, date, note)
-            VALUES (?, ?, ?, ?, ?, ?);
+                (name, isFlowState, engagement, energy, date, note, axis)
+            VALUES (?, ?, ?, ?, ?, ?, ?);
         """
         
         let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
+        }
+        
+        var axis = getAxis(reflection.axis)
+        if axis == nil {
+            try createAxis(reflection.axis)
+            axis = getAxis(reflection.axis)
+            guard axis != nil else { throw SqliteError.Unspecified(message: "Cannot insert reflection with non-existent axis. Axis name not found: \(reflection.axis)") }
         }
         
         guard
@@ -125,6 +152,7 @@ extension SqliteDatabase {
                 && sqlite3_bind_int64(stmt, 4, reflection.energy) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 5, reflection.date) == SQLITE_OK
                 && sqlite3_bind_text(stmt, 6, reflection.note, -1, SQLITE_TRANSIENT) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 7, axis!.id) == SQLITE_OK
         else {
             throw SqliteError.Bind(message: errorMessage)
         }
@@ -201,12 +229,27 @@ extension SqliteDatabase {
     }
     
     /// Fetch all reflections
-    func fetchReflections() -> [Reflection] {
-        let sql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection ORDER BY date DESC"
+    func fetchReflections(axis: String? = nil) throws -> [Reflection] {
+        var sql: String
+        
+        if axis != nil {
+            sql = "SELECT r.id, r.name, r.isFlowState, r.engagement, r.energy, r.date, r.note, axis.name FROM reflection r INNER JOIN axis ON axis.id = r.axis WHERE axis.name = ?1 ORDER BY r.date DESC"
+        } else {
+            sql = "SELECT r.id, r.name, r.isFlowState, r.engagement, r.energy, r.date, r.note, axis.name FROM reflection r INNER JOIN axis ON axis.id = r.axis ORDER BY r.date DESC"
+        }
         
         let stmt = try? prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
+        }
+        
+        // Only bind variable if we have a variable to bind
+        if axis != nil {
+            guard
+                sqlite3_bind_text(stmt, 1, axis, -1, SQLITE_TRANSIENT) == SQLITE_OK
+            else {
+                throw SqliteError.Bind(message: errorMessage)
+            }
         }
         
         var reflections: [Reflection] = []
@@ -223,10 +266,11 @@ extension SqliteDatabase {
             let energy = sqlite3_column_int64(stmt, 4)
             let date = sqlite3_column_int64(stmt, 5)
             let note = String(cString: sqlite3_column_text(stmt, 6))
+            let axisName = String(cString: sqlite3_column_text(stmt, 7))
             
             let tags = (try? fetchTags(for: id)) ?? []
             
-            let reflection = Reflection(id: id, name: name, isFlowState: isFlowState, engagement: engagement, energy: energy, date: date, note: note, tags: tags)
+            let reflection = Reflection(id: id, name: name, isFlowState: isFlowState, engagement: engagement, energy: energy, date: date, note: note, axis: axisName, tags: tags)
 
             reflections.append(reflection)
         }

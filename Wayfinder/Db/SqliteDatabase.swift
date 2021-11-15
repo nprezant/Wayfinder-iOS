@@ -29,7 +29,7 @@ class SqliteDatabase {
     }
     
     /// Sqlite3 user version is stored as a 32 bit integer I think
-    static var latestVersion: Int32 = 1
+    static var latestVersion: Int32 = 2
     
     /// Open a database connection to a transient in memory database (generally for testing or migrating)
     static func openInMemory(targetVersion: Int32 = latestVersion) throws -> SqliteDatabase {
@@ -39,15 +39,18 @@ class SqliteDatabase {
     /// Open database connection. Creates tables or migrate as needed.
     static func open(at url: URL, targetVersion: Int32 = latestVersion) throws -> SqliteDatabase {
         
+        // Very helpful informatino to log
+        Logger().info("Database path: \(url.absoluteString)")
+        
         // Is this a new file?
         let isNewFile = !FileManager.default.fileExists(atPath: url.path)
         
         // Open the connection
         let db = try openDatabase(at: url.absoluteString)
         
-        // If this is a new file, create the initial tables
+        // If this is a new file, we need to migrate /up to/ version 0
         if isNewFile {
-            try db.execute(sql: Reflection.createStatement)
+            db.version = -1
         }
         
         // Nothing to do if this is the correct version
@@ -80,23 +83,41 @@ class SqliteDatabase {
         
         // Get the logger
         let logger = Logger()
+
+        // Whichever direction we are going, we don't want to duplicate that version's migrator
+        let startAtVersion = goingUp ? version + 1 : version - 1
         
         // Migrate database to current version
-        for stepVersion in stride(from: version, through: targetVersion, by: goingUp ? 1 : -1) {
+        for stepVersion in stride(from: startAtVersion, through: targetVersion, by: goingUp ? 1 : -1) {
             switch stepVersion {
-            case 1:
+            case 0:
                 if goingUp {
-                    // Migrate 0 --> 1
-                    logger.info("Migrating 0 to 1")
-                    try executeMany(sql: Tag.createStatement)
-                    version = 1
+                    logger.info("Migrating <empty database> to 0")
+                    try executeMany(sql: Reflection.createStatement)
                 } else {
-                    // Migrate 1 --> 0
                     logger.info("Migrating 1 to 0")
                     try executeMany(sql: Tag.dropStatement)
-                    version = 0
                 }
+                version = 0
+            case 1:
+                if goingUp {
+                    logger.info("Migrating 0 to 1")
+                    try executeMany(sql: Tag.createStatement)
+                } else {
+                    logger.info("Migrating 2 to 1")
+                    try executeMany(sql: Axis.dropStatement + Reflection.dropAxisColumnStatement)
+                }
+                version = 1
                 break
+            case 2:
+                if goingUp {
+                    logger.info("Migrating 1 to 2")
+                    try executeMany(sql: Axis.createStatement + Reflection.addAxisColumnStatement)
+                }
+                else {
+                    logger.info("Migrating 3 to 2 (not implemented)")
+                }
+                version = 2
             default:
                 // No schema changes
                 break
@@ -303,8 +324,11 @@ class SqliteDatabase {
             }
             var tableSchemas: [String] = []
             while sqlite3_step(stmt) == SQLITE_ROW {
-                let tableSchema = String(cString: sqlite3_column_text(stmt, 0))
-                tableSchemas.append(tableSchema)
+                let columnText = sqlite3_column_text(stmt, 0)
+                if columnText != nil { // Auto-indexes (e.g. for unique constraints) don't have sql text attached
+                    let tableSchema = String(cString: sqlite3_column_text(stmt, 0))
+                    tableSchemas.append(tableSchema)
+                }
             }
             return tableSchemas
         }

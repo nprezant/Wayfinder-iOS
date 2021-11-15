@@ -40,6 +40,8 @@ class DataStore: ObservableObject {
     
     @Published var uniqueTagNames: [String] = []
     
+    @Published var uniqueAxisNames: [String] = []
+    
     private var db: SqliteDatabase
     
     public init(inMemory: Bool = false) {
@@ -59,7 +61,7 @@ class DataStore: ObservableObject {
                 fatalError("Could not create example data. \(dataStore.db.errorMessage)")
             }
         }
-        dataStore.reflections = dataStore.db.fetchReflections()
+        dataStore.reflections = try! dataStore.db.fetchReflections()
         return dataStore
     }
     
@@ -69,15 +71,17 @@ class DataStore: ObservableObject {
             
             guard let self = self else { return }
             
-            let reflections = self.db.fetchReflections()
+            let reflections = try! self.db.fetchReflections()
             let uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <)
             let uniqueTagNames = self.db.fetchAllUniqueTags().sorted(by: <)
+            let uniqueAxisNames = self.db.fetchDistinctVisibleAxisNames().sorted(by: <)
             
             // Assigning published properties is UI work, must do on main thread
             DispatchQueue.main.async {
                 self.reflections = reflections
                 self.uniqueReflectionNames = uniqueReflectionNames
                 self.uniqueTagNames = uniqueTagNames
+                self.uniqueAxisNames = uniqueAxisNames
                 completion()
             }
         }
@@ -189,7 +193,7 @@ class DataStore: ObservableObject {
     func ExportCsv(completion: @escaping (Result<URL, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
-            let reflections = self.db.fetchReflections()
+            let reflections = try! self.db.fetchReflections()
             
             var s: String = "name\tisFlowState\tengagement\tenergy\tdate\tnote\ttags\n"
             

@@ -23,7 +23,7 @@ class ReflectionTableTests: XCTestCase {
     func testInsertReflection() throws {
         // Create database in memory. No data should be loaded yet
         let db = try! SqliteDatabase.openInMemory()
-        XCTAssert(db.fetchReflections().isEmpty)
+        XCTAssert(try db.fetchReflections().isEmpty)
         
         // Insert reflection
         let insertedId = try! db.insert(reflection: testData[0])
@@ -31,7 +31,7 @@ class ReflectionTableTests: XCTestCase {
         testData[0].id = insertedId
         
         // Verify inserted reflection
-        let loadedReflections = db.fetchReflections()
+        let loadedReflections = try db.fetchReflections()
         XCTAssertEqual(loadedReflections.count, 1)
         XCTAssertEqual(loadedReflections[0], testData[0])
         
@@ -40,7 +40,7 @@ class ReflectionTableTests: XCTestCase {
         XCTAssertEqual(insertedId2, 2)
         testData[1].id = insertedId2
         
-        let loadedReflections2 = db.fetchReflections()
+        let loadedReflections2 = try db.fetchReflections()
         XCTAssertEqual(loadedReflections2.count, 2)
         XCTAssertEqual(loadedReflections2.sorted(by: {$0.id < $1.id}), [testData[0], testData[1]])
     }
@@ -48,7 +48,7 @@ class ReflectionTableTests: XCTestCase {
     func testDeleteReflection() throws {
         // Create database in memory. No data should be loaded yet
         let db = try! SqliteDatabase.openInMemory()
-        XCTAssert(db.fetchReflections().isEmpty)
+        XCTAssert(try db.fetchReflections().isEmpty)
         
         // Insert reflection
         let insertedId = try! db.insert(reflection: testData[0])
@@ -56,7 +56,7 @@ class ReflectionTableTests: XCTestCase {
         testData[0].id = insertedId
         
         // Verify inserted reflection
-        let loadedReflections = db.fetchReflections()
+        let loadedReflections = try db.fetchReflections()
         XCTAssertEqual(loadedReflections.count, 1)
         XCTAssertEqual(loadedReflections[0], testData[0])
         
@@ -64,7 +64,7 @@ class ReflectionTableTests: XCTestCase {
         try db.delete(reflectionsIds: [testData[0].id])
         
         // Verify reflection was deleted
-        XCTAssert(db.fetchReflections().isEmpty)
+        XCTAssert(try db.fetchReflections().isEmpty)
     }
     
     func testDeleteFirstReflection() throws {
@@ -77,7 +77,7 @@ class ReflectionTableTests: XCTestCase {
         testData.remove(at: 0)
         
         // Verify entry was removed
-        let loadedReflections = db.fetchReflections()
+        let loadedReflections = try db.fetchReflections()
         XCTAssertEqual(loadedReflections, testData)
     }
     
@@ -91,7 +91,7 @@ class ReflectionTableTests: XCTestCase {
         testData.remove(at: testData.count - 1)
         
         // Verify entry was removed
-        let loadedReflections = db.fetchReflections()
+        let loadedReflections = try db.fetchReflections()
         XCTAssertEqual(loadedReflections, testData)
     }
     
@@ -105,7 +105,7 @@ class ReflectionTableTests: XCTestCase {
         testData.remove(at: 1)
         
         // Verify entry was removed
-        let loadedReflections = db.fetchReflections()
+        let loadedReflections = try db.fetchReflections()
         XCTAssertEqual(loadedReflections, testData)
     }
     
@@ -125,7 +125,7 @@ class ReflectionTableTests: XCTestCase {
         testData.removeAll(where: {idsToRemove.contains($0.id)})
         
         // Verify entry was removed
-        let loadedReflections = db.fetchReflections()
+        let loadedReflections = try db.fetchReflections()
         XCTAssertEqual(loadedReflections, testData)
     }
 
