@@ -93,10 +93,19 @@ struct ListView: View {
             .navigationTitle("Reflections")
             .navigationBarItems(
                 leading:
-                    Button(action: shareSheet) {
-                        Image(systemName: "square.and.arrow.up")
-                    }
-                    .disabled(isCreatingExport),
+                    HStack {
+                        Menu {
+                            ForEach(dataStore.uniqueAxisNames, id: \.self) { axis in
+                                Button(axis, action: {print("update axis to \(axis)")})
+                            }
+                        } label: {
+                            Image(systemName: "eyeglasses")
+                        }
+                        Button(action: shareSheet) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                        .disabled(isCreatingExport)
+                    },
                 trailing:
                     Button(action: {
                         isNewReflectionPresented = true
