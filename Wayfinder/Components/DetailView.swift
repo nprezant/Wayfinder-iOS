@@ -56,6 +56,10 @@ struct DetailView: View {
                     Image(systemName: "calendar")
                     Text(Date(timeIntervalSince1970: TimeInterval(reflection.date)), style: .date)
                 }
+                HStack {
+                    Image(systemName: "eyeglasses")
+                    Text(reflection.axis)
+                }
             }
             if !reflection.tags.isEmpty {
                 Section(header: Text("Tags")) {

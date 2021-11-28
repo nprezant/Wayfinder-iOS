@@ -54,6 +54,19 @@ struct EditView: View {
                 // Force a rebuild on date change; there is a bug that changes the short/medium style randomly otherwise
                 // https://stackoverflow.com/questions/66090210/swiftui-datepicker-jumps-between-short-and-medium-date-formats-when-changing-the
                 .id(data.date)
+                HStack {
+                    Text("View")
+                    Spacer()
+                    Menu(content: {
+                        Picker(selection: $data.axis, label: Text(data.axis)) {
+                            ForEach(dataStore.uniqueAxisNames, id: \.self) { axis in
+                                Text(axis)
+                            }
+                        }
+                    }, label: {
+                        Text(data.axis)
+                    })
+                }
             }
             Section(header: Text("Tags")) {
                 ForEach(data.tags.indices, id: \.self) { index in
