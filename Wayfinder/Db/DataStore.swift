@@ -55,15 +55,27 @@ class DataStore: ObservableObject {
     
     /// Performs initial sync with persistant data, including preferences and database (asyncronosly)
     public func syncInitial() {
-        Preferences(data: PreferencesData(activeAxis: activeAxis)).load() { data in
-            self.activeAxis = data.activeAxis
-            self.sync()
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            
+            guard let self = self else { return }
+            print("initial syncing")
+            
+            let preferences = PreferencesData.load()
+            
+            DispatchQueue.main.async {
+                // Only apply preferences if they exists
+                if let preferences = preferences {
+                    self.activeAxis = preferences.activeAxis
+                }
+                
+                self.sync()
+            }
         }
     }
     
     /// Saves preferences (asyncronosly)
     public func savePreferences() {
-        Preferences(data: PreferencesData(activeAxis: activeAxis)).save()
+        PreferencesData(activeAxis: activeAxis).save()
     }
     
     /// Syncs published properties with the database (asyncronosly)
@@ -71,6 +83,8 @@ class DataStore: ObservableObject {
         DispatchQueue.global(qos: .background).async { [weak self] in
             
             guard let self = self else { return }
+            
+            print("syncing")
             
             let reflections = try! self.db.fetchReflections()
             let uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <)
