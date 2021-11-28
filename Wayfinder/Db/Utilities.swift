@@ -35,3 +35,17 @@ extension Int64 {
         return self != 0
     }
 }
+
+struct FileLocations {
+    public static var documentsFolder: URL {
+        do {
+            return try FileManager.default.url(
+                for: .documentDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: false)
+        } catch {
+            fatalError("Can't find documents directory.")
+        }
+    }
+}

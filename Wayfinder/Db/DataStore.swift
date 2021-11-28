@@ -15,32 +15,20 @@ struct BatchRenameData {
 }
 
 class DataStore: ObservableObject {
-    private static var documentsFolder: URL {
-        do {
-            return try FileManager.default.url(
-                for: .documentDirectory,
-                in: .userDomainMask,
-                appropriateFor: nil,
-                create: false)
-        } catch {
-            fatalError("Can't find documents directory.")
-        }
-    }
     private static var dbUrl: URL {
-        return documentsFolder.appendingPathComponent("wayfinder.sqlite3")
+        return FileLocations.documentsFolder.appendingPathComponent("wayfinder.sqlite3")
     }
     
     private static var exportUrl: URL {
-        return documentsFolder.appendingPathComponent("wayfinder.csv")
+        return FileLocations.documentsFolder.appendingPathComponent("wayfinder.csv")
     }
     
     @Published var reflections: [Reflection] = []
-    
     @Published var uniqueReflectionNames: [String] = []
-    
     @Published var uniqueTagNames: [String] = []
-    
     @Published var uniqueAxisNames: [String] = []
+    
+    @Published var activeAxis: String = PreferencesData().activeAxis
     
     private var db: SqliteDatabase
     
@@ -65,8 +53,21 @@ class DataStore: ObservableObject {
         return dataStore
     }
     
+    /// Performs initial sync with persistant data, including preferences and database (asyncronosly)
+    public func syncInitial() {
+        Preferences(data: PreferencesData(activeAxis: activeAxis)).load() { data in
+            self.activeAxis = data.activeAxis
+            self.sync()
+        }
+    }
+    
+    /// Saves preferences (asyncronosly)
+    public func savePreferences() {
+        Preferences(data: PreferencesData(activeAxis: activeAxis)).save()
+    }
+    
     /// Syncs published properties with the database (asyncronosly)
-    func sync(_ completion: @escaping ()->Void = {}) {
+    public func sync(_ completion: @escaping ()->Void = {}) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             
             guard let self = self else { return }

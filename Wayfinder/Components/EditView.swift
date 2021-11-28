@@ -7,7 +7,7 @@ struct EditView: View {
     @ObservedObject var dataStore: DataStore
     @Binding var data: Reflection.Data
     
-    @State var newTag: String = ""
+    @State private var newTag: String = ""
     @State private var oldName: String = ""
     @State private var tagIndexToRename: Int?
     @State private var isActivityRenamePresented: Bool = false

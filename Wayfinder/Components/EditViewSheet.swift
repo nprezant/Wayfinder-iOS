@@ -25,7 +25,7 @@ struct EditViewSheet: View {
                 break
             }
         }
-        newReflectionData = Reflection.Data()
+        newReflectionData = Reflection.Data(axis: dataStore.activeAxis)
     }
     
     var body: some View {
@@ -46,6 +46,9 @@ struct EditViewSheet: View {
                     }
                 )
         }
+        .onAppear(perform: {
+            newReflectionData = Reflection.Data(axis: dataStore.activeAxis)
+        })
     }
 }
 

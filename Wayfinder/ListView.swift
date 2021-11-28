@@ -94,13 +94,15 @@ struct ListView: View {
             .navigationBarItems(
                 leading:
                     HStack {
-                        Menu {
-                            ForEach(dataStore.uniqueAxisNames, id: \.self) { axis in
-                                Button(axis, action: {print("update axis to \(axis)")})
+                        Menu(content: {
+                            Picker(selection: $dataStore.activeAxis, label: Image(systemName: "eyeglasses")) {
+                                ForEach(dataStore.uniqueAxisNames, id: \.self) { axis in
+                                    Text(axis)
+                                }
                             }
-                        } label: {
+                        }, label: {
                             Image(systemName: "eyeglasses")
-                        }
+                        })
                         Button(action: shareSheet) {
                             Image(systemName: "square.and.arrow.up")
                         }

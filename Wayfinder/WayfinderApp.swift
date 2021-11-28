@@ -35,7 +35,7 @@ struct WayfinderApp: App {
                     .tag(2)
             }
             .onAppear {
-                dataStore.sync()
+                dataStore.syncInitial()
             }
             .onChange(of: selectedItem) {
                 if selectedItem == 1 {
