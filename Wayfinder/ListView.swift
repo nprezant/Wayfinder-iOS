@@ -6,6 +6,7 @@ struct ListView: View {
     @ObservedObject var dataStore: DataStore
     
     @State private var isNewReflectionPresented = false
+    @State private var isManageAxesPresented = false
     @State private var isCreatingExport = false
     @State private var errorMessage: ErrorMessage?
     
@@ -99,6 +100,11 @@ struct ListView: View {
                                     Text(axis)
                                 }
                             }
+                            Button(action: {
+                                isManageAxesPresented = true
+                            }) {
+                                Label("Manage views", systemImage: "gear")
+                            }
                         }, label: {
                             Image(systemName: "eyeglasses")
                                 .font(Font.title2.weight(.bold))
@@ -126,6 +132,11 @@ struct ListView: View {
                 dataStore: dataStore,
                 isPresented: $isNewReflectionPresented,
                 errorMessage: $errorMessage
+            )
+        }
+        .sheet(isPresented: $isManageAxesPresented) {
+            ManageAxesView(
+                dataStore: dataStore
             )
         }
         .alert(item: $errorMessage) { msg in

@@ -168,6 +168,31 @@ class DataStore: ObservableObject {
         }
     }
     
+    /// Adds a single new axis.
+    func add(axis: String, completion: @escaping (SqliteError?)->()) {
+        
+        // Database logic on background thread
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            
+            guard let self = self else { return }
+            
+            var result: SqliteError?
+            
+            do {
+                try self.db.createAxis(axis)
+            } catch let e as SqliteError {
+                result = e
+            } catch let e {
+                result = SqliteError.Unspecified(message: "Can't add axis '\(axis)'. \(e)")
+            }
+            
+            // Sync app with database
+            self.sync() {
+                completion(result)
+            }
+        }
+    }
+    
     /// Updates the reflection with the matching ID to contain new data
     func update(reflection: Reflection, completion: @escaping (SqliteError?)->() = {_ in}) {
         DispatchQueue.global(qos: .background).async { [weak self] in
