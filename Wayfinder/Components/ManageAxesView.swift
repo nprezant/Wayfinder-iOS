@@ -35,9 +35,6 @@ struct ManageAxesView: View {
                         errorMessage = ErrorMessage(title: "Can't delete view", message: "\(error)")
                     }
                 }
-                withAnimation {
-                    dataStore.axisNames.remove(atOffsets: indices)
-                }
             }
             HStack {
                 TextField("New View", text: $newAxis)
