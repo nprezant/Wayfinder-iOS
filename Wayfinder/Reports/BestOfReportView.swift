@@ -52,7 +52,7 @@ struct BestOfReportView: View {
                     }
                     .onChange(of: selectedBestWorst, perform: {_ in updateBestOf()})
                     .pickerStyle(MenuPickerStyle())
-                    Text("of")
+                    Text("of a \(dataStore.activeAxis)")
                     Picker("\(selectedCategory.rawValue.capitalized)", selection: $selectedCategory) {
                         ForEach(Category.allCases) { category in
                             Text(category.rawValue.capitalized).tag(category)

@@ -90,10 +90,9 @@ struct ListView: View {
                     }
                 }
             }
-            .navigationTitle("Reflections")
+            .navigationTitle("\(dataStore.activeAxis) Reflections")
             .navigationBarItems(
                 leading:
-                    HStack {
                         Menu(content: {
                             Picker(selection: $dataStore.activeAxis, label: Image(systemName: "eyeglasses")) {
                                 ForEach(dataStore.uniqueAxisNames, id: \.self) { axis in
@@ -102,17 +101,21 @@ struct ListView: View {
                             }
                         }, label: {
                             Image(systemName: "eyeglasses")
-                        })
+                                .font(Font.title2.weight(.bold))
+                        }),
+                trailing:
+                    HStack {
                         Button(action: shareSheet) {
                             Image(systemName: "square.and.arrow.up")
                         }
+                        .padding([.leading])
                         .disabled(isCreatingExport)
-                    },
-                trailing:
-                    Button(action: {
-                        isNewReflectionPresented = true
-                    }) {
-                        Image(systemName: "plus")
+                        Button(action: {
+                            isNewReflectionPresented = true
+                        }) {
+                            Image(systemName: "plus")
+                        }
+                        .padding([.leading])
                     }
             )
             .listStyle(GroupedListStyle())
