@@ -27,6 +27,14 @@ struct ManageAxesView: View {
                     }
             }
             .onDelete { indices in
+                let axesToDelete = indices.map{ dataStore.uniqueAxisNames[$0] }
+                dataStore.delete(axes: axesToDelete) { error in
+                    if let error = error {
+                        dataStore.uniqueAxisNames.append(contentsOf: axesToDelete)
+                        dataStore.uniqueAxisNames.sort(by: <)
+                        errorMessage = ErrorMessage(title: "Can't delete view", message: "\(error)")
+                    }
+                }
                 withAnimation {
                     dataStore.uniqueAxisNames.remove(atOffsets: indices)
                 }
@@ -36,7 +44,7 @@ struct ManageAxesView: View {
                 Button(action: {
                     dataStore.add(axis: newAxis) { error in
                         if let error = error {
-                            errorMessage = ErrorMessage(title: "Can't add view", message: error.localizedDescription)
+                            errorMessage = ErrorMessage(title: "Can't add view", message: "\(error)")
                         }
                     }
                     withAnimation {

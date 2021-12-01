@@ -143,4 +143,52 @@ extension SqliteDatabase {
             throw SqliteError.Step(message: errorMessage)
         }
     }
+    
+    func delete(axis: String) throws {
+        let sql = """
+            DELETE FROM axis
+            WHERE name = ?1;
+        """
+        
+        let stmt = try prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        guard sqlite3_bind_text(stmt, 1, axis, -1, SQLITE_TRANSIENT) == SQLITE_OK else {
+            throw SqliteError.Bind(message: errorMessage)
+        }
+        
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
+    }
+    
+    func delete(axes: [String]) throws {
+        if axes.isEmpty {
+            return
+        }
+        
+        let questionMarks = [String](repeating: "?", count: axes.count)
+        let sql = """
+            DELETE FROM axis
+            WHERE name IN (\(questionMarks.joined(separator: ",")));
+        """
+        
+        let stmt = try prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        for (i, tagName) in axes.enumerated() {
+            let questionMarkIndex = Int32(i) + 1
+            guard sqlite3_bind_text(stmt, questionMarkIndex, tagName, -1, SQLITE_TRANSIENT) == SQLITE_OK else {
+                throw SqliteError.Bind(message: errorMessage)
+            }
+        }
+        
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
+    }
 }
