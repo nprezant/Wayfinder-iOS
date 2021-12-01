@@ -125,9 +125,9 @@ struct BestOfReportView: View {
         .sheet(isPresented: $isPresented, onDismiss: updateBestOf) {
             switch selectedCategory {
             case .activity:
-                NamePicker($selectedCategoryValue, nameOptions: dataStore.uniqueReflectionNames, prompt: "Choose Activity", canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: dataStore.activityNames, prompt: "Choose Activity", canCreate: false, parentIsPresenting: $isPresented)
             case .tag:
-                NamePicker($selectedCategoryValue, nameOptions: dataStore.uniqueTagNames, prompt: "Choose Tag", canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: dataStore.tagNames, prompt: "Choose Tag", canCreate: false, parentIsPresenting: $isPresented)
             }
         }
         .sheet(isPresented: $isDetailPresented, onDismiss: updateEditedReflection) {

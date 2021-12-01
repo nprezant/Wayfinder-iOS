@@ -14,8 +14,8 @@ struct ManageAxesView: View {
     var body: some View {
         Text("Manage views").font(.title).padding([.top])
         List {
-            ForEach(dataStore.uniqueAxisNames.indices, id: \.self) { index in
-                Text(dataStore.uniqueAxisNames[index])
+            ForEach(dataStore.axisNames.indices, id: \.self) { index in
+                Text(dataStore.axisNames[index])
                     // TODO this causes the "disabling recursion trigger logging" message
                     .contextMenu {
                         Button {
@@ -27,16 +27,16 @@ struct ManageAxesView: View {
                     }
             }
             .onDelete { indices in
-                let axesToDelete = indices.map{ dataStore.uniqueAxisNames[$0] }
+                let axesToDelete = indices.map{ dataStore.axisNames[$0] }
                 dataStore.delete(axes: axesToDelete) { error in
                     if let error = error {
-                        dataStore.uniqueAxisNames.append(contentsOf: axesToDelete)
-                        dataStore.uniqueAxisNames.sort(by: <)
+                        dataStore.axisNames.append(contentsOf: axesToDelete)
+                        dataStore.axisNames.sort(by: <)
                         errorMessage = ErrorMessage(title: "Can't delete view", message: "\(error)")
                     }
                 }
                 withAnimation {
-                    dataStore.uniqueAxisNames.remove(atOffsets: indices)
+                    dataStore.axisNames.remove(atOffsets: indices)
                 }
             }
             HStack {
@@ -48,8 +48,8 @@ struct ManageAxesView: View {
                         }
                     }
                     withAnimation {
-                        let insertionIndex = dataStore.uniqueAxisNames.insertionIndex(of: newAxis, using: >)
-                        dataStore.uniqueAxisNames.insert(newAxis, at: insertionIndex)
+                        let insertionIndex = dataStore.axisNames.insertionIndex(of: newAxis, using: >)
+                        dataStore.axisNames.insert(newAxis, at: insertionIndex)
                         newAxis = ""
                     }
                 }) {

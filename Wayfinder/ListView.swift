@@ -96,7 +96,7 @@ struct ListView: View {
                 leading:
                         Menu(content: {
                             Picker(selection: $dataStore.activeAxis, label: Image(systemName: "eyeglasses")) {
-                                ForEach(dataStore.uniqueAxisNames, id: \.self) { axis in
+                                ForEach(dataStore.axisNames, id: \.self) { axis in
                                     Text(axis)
                                 }
                             }

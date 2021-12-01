@@ -102,9 +102,9 @@ struct CategoryReportView: View {
         .sheet(isPresented: $isPresented, onDismiss: updateAverages) {
             switch selectedCategory {
             case .activity:
-                NamePicker($selectedCategoryValue, nameOptions: dataStore.uniqueReflectionNames, prompt: selectedCategory.choicePrompt, canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: dataStore.activityNames, prompt: selectedCategory.choicePrompt, canCreate: false, parentIsPresenting: $isPresented)
             case .tag:
-                NamePicker($selectedCategoryValue, nameOptions: dataStore.uniqueTagNames, prompt: selectedCategory.choicePrompt, canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: dataStore.tagNames, prompt: selectedCategory.choicePrompt, canCreate: false, parentIsPresenting: $isPresented)
             }
         }
     }

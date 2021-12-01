@@ -24,10 +24,17 @@ class DataStore: ObservableObject {
         return FileLocations.documentsFolder.appendingPathComponent("wayfinder.csv")
     }
     
+    /// Available reflections
     @Published var reflections: [Reflection] = []
-    @Published var uniqueReflectionNames: [String] = []
-    @Published var uniqueTagNames: [String] = []
-    @Published var uniqueAxisNames: [String] = []
+    
+    /// Distinct available activity names
+    @Published var activityNames: [String] = []
+    
+    /// Distinct available tag names
+    @Published var tagNames: [String] = []
+    
+    /// Distinct available axis names
+    @Published var axisNames: [String] = []
     
     @Published var activeAxis: String = PreferencesData().activeAxis
     
@@ -89,16 +96,16 @@ class DataStore: ObservableObject {
             Logger().info("Syncing")
             
             let reflections = try! self.db.fetchReflections(axis: self.activeAxis)
-            let uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <) // TODO should this include all or just active axis? Or just non-hidden axis?
-            let uniqueTagNames = self.db.fetchAllUniqueTags().sorted(by: <) // TODO should this include all or just active axis? Or just non-hidden axis?
-            let uniqueAxisNames = self.db.fetchDistinctVisibleAxisNames().sorted(by: <)
+            let activityNames = Array(Set(reflections.map{$0.name})).sorted(by: <) // TODO should this include all or just active axis? Or just non-hidden axis?
+            let tagNames = self.db.fetchAllUniqueTags().sorted(by: <) // TODO should this include all or just active axis? Or just non-hidden axis?
+            let axisNames = self.db.fetchDistinctVisibleAxisNames().sorted(by: <)
             
             // Assigning published properties is UI work, must do on main thread
             DispatchQueue.main.async {
                 self.reflections = reflections
-                self.uniqueReflectionNames = uniqueReflectionNames
-                self.uniqueTagNames = uniqueTagNames
-                self.uniqueAxisNames = uniqueAxisNames
+                self.activityNames = activityNames
+                self.tagNames = tagNames
+                self.axisNames = axisNames
                 completion()
             }
         }
@@ -234,7 +241,7 @@ class DataStore: ObservableObject {
     
     /// Delete axes
     func delete(axes: [String], completion: @escaping (SqliteError?)->() = {_ in}) {
-        self.uniqueAxisNames.removeAll(where: {axes.contains($0)})
+        self.axisNames.removeAll(where: {axes.contains($0)})
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
             do {
@@ -322,9 +329,9 @@ class DataStore: ObservableObject {
             
             switch category {
             case .activity:
-                categoryValues = self.uniqueReflectionNames
+                categoryValues = self.activityNames
             case .tag:
-                categoryValues = self.uniqueTagNames
+                categoryValues = self.tagNames
             }
             
             var allAveraged: [Reflection.Averaged] = []
