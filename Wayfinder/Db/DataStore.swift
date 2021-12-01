@@ -86,7 +86,7 @@ class DataStore: ObservableObject {
             
             print("syncing")
             
-            let reflections = try! self.db.fetchReflections()
+            let reflections = try! self.db.fetchReflections(axis: self.activeAxis)
             let uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <)
             let uniqueTagNames = self.db.fetchAllUniqueTags().sorted(by: <)
             let uniqueAxisNames = self.db.fetchDistinctVisibleAxisNames().sorted(by: <)
