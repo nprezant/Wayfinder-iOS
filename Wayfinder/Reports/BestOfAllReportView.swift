@@ -1,6 +1,7 @@
 // Wayfinder
 
 import SwiftUI
+import os
 
 struct BestOfAllReportView: View {
     @ObservedObject var dataStore: DataStore
@@ -17,7 +18,7 @@ struct BestOfAllReportView: View {
         dataStore.makeBestOfAllReport(for: selectedCategory, by: selectedMetric, direction: selectedBestWorst) { results in
             switch results {
             case .failure(let error):
-                print(error.localizedDescription)
+                Logger().error("\(error.localizedDescription)")
             case .success(let result):
                 self.result = result
             }

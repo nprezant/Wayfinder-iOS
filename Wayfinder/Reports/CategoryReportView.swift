@@ -1,6 +1,7 @@
 // Wayfinder
 
 import SwiftUI
+import os
 
 enum Category: String, CaseIterable, Identifiable {
     case activity
@@ -49,7 +50,7 @@ struct CategoryReportView: View {
         func processResult(results: Result<Reflection.Averaged?, Error>) {
             switch results {
             case .failure(let error):
-                print(error.localizedDescription)
+                Logger().error("\(error.localizedDescription)")
                 
             case .success(let averagedResult):
                 self.averagedResult = averagedResult

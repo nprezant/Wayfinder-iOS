@@ -1,6 +1,7 @@
 // Wayfinder
 
 import Foundation
+import os
 
 struct BatchRenameData {
     var category: Category
@@ -58,7 +59,8 @@ class DataStore: ObservableObject {
         DispatchQueue.global(qos: .background).async { [weak self] in
             
             guard let self = self else { return }
-            print("initial syncing")
+            
+            Logger().info("Initial sync")
             
             let preferences = PreferencesData.load()
             
@@ -84,7 +86,7 @@ class DataStore: ObservableObject {
             
             guard let self = self else { return }
             
-            print("syncing")
+            Logger().info("Syncing")
             
             let reflections = try! self.db.fetchReflections(axis: self.activeAxis)
             let uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <)

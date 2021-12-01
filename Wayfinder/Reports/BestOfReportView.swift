@@ -1,6 +1,7 @@
 // Wayfinder
 
 import SwiftUI
+import os
 
 struct BestOfReportView: View {
     @ObservedObject var dataStore: DataStore
@@ -20,7 +21,7 @@ struct BestOfReportView: View {
         func processResult(results: Result<[Reflection], Error>) {
             switch results {
             case .failure(let error):
-                print(error.localizedDescription)
+                Logger().error("\(error.localizedDescription)")
                 
             case .success(let result):
                 self.result = result

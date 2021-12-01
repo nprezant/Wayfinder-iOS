@@ -1,6 +1,7 @@
 // Wayfinder
 
 import SwiftUI
+import os
 
 struct DailyReportView: View {
     @ObservedObject var dataStore: DataStore
@@ -13,7 +14,7 @@ struct DailyReportView: View {
         dataStore.makeAverageReport(for: date) { results in
             switch results {
             case .failure(let error):
-                print(error.localizedDescription)
+                Logger().error("\(error.localizedDescription)")
                 
             case .success(let averagedResult):
                 self.averagedResult = averagedResult
