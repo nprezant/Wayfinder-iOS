@@ -12,7 +12,7 @@ struct ManageAxesView: View {
     @State private var errorMessage: ErrorMessage?
     
     var body: some View {
-        Text("Manage views").font(.title)
+        Text("Manage views").font(.title).padding([.top])
         List {
             ForEach(dataStore.uniqueAxisNames.indices, id: \.self) { index in
                 Text(dataStore.uniqueAxisNames[index])
@@ -34,14 +34,15 @@ struct ManageAxesView: View {
             HStack {
                 TextField("New View", text: $newAxis)
                 Button(action: {
-                    withAnimation {
-                        dataStore.uniqueAxisNames.append(newAxis)
-                        newAxis = ""
-                    }
                     dataStore.add(axis: newAxis) { error in
                         if let error = error {
                             errorMessage = ErrorMessage(title: "Can't add view", message: error.localizedDescription)
                         }
+                    }
+                    withAnimation {
+                        let insertionIndex = dataStore.uniqueAxisNames.insertionIndex(of: newAxis, using: >)
+                        dataStore.uniqueAxisNames.insert(newAxis, at: insertionIndex)
+                        newAxis = ""
                     }
                 }) {
                     Image(systemName: "plus.circle.fill")

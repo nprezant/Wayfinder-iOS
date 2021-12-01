@@ -24,6 +24,12 @@ extension View {
     }
 }
 
+extension Collection {
+    func insertionIndex(of element: Self.Iterator.Element, using areInIncreasingOrder: (Self.Iterator.Element, Self.Iterator.Element) -> Bool) -> Index {
+        return firstIndex(where: { !areInIncreasingOrder($0, element) }) ?? endIndex
+    }
+}
+
 var MonthShortNames: [Int: String] = [
     1: "Jan",
     2: "Feb",
