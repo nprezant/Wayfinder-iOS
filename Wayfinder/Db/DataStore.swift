@@ -213,9 +213,13 @@ class DataStore: ObservableObject {
                     completion(nil)
                 }
             } catch let e as SqliteError {
-                completion(e)
+                DispatchQueue.main.async {
+                    completion(e)
+                }
             } catch let e {
-                completion(SqliteError.Unspecified(message: "\(e)"))
+                DispatchQueue.main.async {
+                    completion(SqliteError.Unspecified(message: "\(e)"))
+                }
             }
         }
     }
@@ -232,9 +236,13 @@ class DataStore: ObservableObject {
                     completion(nil)
                 }
             } catch let e as SqliteError {
-                completion(e)
+                DispatchQueue.main.async {
+                    completion(e)
+                }
             } catch let e {
-                completion(SqliteError.Unspecified(message: "\(e)"))
+                DispatchQueue.main.async {
+                    completion(SqliteError.Unspecified(message: "\(e)"))
+                }
             }
         }
     }
@@ -250,9 +258,13 @@ class DataStore: ObservableObject {
                     completion(nil)
                 }
             } catch let e as SqliteError {
-                completion(e)
+                DispatchQueue.main.async {
+                    completion(e)
+                }
             } catch let e {
-                completion(SqliteError.Unspecified(message: "\(e)"))
+                DispatchQueue.main.async {
+                    completion(SqliteError.Unspecified(message: "\(e)"))
+                }
             }
         }
     }
