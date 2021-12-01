@@ -22,7 +22,7 @@ struct Reflection : Identifiable, Equatable, MetricComparable {
         return """
         ALTER TABLE reflection
         ADD COLUMN axis INT REFERENCES axis
-            ON UPDATE CASCADE;
+            ON UPDATE CASCADE
             ON DELETE RESTRICT;
         CREATE INDEX indexReflectionAxis ON reflection(axis);
         UPDATE reflection SET axis = 1

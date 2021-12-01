@@ -91,7 +91,8 @@ class MigrationTests: XCTestCase {
             date INT,
             note TEXT ,
             axis INT REFERENCES axis
-                ON UPDATE CASCADE)
+                ON UPDATE CASCADE
+                ON DELETE RESTRICT)
         """,
         """
         CREATE TABLE tag(
