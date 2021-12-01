@@ -100,7 +100,7 @@ extension SqliteDatabase {
         return axes
     }
     
-    func getAxis(_ targetName: String) -> Axis? {
+    func fetchAxis(name targetName: String) -> Axis? {
         let sql = "SELECT id, name, hidden FROM axis WHERE name = ?1 LIMIT 1"
         
         let stmt = try! prepare(sql: sql)
@@ -125,7 +125,7 @@ extension SqliteDatabase {
         return Axis(id: id, name: name, hidden: isHidden)
     }
     
-    func createAxis(_ name: String) throws {
+    func insert(axis name: String) throws {
         let sql = "INSERT INTO axis (name, hidden) VALUES (?1, FALSE);"
         
         let stmt = try! prepare(sql: sql)

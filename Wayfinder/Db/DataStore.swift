@@ -181,7 +181,7 @@ class DataStore: ObservableObject {
             var result: SqliteError?
             
             do {
-                try self.db.createAxis(axis)
+                try self.db.insert(axis: axis)
             } catch let e as SqliteError {
                 result = e
             } catch let e {
