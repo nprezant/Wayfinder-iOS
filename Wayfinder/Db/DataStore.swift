@@ -89,8 +89,8 @@ class DataStore: ObservableObject {
             Logger().info("Syncing")
             
             let reflections = try! self.db.fetchReflections(axis: self.activeAxis)
-            let uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <)
-            let uniqueTagNames = self.db.fetchAllUniqueTags().sorted(by: <)
+            let uniqueReflectionNames = Array(Set(reflections.map{$0.name})).sorted(by: <) // TODO should this include all or just active axis? Or just non-hidden axis?
+            let uniqueTagNames = self.db.fetchAllUniqueTags().sorted(by: <) // TODO should this include all or just active axis? Or just non-hidden axis?
             let uniqueAxisNames = self.db.fetchDistinctVisibleAxisNames().sorted(by: <)
             
             // Assigning published properties is UI work, must do on main thread
