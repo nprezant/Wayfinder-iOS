@@ -23,7 +23,7 @@ struct ListView: View {
     func updateAction(reflection: Reflection) -> Void {
         dataStore.update(reflection: reflection) { error in
             if let error = error {
-                errorMessage = ErrorMessage(title: "Update Error", message: error.localizedDescription)
+                errorMessage = ErrorMessage(title: "Update Error", message: "\(error)")
             }
         }
     }
@@ -31,7 +31,7 @@ struct ListView: View {
     func deleteAction(ids: [Int64]) -> Void {
         dataStore.delete(reflectionIds: ids) { error in
             if let error = error {
-                errorMessage = ErrorMessage(title: "Delete Error", message: error.localizedDescription)
+                errorMessage = ErrorMessage(title: "Delete Error", message: "\(error)")
             }
         }
     }
@@ -44,7 +44,7 @@ struct ListView: View {
         dataStore.ExportCsv() { result in
             switch result {
             case .failure(let error):
-                errorMessage = ErrorMessage(title: "Export Error", message: error.localizedDescription)
+                errorMessage = ErrorMessage(title: "Export Error", message: "\(error)")
                 
             case .success(let csv):
                 let activityVC = UIActivityViewController(

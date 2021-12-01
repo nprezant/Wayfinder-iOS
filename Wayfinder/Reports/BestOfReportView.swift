@@ -37,7 +37,7 @@ struct BestOfReportView: View {
         let reflection = dataStore.reflections[index]
         dataStore.update(reflection: reflection) { error in
             if let error = error {
-                errorMessage = ErrorMessage(title: "Update Error", message: error.localizedDescription)
+                errorMessage = ErrorMessage(title: "Update Error", message: "\(error)")
             }
         }
     }

@@ -20,7 +20,7 @@ struct EditViewSheet: View {
         dataStore.add(reflection: newReflectionData.reflection) { result in
             switch result {
             case .failure(let error):
-                errorMessage = ErrorMessage(title: "Save Error", message: error.localizedDescription)
+                errorMessage = ErrorMessage(title: "Save Error", message: "\(error)")
             case .success(_):
                 break
             }

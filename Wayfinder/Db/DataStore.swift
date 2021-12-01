@@ -37,7 +37,7 @@ class DataStore: ObservableObject {
         do {
             try db = inMemory ? SqliteDatabase.openInMemory() : SqliteDatabase.open(at: DataStore.dbUrl)
         } catch let e {
-            fatalError("Cannot open database: \(DataStore.dbUrl). Error: \(e.localizedDescription)")
+            fatalError("Cannot open database: \(DataStore.dbUrl). Error: \(e)")
         }
     }
     
@@ -208,7 +208,7 @@ class DataStore: ObservableObject {
             } catch let e as SqliteError {
                 completion(e)
             } catch let e {
-                completion(SqliteError.Unspecified(message: e.localizedDescription))
+                completion(SqliteError.Unspecified(message: "\(e)"))
             }
         }
     }
@@ -227,7 +227,25 @@ class DataStore: ObservableObject {
             } catch let e as SqliteError {
                 completion(e)
             } catch let e {
-                completion(SqliteError.Unspecified(message: e.localizedDescription))
+                completion(SqliteError.Unspecified(message: "\(e)"))
+            }
+        }
+    }
+    
+    /// Delete axes
+    func delete(axes: [String], completion: @escaping (SqliteError?)->() = {_ in}) {
+        self.uniqueAxisNames.removeAll(where: {axes.contains($0)})
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else { return }
+            do {
+                try self.db.delete(axes: axes)
+                self.sync() {
+                    completion(nil)
+                }
+            } catch let e as SqliteError {
+                completion(e)
+            } catch let e {
+                completion(SqliteError.Unspecified(message: "\(e)"))
             }
         }
     }

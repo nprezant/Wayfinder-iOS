@@ -36,7 +36,7 @@ class DataStoreTests: XCTestCase {
         dataStore.add(reflection: testData[0]) { [self] result in
             switch result {
             case .failure(let error):
-                XCTFail(error.localizedDescription)
+                XCTFail("\(error)")
                 
             case .success(let dbAssignedId):
                 XCTAssertEqual(1, dbAssignedId) // Should be first entry in database
@@ -48,7 +48,7 @@ class DataStoreTests: XCTestCase {
             dataStore.add(reflection: testData[1]) { [self] result in
                 switch result {
                 case .failure(let error):
-                    XCTFail(error.localizedDescription)
+                    XCTFail("\(error)")
                     
                 case .success(let dbAssignedId):
                     XCTAssertEqual(2, dbAssignedId) // Should be second entry in database
@@ -113,7 +113,7 @@ class DataStoreTests: XCTestCase {
         dataStore.delete(reflectionIds: [2]) {error in
             
             if let error = error {
-                XCTFail(error.localizedDescription)
+                XCTFail("\(error)")
             }
             
             dataStore.sync() { [self] in
@@ -136,7 +136,7 @@ class DataStoreTests: XCTestCase {
         dataStore.delete(reflectionIds: [1, 2]) {error in
             
             if let error = error {
-                XCTFail(error.localizedDescription)
+                XCTFail("\(error)")
             }
             
             dataStore.sync() { [self] in
@@ -161,7 +161,7 @@ class DataStoreTests: XCTestCase {
         dataStore.update(reflection: newSecondReflection) {error in
             
             if let error = error {
-                XCTFail(error.localizedDescription)
+                XCTFail("\(error)")
             }
             
             dataStore.sync() { [self] in
