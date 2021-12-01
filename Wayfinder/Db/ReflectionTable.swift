@@ -279,6 +279,40 @@ extension SqliteDatabase {
         return reflections
     }
     
+    /// Fetch all unique reflection names (activities) for visible axes
+    func fetchVisibleActivities(axis: String? = nil) throws -> [String] {
+        let whereAxisClause = axis != nil ? "AND axis.name = ?1" : ""
+        let sql = "SELECT DISTINCT r.name FROM reflection r INNER JOIN axis ON axis.id = r.axis WHERE axis.hidden = FALSE \(whereAxisClause) ORDER BY r.name"
+        
+        let stmt = try? prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        // Only bind variable if we have a variable to bind
+        if axis != nil {
+            guard
+                sqlite3_bind_text(stmt, 1, axis, -1, SQLITE_TRANSIENT) == SQLITE_OK
+            else {
+                throw SqliteError.Bind(message: errorMessage)
+            }
+        }
+        
+        var activities: [String] = []
+        
+        while (true) {
+            guard sqlite3_step(stmt) == SQLITE_ROW else {
+                break
+            }
+            
+            let name = String(cString: sqlite3_column_text(stmt, 0))
+
+            activities.append(name)
+        }
+        
+        return activities
+    }
+    
     /// Batch rename reflection activities
     func renameReflections(from oldName: String, to newName: String) throws {
         let sql = "UPDATE reflection SET name = ? WHERE name = ?"
@@ -299,5 +333,4 @@ extension SqliteDatabase {
             throw SqliteError.Step(message: errorMessage)
         }
     }
-    
 }
