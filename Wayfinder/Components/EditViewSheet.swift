@@ -14,7 +14,7 @@ struct EditViewSheet: View {
     var dismissAction: (() -> Void) = {}
     var addAction: (() -> Void) = {}
     
-    @State private var newReflectionData = Reflection.Data()
+    @State private var newReflectionData = Reflection.Data(axis: "To be overwritten")
     
     func saveAction() -> Void {
         dataStore.add(reflection: newReflectionData.reflection) { result in

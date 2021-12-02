@@ -9,7 +9,7 @@ struct DetailView: View {
     let saveAction: ((Reflection) -> Void)
     var parentIsPresenting: Binding<Bool>? = nil // If supplied (e.g. when using in a sheet) additional header text and buttons are displayed that are otherwise handled by the navigation view
     
-    @State private var data: Reflection.Data = Reflection.Data()
+    @State private var data: Reflection.Data = Reflection.Data(axis: "To be overwritten")
     @State private var isPresented = false
     
     func editAction() {

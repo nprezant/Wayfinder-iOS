@@ -70,7 +70,7 @@ extension Reflection {
         var energy: Int64 = 0
         var date: Date = Date()
         var note: String = ""
-        var axis: String = "Default Axis"
+        var axis: String
         var tags: [String] = []
         
         var reflection: Reflection {
@@ -172,9 +172,9 @@ extension SqliteDatabase {
     func update(reflection: Reflection) throws {
         let sql = """
             UPDATE reflection
-            SET (name, isFlowState, engagement, energy, date, note)
-            = (?, ?, ?, ?, ?, ?)
-            WHERE id = ?;
+            SET (name, isFlowState, engagement, energy, date, note, axis)
+            = (?1, ?2, ?3, ?4, ?5, ?6, (SELECT axis.id FROM axis WHERE axis.name = ?7 LIMIT 1))
+            WHERE id = ?8;
         """
         
         let stmt = try prepare(sql: sql)
@@ -189,7 +189,8 @@ extension SqliteDatabase {
                 && sqlite3_bind_int64(stmt, 4, reflection.energy) == SQLITE_OK
                 && sqlite3_bind_int64(stmt, 5, reflection.date) == SQLITE_OK
                 && sqlite3_bind_text(stmt, 6, reflection.note, -1, SQLITE_TRANSIENT) == SQLITE_OK
-                && sqlite3_bind_int64(stmt, 7, reflection.id) == SQLITE_OK
+                && sqlite3_bind_text(stmt, 7, reflection.axis, -1, SQLITE_TRANSIENT) == SQLITE_OK
+                && sqlite3_bind_int64(stmt, 8, reflection.id) == SQLITE_OK
         else {
             throw SqliteError.Bind(message: errorMessage)
         }
