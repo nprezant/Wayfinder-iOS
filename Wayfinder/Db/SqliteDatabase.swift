@@ -28,8 +28,8 @@ class SqliteDatabase {
         sqlite3_close(dbPointer)
     }
     
-    /// Sqlite3 user version is stored as a 32 bit integer I think
-    static var latestVersion: Int32 = 2
+    /// Sqlite3 user version is stored as a 32 bit integer
+    static var latestVersion: Int32 = 3
     
     /// Open a database connection to a transient in memory database (generally for testing or migrating)
     static func openInMemory(targetVersion: Int32 = latestVersion) throws -> SqliteDatabase {
@@ -47,11 +47,6 @@ class SqliteDatabase {
         
         // Open the connection
         let db = try openDatabase(at: url.absoluteString)
-        
-        // If this is a new file, we need to migrate /up to/ version 0
-        if isNewFile {
-            db.version = -1
-        }
         
         // Nothing to do if this is the correct version
         if db.version == targetVersion {
@@ -80,48 +75,45 @@ class SqliteDatabase {
         
         // Can migrate either up or down
         let goingUp = targetVersion > version ? true : false
-        
-        // Get the logger
-        let logger = Logger()
 
         // Whichever direction we are going, we don't want to duplicate that version's migrator
         let startAtVersion = goingUp ? version + 1 : version - 1
         
         // Migrate database to current version
         for stepVersion in stride(from: startAtVersion, through: targetVersion, by: goingUp ? 1 : -1) {
-            switch stepVersion {
-            case 0:
-                if goingUp {
-                    logger.info("Migrating <empty database> to 0")
-                    try executeMany(sql: Reflection.createStatement)
-                } else {
-                    logger.info("Migrating 1 to 0")
-                    try executeMany(sql: Tag.dropStatement)
-                }
-                version = 0
-            case 1:
-                if goingUp {
-                    logger.info("Migrating 0 to 1")
-                    try executeMany(sql: Tag.createStatement)
-                } else {
-                    logger.info("Migrating 2 to 1")
-                    try executeMany(sql: Axis.dropStatement + Reflection.dropAxisColumnStatement)
-                }
-                version = 1
-                break
-            case 2:
-                if goingUp {
-                    logger.info("Migrating 1 to 2")
-                    try executeMany(sql: Axis.createStatement + Reflection.addAxisColumnStatement)
-                }
-                else {
-                    logger.info("Migrating 3 to 2 (not implemented)")
-                }
-                version = 2
-            default:
-                // No schema changes
-                break
-            }
+            try migrateWithFile(to: stepVersion, goingUp: goingUp)
+            version = stepVersion
+        }
+    }
+    
+    private let migrationFiles: [Int32:String] = [
+        1: "001-initial",
+        2: "002-tags",
+        3: "003-axis",
+    ]
+    
+    /// Runs a migration file. Can either run up or down.
+    private func migrateWithFile(to targetVersion: Int32, goingUp: Bool) throws {
+        
+        // The actual file we need depends on if we are going up or down.
+        // If we are going up, we want to migrate up to that version, so we use the 'up' of that version directly
+        // If we are going down, we want to undo the previously applied version, so we use the 'down' of the next version
+        guard let fileName = migrationFiles[goingUp ? targetVersion : targetVersion + 1] else {
+            throw SqliteError.Migrate(message: "No migrator file associated with version \(targetVersion)")
+        }
+        
+        guard let thisMigratorFile = Bundle.main.url(forResource: fileName, withExtension: "sqlite3") else {
+            throw SqliteError.Migrate(message: "Cannot find migrator file! Expected: \(fileName)")
+        }
+
+        Logger().info("Migrating \(goingUp ? "up" : "down") to version \(targetVersion) with file: \(thisMigratorFile.lastPathComponent)")
+        
+        let migrator = try Migrator.open(url: thisMigratorFile)
+        
+        if goingUp {
+            try executeMany(sql: migrator.sqlUp)
+        } else {
+            try executeMany(sql: migrator.sqlDown)
         }
     }
     
@@ -190,19 +182,24 @@ class SqliteDatabase {
             sqlite3_finalize(stmt)
         }
         
-        guard sqlite3_step(stmt) == SQLITE_DONE else {
-            throw SqliteError.Step(message: errorMessage)
+        let rc = sqlite3_step(stmt)
+        
+        guard [SQLITE_DONE, SQLITE_OK].contains(rc) else {
+            throw SqliteError.Step(message: "Statement \(sql) returned \(rc) with message: \(errorMessage)")
         }
     }
     
     /// Execute many sql commands
     func executeMany(sql: String) throws {
-        let commands = sql.split(separator: ";")
-        try beginTransaction()
+        // Remove comment lines and split into commands
+        // TODO note this doesn't handle /* */ C style comments
+        let lines = sql.split(separator: "\n")
+        let linesWithoutComments = lines.filter{ !$0.trimmingCharacters(in: .whitespaces).starts(with: "--") }
+        let commands = linesWithoutComments.joined(separator: "\n").split(separator: ";")
+        
         for command in commands {
             try execute(sql: String(command))
         }
-        try endTransaction()
     }
     
     /// Begin a transaction

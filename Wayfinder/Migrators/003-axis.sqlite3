@@ -1,0 +1,28 @@
+-----------
+-- Up
+-----------
+
+CREATE TABLE axis(
+    id INTEGER PRIMARY KEY,
+    name TEXT UNIQUE,
+    hidden BOOL
+);
+
+CREATE INDEX indexAxisHidden ON axis(hidden);
+INSERT INTO axis (name, hidden) VALUES ('Work', FALSE);
+
+ALTER TABLE reflection
+    ADD COLUMN axis INT REFERENCES axis
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT;
+
+CREATE INDEX indexReflectionAxis ON reflection(axis);
+UPDATE reflection SET axis = 1
+
+-----------
+-- Down
+-----------
+
+DROP TABLE axis;
+DROP INDEX indexReflectionAxis;
+ALTER TABLE reflection DROP COLUMN axis;

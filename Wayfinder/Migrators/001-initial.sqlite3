@@ -1,0 +1,19 @@
+-----------
+-- Up
+-----------
+
+CREATE TABLE reflection(
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    isFlowState BOOL,
+    engagement INT,
+    energy INT,
+    date INT,
+    note TEXT
+);
+
+-----------
+-- Down
+-----------
+
+DROP TABLE reflection;

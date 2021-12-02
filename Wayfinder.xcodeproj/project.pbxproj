@@ -16,6 +16,10 @@
 		4F03BE3026DEDAF3001E61E5 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F03BE2F26DEDAF3001E61E5 /* CardView.swift */; };
 		4F0D5E3C274C16900034A26C /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0D5E3B274C16900034A26C /* Preferences.swift */; };
 		4F0D5E3E27571A540034A26C /* ManageAxesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0D5E3D27571A530034A26C /* ManageAxesView.swift */; };
+		4F0D5E40275883590034A26C /* 001-initial.sqlite3 in Resources */ = {isa = PBXBuildFile; fileRef = 4F0D5E3F275883580034A26C /* 001-initial.sqlite3 */; };
+		4F0D5E43275886630034A26C /* 002-tags.sqlite3 in Resources */ = {isa = PBXBuildFile; fileRef = 4F0D5E42275886630034A26C /* 002-tags.sqlite3 */; };
+		4F0D5E45275887200034A26C /* 003-axis.sqlite3 in Resources */ = {isa = PBXBuildFile; fileRef = 4F0D5E44275887200034A26C /* 003-axis.sqlite3 */; };
+		4F0D5E4727589EF60034A26C /* Migrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0D5E4627589EF60034A26C /* Migrator.swift */; };
 		4F23566727018BF100906E88 /* ReflectionTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23566627018BF100906E88 /* ReflectionTable.swift */; };
 		4F23566927018E5B00906E88 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23566827018E5B00906E88 /* Utilities.swift */; };
 		4F23566B27019C0A00906E88 /* TagTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23566A27019C0A00906E88 /* TagTable.swift */; };
@@ -75,6 +79,10 @@
 		4F03BE2F26DEDAF3001E61E5 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		4F0D5E3B274C16900034A26C /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		4F0D5E3D27571A530034A26C /* ManageAxesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageAxesView.swift; sourceTree = "<group>"; };
+		4F0D5E3F275883580034A26C /* 001-initial.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = text; path = "001-initial.sqlite3"; sourceTree = "<group>"; };
+		4F0D5E42275886630034A26C /* 002-tags.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = text; path = "002-tags.sqlite3"; sourceTree = "<group>"; };
+		4F0D5E44275887200034A26C /* 003-axis.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = text; path = "003-axis.sqlite3"; sourceTree = "<group>"; };
+		4F0D5E4627589EF60034A26C /* Migrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Migrator.swift; sourceTree = "<group>"; };
 		4F23566627018BF100906E88 /* ReflectionTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReflectionTable.swift; sourceTree = "<group>"; };
 		4F23566827018E5B00906E88 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		4F23566A27019C0A00906E88 /* TagTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagTable.swift; sourceTree = "<group>"; };
@@ -152,6 +160,17 @@
 			path = Db;
 			sourceTree = "<group>";
 		};
+		4F0D5E41275883AC0034A26C /* Migrators */ = {
+			isa = PBXGroup;
+			children = (
+				4F0D5E4627589EF60034A26C /* Migrator.swift */,
+				4F0D5E3F275883580034A26C /* 001-initial.sqlite3 */,
+				4F0D5E42275886630034A26C /* 002-tags.sqlite3 */,
+				4F0D5E44275887200034A26C /* 003-axis.sqlite3 */,
+			);
+			path = Migrators;
+			sourceTree = "<group>";
+		};
 		4FF3093D270D155D00272EBF /* Reports */ = {
 			isa = PBXGroup;
 			children = (
@@ -208,6 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				4F03BE2026DD4EE2001E61E5 /* Db */,
+				4F0D5E41275883AC0034A26C /* Migrators */,
 				4FF3093D270D155D00272EBF /* Reports */,
 				4FF3093E270D15C200272EBF /* Components */,
 				5F7487382609A52B0046B148 /* WayfinderApp.swift */,
@@ -357,8 +377,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F0D5E45275887200034A26C /* 003-axis.sqlite3 in Resources */,
 				5F7487402609A5310046B148 /* Preview Assets.xcassets in Resources */,
+				4F0D5E43275886630034A26C /* 002-tags.sqlite3 in Resources */,
 				5F74873D2609A5310046B148 /* Assets.xcassets in Resources */,
+				4F0D5E40275883590034A26C /* 001-initial.sqlite3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -397,6 +420,7 @@
 				4FCE948926E5ABE100BD636C /* WeeklyReportView.swift in Sources */,
 				4FCE948326E5849600BD636C /* NamePickerField.swift in Sources */,
 				4F03BE2826DED59B001E61E5 /* EditView.swift in Sources */,
+				4F0D5E4727589EF60034A26C /* Migrator.swift in Sources */,
 				4F03BE2426DD728E001E61E5 /* DataStore.swift in Sources */,
 				4FF30944270D1A0400272EBF /* Common.swift in Sources */,
 				4FCE948126E582F100BD636C /* NamePicker.swift in Sources */,

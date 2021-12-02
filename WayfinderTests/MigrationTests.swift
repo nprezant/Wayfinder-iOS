@@ -42,7 +42,9 @@ class MigrationTests: XCTestCase {
         XCTAssertEqual(db.version, SqliteDatabase.latestVersion)
     }
     
-    static var schema0: [String] = [
+    static var schema0: [String] = []
+    
+    static var schema1: [String] = [
         """
         CREATE TABLE reflection(
             id INTEGER PRIMARY KEY,
@@ -55,7 +57,7 @@ class MigrationTests: XCTestCase {
         )
         """].withCondensedWhitespace()
     
-    static var schema1: [String] = [
+    static var schema2: [String] = [
         """
         CREATE TABLE reflection(
             id INTEGER PRIMARY KEY,
@@ -80,7 +82,7 @@ class MigrationTests: XCTestCase {
         CREATE INDEX tagindex ON tag(reflection)
         """].withCondensedWhitespace()
     
-    static var schema2: [String] = [
+    static var schema3: [String] = [
         """
         CREATE TABLE reflection(
             id INTEGER PRIMARY KEY,
@@ -121,47 +123,60 @@ class MigrationTests: XCTestCase {
         """].withCondensedWhitespace()
     
     func testVersion0() throws {
-        let db = try! SqliteDatabase.openInMemory(targetVersion: 0)
+        let db = try SqliteDatabase.openInMemory(targetVersion: 0)
         XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema0)
     }
     
     func testVersion0Backwards() throws {
-        let db = try! SqliteDatabase.openInMemory(targetVersion: 1)
+        let db = try SqliteDatabase.openInMemory(targetVersion: 1)
         try db.migrate(to: 0)
         XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema0)
     }
     
     func testVersion1() throws {
-        let db = try! SqliteDatabase.openInMemory(targetVersion: 1)
+        let db = try SqliteDatabase.openInMemory(targetVersion: 1)
         XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema1)
     }
     
     func testVersion1Backwards() throws {
-        let db = try! SqliteDatabase.openInMemory(targetVersion: 2)
+        let db = try SqliteDatabase.openInMemory(targetVersion: 2)
         try db.migrate(to: 1)
         XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema1)
     }
     
     func testVersion2() throws {
-        let db = try! SqliteDatabase.openInMemory(targetVersion: 2)
+        let db = try SqliteDatabase.openInMemory(targetVersion: 2)
         for index in 0...db.tableSchemas.count-1 {
             XCTAssertEqual(db.tableSchemas[index].withCondensedWhitespace(), MigrationTests.schema2[index])
         }
     }
     
-    func testLatest() throws {
-        let db = try! SqliteDatabase.openInMemory()
+    func testVersion2Backwards() throws {
+        let db = try SqliteDatabase.openInMemory(targetVersion: 3)
+        try db.migrate(to: 2)
         XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema2)
     }
+    
+    func testVersion3() throws {
+        let db = try SqliteDatabase.openInMemory(targetVersion: 3)
+        for index in 0...db.tableSchemas.count-1 {
+            XCTAssertEqual(db.tableSchemas[index].withCondensedWhitespace(), MigrationTests.schema3[index])
+        }
+    }
+    
+    func testLatest() throws {
+        let db = try SqliteDatabase.openInMemory()
+        XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema3)
+    }
 
-    func testMigrate0To1() throws {
-        let db = try! SqliteDatabase.openInMemory(targetVersion: 0)
+    func testMigrate1To2() throws {
+        let db = try SqliteDatabase.openInMemory(targetVersion: 1)
         try db.executeMany(sql: """
         INSERT INTO reflection (name, isFlowState, engagement, energy, date, note) VALUES ('reflection1', 1, 25, 80, 10000, 'no notes');
         INSERT INTO reflection (name, isFlowState, engagement, energy, date, note) VALUES ('reflection2', 0, 10, 20, 50000, 'bummer');
         """)
         
-        try db.migrate(to: 1)
+        try db.migrate(to: 2)
         
         let sql = "SELECT id, name, isFlowState, engagement, energy, date, note, FROM reflection ORDER BY date DESC"
         
@@ -204,18 +219,18 @@ class MigrationTests: XCTestCase {
         }
     }
     
-    /// When migrating from schema 1 to schema 2, we are adding the view table
-    /// In schema 1 there are no views. In schema 2 every reflection must have a view
+    /// When migrating from schema 2 to schema 3, we are adding the view table
+    /// In schema 2 there are no views. In schema 3 every reflection must have a view
     /// During the migration a single view should be made ("Work", hidden = false)
     /// and all reflections should be assigned to it.
-    func testMigrate1To2() throws {
-        let db = try! SqliteDatabase.openInMemory(targetVersion: 1)
+    func testMigrate2To3() throws {
+        let db = try SqliteDatabase.openInMemory(targetVersion: 2)
         try db.executeMany(sql: """
         INSERT INTO reflection (name, isFlowState, engagement, energy, date, note) VALUES ('reflection1', 1, 25, 80, 10000, 'no notes');
         INSERT INTO reflection (name, isFlowState, engagement, energy, date, note) VALUES ('reflection2', 0, 10, 20, 50000, 'bummer');
         """)
         
-        try db.migrate(to: 2)
+        try db.migrate(to: 3)
         
         // A single axis should be made during the migration
         let defaultAxis = Axis(id: 1, name: "Work", hidden: false.intValue)
@@ -238,6 +253,6 @@ class MigrationTests: XCTestCase {
 
     func testCanMigrateBackwards() throws {
         let db = try SqliteDatabase.openInMemory()
-        try db.migrate(to: 0)
+        try db.migrate(to: 1)
     }
 }
