@@ -3,39 +3,7 @@
 import Foundation
 
 /// The table itself
-struct Reflection : Identifiable, Equatable, MetricComparable {
-    static var createStatement: String {
-        return """
-        CREATE TABLE reflection(
-            id INTEGER PRIMARY KEY,
-            name TEXT,
-            isFlowState BOOL,
-            engagement INT,
-            energy INT,
-            date INT,
-            note TEXT
-        );
-        """
-    }
-    
-    static var addAxisColumnStatement: String {
-        return """
-        ALTER TABLE reflection
-        ADD COLUMN axis INT REFERENCES axis
-            ON UPDATE CASCADE
-            ON DELETE RESTRICT;
-        CREATE INDEX indexReflectionAxis ON reflection(axis);
-        UPDATE reflection SET axis = 1
-        """
-    }
-    
-    static var dropAxisColumnStatement: String {
-        return """
-        DROP INDEX indexReflectionAxis;
-        ALTER TABLE reflection DROP COLUMN axis;
-        """
-    }
-    
+struct Reflection : Identifiable, Equatable, MetricComparable {    
     var id: Int64
     var name: String
     var isFlowState: Int64

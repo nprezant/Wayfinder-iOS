@@ -15,4 +15,7 @@ CREATE INDEX tagindex ON tag(reflection);
 -- Down
 -----------
 
+-- NOTE: index is automatically dropped with the table
+-- "All indices and triggers associated with the table are also deleted"
+-- https://sqlite.org/lang_droptable.html
 DROP TABLE tag;

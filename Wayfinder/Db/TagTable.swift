@@ -3,28 +3,7 @@
 import Foundation
 
 /// The tag table
-struct Tag : Identifiable {
-    static var createStatement: String {
-        return """
-        CREATE TABLE tag(
-            id INTEGER PRIMARY KEY,
-            name TEXT,
-            reflection INT REFERENCES reflection
-                ON UPDATE CASCADE
-                ON DELETE CASCADE
-        );
-        CREATE INDEX tagindex ON tag(reflection);
-        """
-    }
-    static var dropStatement: String {
-        // NOTE: index is automatically dropped with the table
-        // "All indices and triggers associated with the table are also deleted"
-        // https://sqlite.org/lang_droptable.html
-        return """
-        DROP TABLE tag;
-        """
-    }
-    
+struct Tag : Identifiable {    
     var id: Int64
     var name: String
     var reflection: Int64

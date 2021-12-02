@@ -3,24 +3,7 @@
 import Foundation
 
 /// The axis table
-struct Axis : Identifiable, Equatable {
-    static var createStatement: String {
-        return """
-        CREATE TABLE axis(
-            id INTEGER PRIMARY KEY,
-            name TEXT UNIQUE,
-            hidden BOOL
-        );
-        CREATE INDEX indexAxisHidden ON axis(hidden);
-        INSERT INTO axis (name, hidden) VALUES ('Work', FALSE);
-        """
-    }
-    static var dropStatement: String {
-        return """
-        DROP TABLE axis;
-        """
-    }
-    
+struct Axis : Identifiable, Equatable {    
     var id: Int64
     var name: String
     var hidden: Int64
