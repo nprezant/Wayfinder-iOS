@@ -55,7 +55,7 @@ class SqliteDatabase {
         
         // This is an old database version and it needs to be migrated. Save yourself a backup.
         if !isNewFile {
-            let backupUrl = url.appendingPathExtension(".before-migration")
+            let backupUrl = url.appendingPathExtension("before-migration")
             try? FileManager.default.removeItem(at: backupUrl)
             try FileManager.default.copyItem(at: url, to: backupUrl)
         }

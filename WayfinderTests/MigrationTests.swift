@@ -20,6 +20,25 @@ extension Array where Element == String {
     }
 }
 
+func XCTAssertEqual(
+    _ strings: [String],
+    reference: [String],
+    file: StaticString = #file,
+    line: UInt = #line
+) {
+    // Make sure they are equal lengths
+    XCTAssertEqual(strings.count, reference.count, "String lists must be equal sizes. \(strings.count) != \(reference.count)", file: file, line: line)
+    
+    // Clean the strings. Condense whitespace, remove whitespace before closing parenthases, remove quote characters.
+    let sanitizedStrings = strings.map{ $0.replacingOccurrences(of: "\"", with: "").withCondensedWhitespace().replacingOccurrences(of: " )", with: ")") }.sorted()
+    let sanitizedReference = reference.map{ $0.replacingOccurrences(of: "\"", with: "").withCondensedWhitespace().replacingOccurrences(of: " )", with: ")") }.sorted()
+    
+    // Check each string individually, condensing whitespace, removing whitespace before closing parenthases, removing quote characteres
+    for index in 0...strings.count - 1 {
+        XCTAssertEqual(sanitizedStrings[index], sanitizedReference[index], file: file, line: line)
+    }
+}
+
 class MigrationTests: XCTestCase {
     
     var testData: [Reflection] = []
@@ -55,7 +74,7 @@ class MigrationTests: XCTestCase {
             date INT,
             note TEXT
         )
-        """].withCondensedWhitespace()
+        """]
     
     static var schema2: [String] = [
         """
@@ -80,7 +99,7 @@ class MigrationTests: XCTestCase {
         """,
         """
         CREATE INDEX tagindex ON tag(reflection)
-        """].withCondensedWhitespace()
+        """]
     
     static var schema3: [String] = [
         """
@@ -91,10 +110,11 @@ class MigrationTests: XCTestCase {
             engagement INT,
             energy INT,
             date INT,
-            note TEXT ,
+            note TEXT,
             axis INT REFERENCES axis
                 ON UPDATE CASCADE
-                ON DELETE RESTRICT)
+                ON DELETE RESTRICT
+        )
         """,
         """
         CREATE TABLE tag(
@@ -120,53 +140,49 @@ class MigrationTests: XCTestCase {
         """,
         """
         CREATE INDEX indexReflectionAxis ON reflection(axis)
-        """].withCondensedWhitespace()
+        """]
     
     func testVersion0() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 0)
-        XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema0)
+        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema0)
     }
     
     func testVersion0Backwards() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 1)
         try db.migrate(to: 0)
-        XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema0)
+        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema0)
     }
     
     func testVersion1() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 1)
-        XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema1)
+        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema1)
     }
     
     func testVersion1Backwards() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 2)
         try db.migrate(to: 1)
-        XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema1)
+        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema1)
     }
     
     func testVersion2() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 2)
-        for index in 0...db.tableSchemas.count-1 {
-            XCTAssertEqual(db.tableSchemas[index].withCondensedWhitespace(), MigrationTests.schema2[index])
-        }
+        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema2)
     }
     
     func testVersion2Backwards() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 3)
         try db.migrate(to: 2)
-        XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema2)
+        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema2)
     }
     
     func testVersion3() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 3)
-        for index in 0...db.tableSchemas.count-1 {
-            XCTAssertEqual(db.tableSchemas[index].withCondensedWhitespace(), MigrationTests.schema3[index])
-        }
+        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema3)
     }
     
     func testLatest() throws {
         let db = try SqliteDatabase.openInMemory()
-        XCTAssertEqual(db.tableSchemas.withCondensedWhitespace(), MigrationTests.schema3)
+        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema3)
     }
 
     func testMigrate1To2() throws {
