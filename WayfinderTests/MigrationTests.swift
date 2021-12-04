@@ -29,6 +29,12 @@ func XCTAssertEqual(
     // Make sure they are equal lengths
     XCTAssertEqual(strings.count, reference.count, "String lists must be equal sizes. \(strings.count) != \(reference.count)", file: file, line: line)
     
+    // Check for zero length
+    if strings.count == 0 {
+        XCTAssertEqual(strings, reference, file: file, line: line)
+        return
+    }
+    
     // Clean the strings. Condense whitespace, remove whitespace before closing parenthases, remove quote characters.
     let sanitizedStrings = strings.map{ $0.replacingOccurrences(of: "\"", with: "").withCondensedWhitespace().replacingOccurrences(of: " )", with: ")") }.sorted()
     let sanitizedReference = reference.map{ $0.replacingOccurrences(of: "\"", with: "").withCondensedWhitespace().replacingOccurrences(of: " )", with: ")") }.sorted()
