@@ -274,10 +274,10 @@ class DataStore: ObservableObject {
             guard let self = self else { return }
             let reflections = try! self.db.fetchReflections()
             
-            var s: String = "name\tisFlowState\tengagement\tenergy\tdate\tnote\ttags\n"
+            var s: String = "view\tname\tisFlowState\tengagement\tenergy\tdate\tnote\ttags\n"
             
             for r in reflections {
-                s.append("\(r.name)\t\(r.isFlowState)\t\(r.engagement)\t\(r.energy)\t\(r.date)\t\(r.note)\t\(r.tags.joined(separator: ";"))\n")
+                s.append("\(r.axis)\t\(r.name)\t\(r.isFlowState)\t\(r.engagement)\t\(r.energy)\t\(r.date)\t\(r.note)\t\(r.tags.joined(separator: ";"))\n")
             }
             
             var result: Result<URL, Error>
