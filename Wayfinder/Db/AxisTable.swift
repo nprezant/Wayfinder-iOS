@@ -151,4 +151,28 @@ extension SqliteDatabase {
             throw SqliteError.Step(message: errorMessage)
         }
     }
+    
+    /// Updates the axis with the corresponding ID to contain new data
+    func update(axis: Axis) throws {
+        let sql = """
+            UPDATE axis SET (name, hidden) = (?2, ?3) WHERE id = ?1;
+        """
+        
+        let stmt = try prepare(sql: sql)
+        defer {
+            sqlite3_finalize(stmt)
+        }
+        
+        guard
+            sqlite3_bind_int64(stmt, 1, axis.id) == SQLITE_OK &&
+            sqlite3_bind_text(stmt, 2, axis.name, -1, SQLITE_TRANSIENT) == SQLITE_OK &&
+            sqlite3_bind_int64(stmt, 3, axis.hidden) == SQLITE_OK
+        else {
+            throw SqliteError.Bind(message: errorMessage)
+        }
+        
+        guard sqlite3_step(stmt) == SQLITE_DONE else {
+            throw SqliteError.Step(message: errorMessage)
+        }
+    }
 }

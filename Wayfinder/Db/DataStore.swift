@@ -231,6 +231,27 @@ class DataStore: ObservableObject {
         }
     }
     
+    /// Updates the axis with the matching ID to contain new data
+    func update(axis: Axis, completion: @escaping (SqliteError?)->() = {_ in}) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else { return }
+            do {
+                try self.db.update(axis: axis)
+                self.sync() {
+                    completion(nil)
+                }
+            } catch let e as SqliteError {
+                DispatchQueue.main.async {
+                    completion(e)
+                }
+            } catch let e {
+                DispatchQueue.main.async {
+                    completion(SqliteError.Unspecified(message: "\(e)"))
+                }
+            }
+        }
+    }
+    
     /// Delete reflections based on database id
     func delete(reflectionIds: [Int64], completion: @escaping (SqliteError?)->() = {_ in}) {
         self.reflections.removeAll(where: {reflectionIds.contains($0.id)})

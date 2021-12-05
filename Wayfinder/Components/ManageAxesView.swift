@@ -33,6 +33,27 @@ struct ManageAxesView: View {
                             } label: {
                                 Label("Rename", systemImage: "pencil")
                             }
+                            Button {
+                                axisIndexToRename = index
+                                isAxisRenamePresented = true
+                            } label: {
+                                Label("Merge with...", systemImage: "arrow.triangle.merge")
+                            }
+                            Button {
+                                if visibleAxes.count == 1 {
+                                    errorMessage = ErrorMessage(title: "", message: "Please leave at least one view visible")
+                                }
+                                else {
+                                    let a = visibleAxes[index]
+                                    dataStore.update(axis: Axis(id: a.id, name: a.name, hidden: true.intValue)) { error in
+                                        if let error = error {
+                                            errorMessage = ErrorMessage(title: "Can't hide view", message: "\(error)")
+                                        }
+                                    }
+                                }
+                            } label: {
+                                Label("Hide", systemImage: "trash")
+                            }
                         }
                 }
                 .onDelete { indices in
@@ -71,6 +92,16 @@ struct ManageAxesView: View {
                                     isAxisRenamePresented = true
                                 } label: {
                                     Label("Rename", systemImage: "pencil")
+                                }
+                                Button {
+                                    let a = hiddenAxes[index]
+                                    dataStore.update(axis: Axis(id: a.id, name: a.name, hidden: false.intValue)) { error in
+                                        if let error = error {
+                                            errorMessage = ErrorMessage(title: "Can't show view", message: "\(error)")
+                                        }
+                                    }
+                                } label: {
+                                    Label("Show", systemImage: "arrow.up")
                                 }
                             }
                     }
