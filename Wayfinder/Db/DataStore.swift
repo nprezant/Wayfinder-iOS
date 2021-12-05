@@ -33,9 +33,13 @@ class DataStore: ObservableObject {
     /// Distinct available tag names
     @Published var tagNames: [String] = []
     
-    /// Distinct available axis names
-    @Published var axisNames: [String] = []
+    /// All visible axes
+    @Published var visibleAxes: [Axis] = []
     
+    /// All hidden axes
+    @Published var hiddenAxes: [Axis] = []
+    
+    /// The currently active axis
     @Published var activeAxis: String = PreferencesData().activeAxis
     
     private var db: SqliteDatabase
@@ -97,15 +101,18 @@ class DataStore: ObservableObject {
             
             let reflections = try! self.db.fetchReflections(axis: self.activeAxis)
             let activityNames = try! self.db.fetchVisibleActivities(axis: self.activeAxis)
-            let tagNames = self.db.fetchAllUniqueTags().sorted(by: <) // TODO should only include visible axes
-            let axisNames = self.db.fetchDistinctVisibleAxisNames().sorted(by: <)
+            let tagNames = self.db.fetchAllUniqueTags().sorted(by: <)
+            let axes = self.db.fetchAllAxes().sorted(by: { $0.name < $1.name })
+            let visibleAxes = axes.filter{ !$0.hidden.boolValue }
+            let hiddenAxes = axes.filter{ $0.hidden.boolValue }
             
             // Assigning published properties is UI work, must do on main thread
             DispatchQueue.main.async {
                 self.reflections = reflections
                 self.activityNames = activityNames
                 self.tagNames = tagNames
-                self.axisNames = axisNames
+                self.visibleAxes = visibleAxes
+                self.hiddenAxes = hiddenAxes
                 completion()
             }
         }
@@ -249,7 +256,6 @@ class DataStore: ObservableObject {
     
     /// Delete axes
     func delete(axes: [String], completion: @escaping (SqliteError?)->() = {_ in}) {
-        self.axisNames.removeAll(where: {axes.contains($0)})
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
             do {

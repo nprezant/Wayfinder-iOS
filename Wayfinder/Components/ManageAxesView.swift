@@ -11,48 +11,70 @@ struct ManageAxesView: View {
     @State private var isAxisRenamePresented: Bool = false
     @State private var errorMessage: ErrorMessage?
     
+    var visibleAxes: [Axis] {
+        dataStore.visibleAxes
+    }
+    
+    var hiddenAxes: [Axis] {
+        dataStore.hiddenAxes
+    }
+    
     var body: some View {
         Text("Manage views").font(.title).padding([.top])
         List {
-            ForEach(dataStore.axisNames.indices, id: \.self) { index in
-                Text(dataStore.axisNames[index])
-                    // TODO this causes the "disabling recursion trigger logging" message
-                    .contextMenu {
-                        Button {
-                            axisIndexToRename = index
-                            isAxisRenamePresented = true
-                        } label: {
-                            Label("Rename", systemImage: "pencil")
+            Section() {
+                ForEach(visibleAxes.indices, id: \.self) { index in
+                    Text(visibleAxes[index].name)
+                        // TODO this causes the "disabling recursion trigger logging" message
+                        .contextMenu {
+                            Button {
+                                axisIndexToRename = index
+                                isAxisRenamePresented = true
+                            } label: {
+                                Label("Rename", systemImage: "pencil")
+                            }
                         }
-                    }
-            }
-            .onDelete { indices in
-                let axesToDelete = indices.map{ dataStore.axisNames[$0] }
-                dataStore.delete(axes: axesToDelete) { error in
-                    if let error = error {
-                        dataStore.axisNames.append(contentsOf: axesToDelete)
-                        dataStore.axisNames.sort(by: <)
-                        errorMessage = ErrorMessage(title: "Can't delete view", message: "\(error)")
-                    }
                 }
-            }
-            HStack {
-                TextField("New View", text: $newAxis)
-                Button(action: {
-                    dataStore.add(axis: newAxis) { error in
+                .onDelete { indices in
+                    let axesToDelete = indices.map{ visibleAxes[$0] }
+                    dataStore.delete(axes: axesToDelete.map{ $0.name }) { error in
                         if let error = error {
-                            errorMessage = ErrorMessage(title: "Can't add view", message: "\(error)")
+                            errorMessage = ErrorMessage(title: "Can't delete view", message: "\(error)")
                         }
                     }
-                    withAnimation {
-                        let insertionIndex = dataStore.axisNames.insertionIndex(of: newAxis, using: >)
-                        dataStore.axisNames.insert(newAxis, at: insertionIndex)
-                        newAxis = ""
-                    }
-                }) {
-                    Image(systemName: "plus.circle.fill")
                 }
-                .disabled(newAxis.isEmpty)
+                HStack {
+                    TextField("New View", text: $newAxis)
+                    Button(action: {
+                        withAnimation {
+                            dataStore.add(axis: newAxis) { error in
+                                if let error = error {
+                                    errorMessage = ErrorMessage(title: "Can't add view", message: "\(error)")
+                                }
+                            }
+                            newAxis = ""
+                        }
+                    }) {
+                        Image(systemName: "plus.circle.fill")
+                    }
+                    .disabled(newAxis.isEmpty)
+                }
+            }
+            if !hiddenAxes.isEmpty {
+                Section(header: Text("Hidden Views")) {
+                    ForEach(hiddenAxes.indices, id: \.self) { index in
+                        Text(hiddenAxes[index].name)
+                            // TODO this causes the "disabling recursion trigger logging" message
+                            .contextMenu {
+                                Button {
+                                    axisIndexToRename = index
+                                    isAxisRenamePresented = true
+                                } label: {
+                                    Label("Rename", systemImage: "pencil")
+                                }
+                            }
+                    }
+                }
             }
         }
         .listStyle(InsetGroupedListStyle())

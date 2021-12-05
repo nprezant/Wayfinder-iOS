@@ -59,8 +59,8 @@ struct EditView: View {
                     Spacer()
                     Menu(content: {
                         Picker(selection: $data.axis, label: Text(data.axis)) {
-                            ForEach(dataStore.axisNames, id: \.self) { axis in
-                                Text(axis)
+                            ForEach(dataStore.visibleAxes.indices, id: \.self) { index in
+                                Text(dataStore.visibleAxes[index].name)
                             }
                         }
                     }, label: {

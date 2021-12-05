@@ -257,11 +257,6 @@ class MigrationTests: XCTestCase {
         // A single axis should be made during the migration
         let defaultAxis = Axis(id: 1, name: "Work", hidden: false.intValue)
         
-        // A single axis should be made that is visible
-        let axisNames = db.fetchDistinctVisibleAxisNames()
-        XCTAssertEqual(axisNames.count, 1)
-        XCTAssertEqual(axisNames.first, "Work")
-        
         // A single axis should be made overall
         let axes = db.fetchAllAxes()
         XCTAssertEqual(axes.count, 1)

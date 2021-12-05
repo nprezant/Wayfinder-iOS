@@ -35,29 +35,6 @@ extension Axis {
 /// Tag related database methods
 extension SqliteDatabase {
     
-    func fetchDistinctVisibleAxisNames() -> [String] {
-        let sql = "SELECT DISTINCT name FROM axis WHERE hidden = 0"
-        
-        let stmt = try! prepare(sql: sql)
-        defer {
-            sqlite3_finalize(stmt)
-        }
-        
-        var axes: [String] = []
-        
-        while (true) {
-            guard sqlite3_step(stmt) == SQLITE_ROW else {
-                break
-            }
-            
-            let axisName = String(cString: sqlite3_column_text(stmt, 0))
-
-            axes.append(axisName)
-        }
-        
-        return axes
-    }
-    
     func fetchAllAxes() -> [Axis] {
         let sql = "SELECT id, name, hidden FROM axis"
         
