@@ -296,6 +296,27 @@ class DataStore: ObservableObject {
         }
     }
     
+    /// Merge axes
+    func merge(axis: Axis, into: Axis, completion: @escaping (SqliteError?)->() = {_ in}) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else { return }
+            do {
+                try self.db.merge(axis: axis, into: into)
+                self.sync() {
+                    completion(nil)
+                }
+            } catch let e as SqliteError {
+                DispatchQueue.main.async {
+                    completion(e)
+                }
+            } catch let e {
+                DispatchQueue.main.async {
+                    completion(SqliteError.Unspecified(message: "\(e)"))
+                }
+            }
+        }
+    }
+    
     func ExportCsv(completion: @escaping (Result<URL, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }

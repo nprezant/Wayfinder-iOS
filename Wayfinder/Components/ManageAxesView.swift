@@ -14,6 +14,10 @@ struct ManageAxesView: View {
     @State private var isVisibleAxisRenamePresented: Bool = false
     @State private var isHiddenAxisRenamePresented: Bool = false
     
+    @State private var mergeIntoAxisName: String = ""
+    @State private var visibleAxisIndexToMerge: Int?
+    @State private var isVisibleAxisMergePresented: Bool = false
+    
     @State private var errorMessage: ErrorMessage?
     
     var visibleAxes: [Axis] {
@@ -31,7 +35,7 @@ struct ManageAxesView: View {
     func rename(updated: Axis) {
         dataStore.update(axis: updated) { error in
             if let error = error {
-                errorMessage = ErrorMessage(title: "Can't rename view", message: "\(error)")
+                errorMessage = ErrorMessage(title: "Cannot rename view", message: "\(error)")
             }
         }
     }
@@ -51,9 +55,10 @@ struct ManageAxesView: View {
                                 Label("Rename", systemImage: "pencil")
                             }
                             Button {
-                                
+                                visibleAxisIndexToMerge = index
+                                isVisibleAxisMergePresented = true
                             } label: {
-                                Label("Merge with...", systemImage: "arrow.triangle.merge")
+                                Label("Merge into...", systemImage: "arrow.triangle.merge")
                             }
                             Button {
                                 if visibleAxes.count == 1 {
@@ -63,7 +68,7 @@ struct ManageAxesView: View {
                                     let a = visibleAxes[index]
                                     dataStore.update(axis: Axis(id: a.id, name: a.name, hidden: true.intValue)) { error in
                                         if let error = error {
-                                            errorMessage = ErrorMessage(title: "Can't hide view", message: "\(error)")
+                                            errorMessage = ErrorMessage(title: "Cannot hide view", message: "\(error)")
                                         }
                                     }
                                 }
@@ -71,14 +76,24 @@ struct ManageAxesView: View {
                                 Label("Hide", systemImage: "arrow.down")
                             }
                         }
-                        .popover(
-                            isPresented: self.$isVisibleAxisRenamePresented,
-                            arrowEdge: .top
-                        ) {
+                        .popover(isPresented: self.$isVisibleAxisRenamePresented, arrowEdge: .top) {
                             if let index = visibleAxisIndexToRename {
                                 RenameView(isPresented: $isVisibleAxisRenamePresented, oldName: visibleAxes[index].name, invalidNames: allAxisNames) { newName in
                                     let a = visibleAxes[index]
                                     rename(updated: Axis(id: a.id, name: newName, hidden: a.hidden))
+                                }
+                            }
+                        }
+                        .popover(isPresented: $isVisibleAxisMergePresented, arrowEdge: .top) {
+                            if let index = visibleAxisIndexToMerge {
+                                // TODO should this only allow you to pick visible axes? Or all?
+                                NamePicker($mergeIntoAxisName, nameOptions: allAxisNames, prompt: "Merge **\(visibleAxes[index].name)** into...", canCreate: false) {
+                                    let mergeInto = (visibleAxes + hiddenAxes).first(where: { $0.name == mergeIntoAxisName })
+                                    if mergeInto == nil {
+                                        errorMessage = ErrorMessage(title: "Cannot merge views", message: "Cannot merge \(visibleAxes[index].name) into \(mergeIntoAxisName)")
+                                    } else {
+                                        dataStore.merge(axis: visibleAxes[index], into: mergeInto!)
+                                    }
                                 }
                             }
                         }
@@ -87,7 +102,7 @@ struct ManageAxesView: View {
                     let axesToDelete = indices.map{ visibleAxes[$0] }
                     dataStore.delete(axes: axesToDelete.map{ $0.name }) { error in
                         if let error = error {
-                            errorMessage = ErrorMessage(title: "Can't delete view", message: "\(error)")
+                            errorMessage = ErrorMessage(title: "Cannot delete view", message: "\(error)")
                         }
                     }
                 }
@@ -97,7 +112,7 @@ struct ManageAxesView: View {
                         withAnimation {
                             dataStore.add(axis: newAxis) { error in
                                 if let error = error {
-                                    errorMessage = ErrorMessage(title: "Can't add view", message: "\(error)")
+                                    errorMessage = ErrorMessage(title: "Cannot add view", message: "\(error)")
                                 }
                             }
                             newAxis = ""
@@ -124,7 +139,7 @@ struct ManageAxesView: View {
                                     let a = hiddenAxes[index]
                                     dataStore.update(axis: Axis(id: a.id, name: a.name, hidden: false.intValue)) { error in
                                         if let error = error {
-                                            errorMessage = ErrorMessage(title: "Can't show view", message: "\(error)")
+                                            errorMessage = ErrorMessage(title: "Cannot show view", message: "\(error)")
                                         }
                                     }
                                 } label: {
