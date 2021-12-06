@@ -95,9 +95,10 @@ struct ListView: View {
             .navigationBarItems(
                 leading:
                         Menu(content: {
+                            let axisNames = dataStore.visibleAxes.map{ $0.name }
                             Picker(selection: $dataStore.activeAxis, label: Image(systemName: "eyeglasses")) {
-                                ForEach(dataStore.visibleAxes.indices, id: \.self) { index in
-                                    Text(dataStore.visibleAxes[index].name)
+                                ForEach(axisNames, id: \.self) { axis in
+                                    Text(axis)
                                 }
                             }
                             Button(action: {
