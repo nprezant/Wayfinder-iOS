@@ -57,7 +57,7 @@ struct NamePicker: View {
                         Text(nameOption)
                     }
                 }
-                if canCreate && (!name.isEmpty || name.isEmpty && nameOptions.isEmpty) && !nameOptions.contains(name) {
+                if canCreate && !name.isEmpty && !nameOptions.contains(name) {
                     Button(action: {
                         self.presentationMode.wrappedValue.dismiss()
                         completion()
