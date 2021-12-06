@@ -7,8 +7,13 @@ struct ManageAxesView: View {
     @ObservedObject var dataStore: DataStore
     
     @State private var newAxis: String = ""
-    @State private var axisIndexToRename: Int?
-    @State private var isAxisRenamePresented: Bool = false
+    
+    @State private var visibleAxisIndexToRename: Int?
+    @State private var hiddenAxisIndexToRename: Int?
+    
+    @State private var isVisibleAxisRenamePresented: Bool = false
+    @State private var isHiddenAxisRenamePresented: Bool = false
+    
     @State private var errorMessage: ErrorMessage?
     
     var visibleAxes: [Axis] {
@@ -17,6 +22,18 @@ struct ManageAxesView: View {
     
     var hiddenAxes: [Axis] {
         dataStore.hiddenAxes
+    }
+    
+    var allAxisNames: [String] {
+        (visibleAxes + hiddenAxes).map{ $0.name }
+    }
+    
+    func rename(updated: Axis) {
+        dataStore.update(axis: updated) { error in
+            if let error = error {
+                errorMessage = ErrorMessage(title: "Can't rename view", message: "\(error)")
+            }
+        }
     }
     
     var body: some View {
@@ -28,14 +45,13 @@ struct ManageAxesView: View {
                         // TODO this causes the "disabling recursion trigger logging" message
                         .contextMenu {
                             Button {
-                                axisIndexToRename = index
-                                isAxisRenamePresented = true
+                                visibleAxisIndexToRename = index
+                                isVisibleAxisRenamePresented = true
                             } label: {
                                 Label("Rename", systemImage: "pencil")
                             }
                             Button {
-                                axisIndexToRename = index
-                                isAxisRenamePresented = true
+                                
                             } label: {
                                 Label("Merge with...", systemImage: "arrow.triangle.merge")
                             }
@@ -52,7 +68,18 @@ struct ManageAxesView: View {
                                     }
                                 }
                             } label: {
-                                Label("Hide", systemImage: "trash")
+                                Label("Hide", systemImage: "arrow.down")
+                            }
+                        }
+                        .popover(
+                            isPresented: self.$isVisibleAxisRenamePresented,
+                            arrowEdge: .top
+                        ) {
+                            if let index = visibleAxisIndexToRename {
+                                RenameView(isPresented: $isVisibleAxisRenamePresented, oldName: visibleAxes[index].name, invalidNames: allAxisNames) { newName in
+                                    let a = visibleAxes[index]
+                                    rename(updated: Axis(id: a.id, name: newName, hidden: a.hidden))
+                                }
                             }
                         }
                 }
@@ -88,8 +115,8 @@ struct ManageAxesView: View {
                             // TODO this causes the "disabling recursion trigger logging" message
                             .contextMenu {
                                 Button {
-                                    axisIndexToRename = index
-                                    isAxisRenamePresented = true
+                                    hiddenAxisIndexToRename = index
+                                    isHiddenAxisRenamePresented = true
                                 } label: {
                                     Label("Rename", systemImage: "pencil")
                                 }
@@ -104,9 +131,22 @@ struct ManageAxesView: View {
                                     Label("Show", systemImage: "arrow.up")
                                 }
                             }
+                            .popover(
+                                isPresented: self.$isHiddenAxisRenamePresented,
+                                arrowEdge: .top
+                            ) {
+                                if let index = hiddenAxisIndexToRename {
+                                    RenameView(isPresented: $isHiddenAxisRenamePresented, oldName: hiddenAxes[index].name, invalidNames: allAxisNames) { newName in
+                                        let a = hiddenAxes[index]
+                                        rename(updated: Axis(id: a.id, name: newName, hidden: a.hidden))
+                                    }
+                                }
+                            }
                     }
                 }
             }
+            // https://developer.apple.com/forums/thread/652080
+            let _ = "\(hiddenAxisIndexToRename ?? 1) \(visibleAxisIndexToRename ?? 1)"
         }
         .listStyle(InsetGroupedListStyle())
         .alert(item: $errorMessage) { msg in
