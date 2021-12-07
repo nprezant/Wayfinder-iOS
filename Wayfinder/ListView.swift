@@ -94,7 +94,7 @@ struct ListView: View {
                     Button {
                         isNewReflectionPresented = true
                     } label: {
-                        HStack { Text("Tap the"); Image(systemName: "plus"); Text("to create a reflection") }
+                        HStack { Text("Tap"); Image(systemName: "plus"); Text("to create a reflection") }
                     }
                 }
             }
