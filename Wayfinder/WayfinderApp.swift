@@ -44,6 +44,10 @@ struct WayfinderApp: App {
                     self.lastSelectedItem = $0
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification), perform: { output in
+                // App may be about to be terminated
+                dataStore.savePreferences()
+             })
             .sheet(isPresented: $isPresented, onDismiss: {self.selectedItem = lastSelectedItem}) {
                 EditViewSheet(
                     dataStore: dataStore,

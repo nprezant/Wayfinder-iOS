@@ -25,6 +25,7 @@ extension PreferencesData {
     }
     
     func save() {
+        Logger().info("Saving preferences file: \(Self.fileUrl)")
         guard let data = try? JSONEncoder().encode(self) else {
             Logger().warning("Error encoding preferences data")
             return

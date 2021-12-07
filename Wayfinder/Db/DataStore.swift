@@ -40,7 +40,7 @@ class DataStore: ObservableObject {
     @Published var hiddenAxes: [Axis] = []
     
     /// The currently active axis
-    @Published var activeAxis: String = PreferencesData().activeAxis
+    @Published var activeAxis: String = ""
     
     private var db: SqliteDatabase
     
@@ -76,12 +76,14 @@ class DataStore: ObservableObject {
             let preferences = PreferencesData.load()
             
             DispatchQueue.main.async {
-                // Only apply preferences if they exists
                 if let preferences = preferences {
+                    // Only apply preferences if they exist
+                    // Updating active axis will automatically queue a sync
                     self.activeAxis = preferences.activeAxis
+                } else {
+                    // Use default preferences
+                    self.activeAxis = PreferencesData().activeAxis
                 }
-                
-                self.sync()
             }
         }
     }
