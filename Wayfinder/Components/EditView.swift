@@ -18,7 +18,7 @@ struct EditView: View {
             // TODO fix issue with tappable area too small
             Section() {
                 NavigationLink(
-                    destination: NamePicker($data.name, nameOptions: dataStore.activityNames, prompt: "Choose Activity")
+                    destination: NamePicker($data.name, nameOptions: dataStore.activityNames, prompt: dataStore.activityNames.isEmpty ? "Create Activity" : "Choose Activity")
                 ) {
                     NamePickerField(name: data.name, prompt: "Choose Activity", font: .title2)
                         .contentShape(Rectangle())

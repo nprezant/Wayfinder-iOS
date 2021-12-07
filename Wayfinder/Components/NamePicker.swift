@@ -69,7 +69,7 @@ struct NamePicker: View {
                         .foregroundColor(.green)
                     }
                 } else {
-                    if filteredNames.isEmpty {
+                    if filteredNames.isEmpty && !nameOptions.isEmpty {
                         HStack {
                             Image(systemName: "xmark.circle")
                             Text("No matches found")
