@@ -17,10 +17,11 @@ struct EditView: View {
         List {
             // TODO fix issue with tappable area too small
             Section() {
+                let prompt = dataStore.activityNames.isEmpty ? "Create Activity" : "Choose Activity"
                 NavigationLink(
-                    destination: NamePicker($data.name, nameOptions: dataStore.activityNames, prompt: dataStore.activityNames.isEmpty ? "Create Activity" : "Choose Activity")
+                    destination: NamePicker($data.name, nameOptions: dataStore.activityNames, prompt: prompt)
                 ) {
-                    NamePickerField(name: data.name, prompt: "Choose Activity", font: .title2)
+                    NamePickerField(name: data.name, prompt: prompt, font: .title2)
                         .contentShape(Rectangle())
                 }
                 // TODO this causes the "disabling recursion trigger logging" message
