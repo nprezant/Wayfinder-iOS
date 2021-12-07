@@ -91,7 +91,11 @@ struct ListView: View {
                     }
                 }
                 if dates.isEmpty {
-                    HStack { Text("Tap the"); Image(systemName: "plus"); Text("to create a reflection") }
+                    Button {
+                        isNewReflectionPresented = true
+                    } label: {
+                        HStack { Text("Tap the"); Image(systemName: "plus"); Text("to create a reflection") }
+                    }
                 }
             }
             .navigationTitle("\(dataStore.activeAxis) Reflections")
