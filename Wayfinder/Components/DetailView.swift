@@ -20,7 +20,7 @@ struct DetailView: View {
     var body: some View {
         if parentIsPresenting != nil {
             HStack {
-                Button("Cancel") { parentIsPresenting?.wrappedValue = false }
+                Button("Back") { parentIsPresenting?.wrappedValue = false }
                 Spacer()
                 Button("Edit") { editAction() }
             }

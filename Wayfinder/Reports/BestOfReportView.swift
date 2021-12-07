@@ -10,12 +10,13 @@ struct BestOfReportView: View {
     @State public var selectedCategory: Category = .activity
     @State public var selectedCategoryValue: String = ""
     @State public var selectedMetric: Metric = .engagement
+    public var wasUpdated: Binding<Bool>?
 
     @State private var result: [Reflection] = []
     @State private var errorMessage: ErrorMessage?
     @State private var isPresented: Bool = false
     @State private var isDetailPresented: Bool = false
-    @State private var dsIndexToEdit: Int?
+    @State private var reflectionToEdit: Reflection?
     
     private func updateBestOf() {
         func processResult(results: Result<[Reflection], Error>) {
@@ -32,13 +33,13 @@ struct BestOfReportView: View {
         dataStore.makeBestOfReport(inclusionComparator, by: selectedMetric, direction: selectedBestWorst, completion: processResult)
     }
     
-    func updateEditedReflection() -> Void {
-        guard let index = dsIndexToEdit else { return }
-        let reflection = dataStore.reflections[index]
+    func updateAction(reflection: Reflection) -> Void {
         dataStore.update(reflection: reflection) { error in
             if let error = error {
                 errorMessage = ErrorMessage(title: "Update Error", message: "\(error)")
             }
+            updateBestOf()
+            wasUpdated?.wrappedValue = true
         }
     }
     
@@ -88,11 +89,10 @@ struct BestOfReportView: View {
             .padding()
             List {
                 if !result.isEmpty {
-                    ForEach(result.indices, id: \.self) { index in
-                        let r = result[index]
-                        let dataStoreIndex = dataStore.reflections.firstIndex(where: {$0.id == r.id})!
+                    // https://stackoverflow.com/questions/59295206/how-do-you-use-enumerated-with-foreach-in-swiftui
+                    ForEach(Array(zip(result.indices, result)), id: \.0) { index, r in
                         Button(action: {
-                            dsIndexToEdit = dataStoreIndex
+                            reflectionToEdit = r
                             isDetailPresented = true
                         }) {
                             HStack {
@@ -118,7 +118,7 @@ struct BestOfReportView: View {
             // Seems to be bug with nullable state variables.
             // Value won't stay set without this
             // https://developer.apple.com/forums/thread/652080
-            let _ = "\(dsIndexToEdit ?? 1)"
+            let _ = "\(reflectionToEdit ?? Reflection.exampleData[0])"
             Spacer()
         }
         .onAppear(perform: updateBestOf)
@@ -130,12 +130,12 @@ struct BestOfReportView: View {
                 NamePicker($selectedCategoryValue, nameOptions: dataStore.tagNames, prompt: "Choose Tag", canCreate: false, parentIsPresenting: $isPresented)
             }
         }
-        .sheet(isPresented: $isDetailPresented, onDismiss: updateEditedReflection) {
-            if let dsIndex = dsIndexToEdit {
+        .sheet(isPresented: $isDetailPresented) {
+            if let r = reflectionToEdit {
                 DetailView(
                     dataStore: dataStore,
-                    reflection: dataStore.reflections[dsIndex],
-                    saveAction: {_ in updateEditedReflection()},
+                    reflection: r,
+                    saveAction: updateAction,
                     parentIsPresenting: $isDetailPresented
                 )
             }

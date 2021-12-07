@@ -12,9 +12,10 @@ struct BestOfAllReportView: View {
     @State private var result: [Reflection.Averaged] = []
     @State private var errorMessage: ErrorMessage?
     @State private var isBestOfPresented: Bool = false
+    @State private var bestOfUpdatedData: Bool = false
     @State private var selectedAverage: Reflection.Averaged?
     
-    private func updateBestOf() {
+    private func updateBestOfAll() {
         dataStore.makeBestOfAllReport(for: selectedCategory, by: selectedMetric, direction: selectedBestWorst) { results in
             switch results {
             case .failure(let error):
@@ -22,6 +23,13 @@ struct BestOfAllReportView: View {
             case .success(let result):
                 self.result = result
             }
+        }
+    }
+    
+    private func updateBestOfAllIfBestOfMadeChanges() {
+        if bestOfUpdatedData {
+            updateBestOfAll()
+            bestOfUpdatedData = false
         }
     }
     
@@ -34,7 +42,7 @@ struct BestOfAllReportView: View {
                             Text(bestWorst.rawValue.capitalized).tag(bestWorst)
                         }
                     }
-                    .onChange(of: selectedBestWorst, perform: {_ in updateBestOf()})
+                    .onChange(of: selectedBestWorst, perform: {_ in updateBestOfAll()})
                     .pickerStyle(MenuPickerStyle())
                     Text("of all \(dataStore.activeAxis)")
                     Picker("\(selectedCategory.pluralized.capitalized)", selection: $selectedCategory) {
@@ -42,7 +50,7 @@ struct BestOfAllReportView: View {
                             Text(category.pluralized.capitalized).tag(category)
                         }
                     }
-                    .onChange(of: selectedCategory, perform: {_ in updateBestOf()})
+                    .onChange(of: selectedCategory, perform: {_ in updateBestOfAll()})
                     .pickerStyle(MenuPickerStyle())
                     Spacer()
                 }
@@ -53,7 +61,7 @@ struct BestOfAllReportView: View {
                         Text(metric.rawValue.capitalized).tag(metric)
                     }
                 }
-                .onChange(of: selectedMetric, perform: {_ in updateBestOf()})
+                .onChange(of: selectedMetric, perform: {_ in updateBestOfAll()})
                 .pickerStyle(SegmentedPickerStyle())
                 // Still silly.
                 // https://developer.apple.com/forums/thread/652080
@@ -63,8 +71,7 @@ struct BestOfAllReportView: View {
             .padding()
             List {
                 if !result.isEmpty {
-                    ForEach(result.indices, id: \.self) { index in
-                        let r = result[index]
+                    ForEach(Array(zip(result.indices, result)), id: \.0) { index, r in
                         Button {
                             selectedAverage = r
                             isBestOfPresented = true
@@ -83,13 +90,13 @@ struct BestOfAllReportView: View {
             .edgesIgnoringSafeArea([.leading, .trailing])
             Spacer()
         }
-        .onAppear(perform: updateBestOf)
+        .onAppear(perform: updateBestOfAll)
         .alert(item: $errorMessage) { msg in
             msg.toAlert()
         }
-        .sheet(isPresented: $isBestOfPresented) {
+        .sheet(isPresented: $isBestOfPresented, onDismiss: updateBestOfAllIfBestOfMadeChanges) {
             if selectedAverage != nil {
-                BestOfReportView(dataStore: dataStore, selectedBestWorst: selectedBestWorst, selectedCategory: selectedCategory, selectedCategoryValue: selectedAverage!.label ?? "[No group label]")
+                BestOfReportView(dataStore: dataStore, selectedBestWorst: selectedBestWorst, selectedCategory: selectedCategory, selectedCategoryValue: selectedAverage!.label ?? "[No group label]", wasUpdated: $bestOfUpdatedData)
             }
         }
     }

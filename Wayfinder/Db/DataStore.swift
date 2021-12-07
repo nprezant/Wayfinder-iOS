@@ -375,6 +375,7 @@ class DataStore: ObservableObject {
     func makeAverageReport(_ isIncluded: @escaping (Reflection) -> Bool, completion: @escaping (Result<Reflection.Averaged?, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
+            Logger().info("Generating averaged report")
             let relevantReflections = self.reflections.filter{isIncluded($0)}
             let result = Reflection.Averaged.make(from: relevantReflections)
             DispatchQueue.main.async {
@@ -386,6 +387,7 @@ class DataStore: ObservableObject {
     func makeBestOfReport(_ isIncluded: @escaping (Reflection) -> Bool, by metric: Metric, direction bestWorst: BestWorst, completion: @escaping (Result<[Reflection], Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
+            Logger().info("Generating best of report")
             let sortComparator = metric.makeComparator(direction: bestWorst)
             let relevantReflections = self.reflections.filter{isIncluded($0)}.sorted(by: sortComparator)
             DispatchQueue.main.async {
@@ -397,6 +399,7 @@ class DataStore: ObservableObject {
     func makeBestOfAllReport(for category: Category, by metric: Metric, direction bestWorst: BestWorst, completion: @escaping (Result<[Reflection.Averaged], Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
+            Logger().info("Generating best of all report")
             
             var categoryValues: [String] = []
             
