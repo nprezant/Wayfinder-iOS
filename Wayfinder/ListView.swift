@@ -116,8 +116,7 @@ struct ListView: View {
                         }, label: {
                             Image(systemName: "eyeglasses")
                                 .font(Font.title2.weight(.bold))
-                        })
-                    .onChange(of: dataStore.activeAxis, perform: {_ in dataStore.sync() }),
+                        }),
                 trailing:
                     HStack {
                         Button(action: shareSheet) {

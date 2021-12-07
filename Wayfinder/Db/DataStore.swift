@@ -1,6 +1,7 @@
 // Wayfinder
 
 import Foundation
+import Combine
 import os
 
 struct BatchRenameData {
@@ -42,6 +43,9 @@ class DataStore: ObservableObject {
     /// The currently active axis
     @Published var activeAxis: String = ""
     
+    /// So that we can properly subscribe to publisher events
+    private var cancellables = Set<AnyCancellable>()
+    
     private var db: SqliteDatabase
     
     public init(inMemory: Bool = false) {
@@ -50,8 +54,15 @@ class DataStore: ObservableObject {
         } catch let e {
             fatalError("Cannot open database: \(DataStore.dbUrl). Error: \(e)")
         }
+        
+        self.$activeAxis
+            .dropFirst() // Skips the initial value so we only persist changes
+            .sink { (newActiveAxis: String) in
+                self.sync() // Sync data when active axis changes
+            }
+            .store(in: &cancellables)
     }
-    
+        
     public static func createExample() -> DataStore {
         let dataStore = DataStore(inMemory: true)
         for r in Reflection.exampleData {
@@ -99,7 +110,7 @@ class DataStore: ObservableObject {
             
             guard let self = self else { return }
             
-            Logger().info("Syncing")
+            Logger().info("Syncing with axis = \(self.activeAxis)")
             
             let reflections = try! self.db.fetchReflections(axis: self.activeAxis)
             let activityNames = try! self.db.fetchVisibleActivities(axis: self.activeAxis)
