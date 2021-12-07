@@ -12,8 +12,8 @@ struct RenameView: View {
     
     var body: some View {
         VStack {
-            HStack { Text("Rename **\(oldName)** to..."); Spacer() }
-            TextField("New name", text: $newName)
+            HStack { Text("Rename '\(oldName)' to...").font(.title); Spacer() }.padding()
+            TextField("New name", text: $newName).padding()
             let nameIsInvalid = invalidNames.contains(newName)
             if nameIsInvalid {
                 Text("A '\(newName)' view already exists")
@@ -26,7 +26,8 @@ struct RenameView: View {
             } label: {
                 Text("Rename")
                     .disabled(nameIsInvalid)
-            }
+            }.padding()
+            Spacer()
         }
         .padding()
     }
