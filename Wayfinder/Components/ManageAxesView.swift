@@ -14,9 +14,10 @@ struct ManageAxesView: View {
     @State private var isVisibleAxisRenamePresented: Bool = false
     @State private var isHiddenAxisRenamePresented: Bool = false
     
-    @State private var mergeIntoAxisName: String = ""
     @State private var visibleAxisIndexToMerge: Int?
+    @State private var axisNameToMergeInto: String = ""
     @State private var isVisibleAxisMergePresented: Bool = false
+    @State private var shouldDoMerge: Bool = false
     
     @State private var errorMessage: ErrorMessage?
     
@@ -38,6 +39,30 @@ struct ManageAxesView: View {
                 errorMessage = ErrorMessage(title: "Cannot rename view", message: "\(error)")
             }
         }
+    }
+    
+    func merge() {
+        if !shouldDoMerge { return }
+        guard let index = visibleAxisIndexToMerge else { return }
+        let axis = visibleAxes[index]
+        let into = axisNameToMergeInto
+        merge(axis: axis, into: into)
+    }
+    
+    func merge(axis: Axis, into: String) {
+        let mergeInto = (visibleAxes + hiddenAxes).first(where: { $0.name == into })
+        if mergeInto == nil {
+            errorMessage = ErrorMessage(title: "Cannot merge views", message: "\(into) view not found")
+        } else {
+            dataStore.merge(axis: axis, into: mergeInto!) { error in
+                if let error = error {
+                    errorMessage = ErrorMessage(title: "Cannot merge views", message: "\(error)")
+                }
+            }
+        }
+        // Reset state variables
+        axisNameToMergeInto = ""
+        shouldDoMerge = false
     }
     
     var body: some View {
@@ -74,26 +99,6 @@ struct ManageAxesView: View {
                                 }
                             } label: {
                                 Label("Hide", systemImage: "arrow.down")
-                            }
-                        }
-                        .popover(isPresented: self.$isVisibleAxisRenamePresented, arrowEdge: .top) {
-                            if let index = visibleAxisIndexToRename {
-                                RenameView(isPresented: $isVisibleAxisRenamePresented, oldName: visibleAxes[index].name, invalidNames: allAxisNames) { newName in
-                                    let a = visibleAxes[index]
-                                    rename(updated: Axis(id: a.id, name: newName, hidden: a.hidden))
-                                }
-                            }
-                        }
-                        .popover(isPresented: $isVisibleAxisMergePresented, arrowEdge: .top) {
-                            if let index = visibleAxisIndexToMerge {
-                                NamePicker($mergeIntoAxisName, nameOptions: allAxisNames, prompt: "Merge **\(visibleAxes[index].name)** into...", canCreate: false) {
-                                    let mergeInto = (visibleAxes + hiddenAxes).first(where: { $0.name == mergeIntoAxisName })
-                                    if mergeInto == nil {
-                                        errorMessage = ErrorMessage(title: "Cannot merge views", message: "Cannot merge \(visibleAxes[index].name) into \(mergeIntoAxisName)")
-                                    } else {
-                                        dataStore.merge(axis: visibleAxes[index], into: mergeInto!)
-                                    }
-                                }
                             }
                         }
                 }
@@ -145,17 +150,6 @@ struct ManageAxesView: View {
                                     Label("Show", systemImage: "arrow.up")
                                 }
                             }
-                            .popover(
-                                isPresented: self.$isHiddenAxisRenamePresented,
-                                arrowEdge: .top
-                            ) {
-                                if let index = hiddenAxisIndexToRename {
-                                    RenameView(isPresented: $isHiddenAxisRenamePresented, oldName: hiddenAxes[index].name, invalidNames: allAxisNames) { newName in
-                                        let a = hiddenAxes[index]
-                                        rename(updated: Axis(id: a.id, name: newName, hidden: a.hidden))
-                                    }
-                                }
-                            }
                     }
                 }
             }
@@ -165,6 +159,30 @@ struct ManageAxesView: View {
         .listStyle(InsetGroupedListStyle())
         .alert(item: $errorMessage) { msg in
             msg.toAlert()
+        }
+        .sheet(isPresented: $isVisibleAxisRenamePresented) {
+            if let index = visibleAxisIndexToRename {
+                RenameView(isPresented: $isVisibleAxisRenamePresented, oldName: visibleAxes[index].name, invalidNames: allAxisNames) { newName in
+                    let a = visibleAxes[index]
+                    rename(updated: Axis(id: a.id, name: newName, hidden: a.hidden))
+                }
+            }
+        }
+        .sheet(isPresented: $isVisibleAxisMergePresented, onDismiss: { merge() }) {
+            if let index = visibleAxisIndexToMerge {
+                let axisNameOptions = allAxisNames.filter{ $0 != visibleAxes[index].name } // Can't merge an axis into itself now can we
+                NamePicker($axisNameToMergeInto, nameOptions: axisNameOptions, prompt: "Merge '\(visibleAxes[index].name)' into...", canCreate: false, parentIsPresenting: $isVisibleAxisMergePresented) {
+                    shouldDoMerge = true
+                }
+            }
+        }
+        .sheet(isPresented: $isHiddenAxisRenamePresented) {
+            if let index = hiddenAxisIndexToRename {
+                RenameView(isPresented: $isHiddenAxisRenamePresented, oldName: hiddenAxes[index].name, invalidNames: allAxisNames) { newName in
+                    let a = hiddenAxes[index]
+                    rename(updated: Axis(id: a.id, name: newName, hidden: a.hidden))
+                }
+            }
         }
     }
 }
