@@ -33,7 +33,15 @@ struct ManageAxesView: View {
         (visibleAxes + hiddenAxes).map{ $0.name }
     }
     
-    func rename(updated: Axis) {
+    func rename(from oldName: String, to newName: String) {
+        guard let oldData = (visibleAxes + hiddenAxes).first(where: { $0.name == oldName }) else {
+            errorMessage = ErrorMessage(title: "Cannot rename view", message: "View with name '\(oldName)' cannot be found")
+            return
+        }
+        let updated = Axis(id: oldData.id, name: newName, hidden: oldData.hidden)
+        if oldName == dataStore.activeAxis {
+            dataStore.activeAxis = newName // TODO this causes the sync() event to fire. Is there a way to set the published property without it calling sync?
+        }
         dataStore.update(axis: updated) { error in
             if let error = error {
                 errorMessage = ErrorMessage(title: "Cannot rename view", message: "\(error)")
@@ -50,19 +58,29 @@ struct ManageAxesView: View {
     }
     
     func merge(axis: Axis, into: String) {
-        let mergeInto = (visibleAxes + hiddenAxes).first(where: { $0.name == into })
-        if mergeInto == nil {
-            errorMessage = ErrorMessage(title: "Cannot merge views", message: "\(into) view not found")
-        } else {
-            dataStore.merge(axis: axis, into: mergeInto!) { error in
-                if let error = error {
-                    errorMessage = ErrorMessage(title: "Cannot merge views", message: "\(error)")
-                }
-            }
-        }
         // Reset state variables
         axisNameToMergeInto = ""
         shouldDoMerge = false
+        // Do the merge
+        guard let mergeInto = (visibleAxes + hiddenAxes).first(where: { $0.name == into }) else {
+            errorMessage = ErrorMessage(title: "Cannot merge views", message: "\(into) view not found")
+            return
+        }
+        if visibleAxes.count == 1 && visibleAxes[0].name == axis.name {
+            // TODO The hackiest of hacks. Need to figure out how to run code AFTER the sheet is dismissed, not while it is being dismissed
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                errorMessage = ErrorMessage(title: "", message: "Please leave at least one view visible")
+            }
+            return
+        }
+        if axis.name == dataStore.activeAxis {
+            dataStore.activeAxis = mergeInto.name // TODO this causes the sync() event to fire. Is there a way to set the published property without it calling sync?
+        }
+        dataStore.merge(axis: axis, into: mergeInto) { error in
+            if let error = error {
+                errorMessage = ErrorMessage(title: "Cannot merge views", message: "\(error)")
+            }
+        }
     }
     
     var body: some View {
@@ -174,7 +192,7 @@ struct ManageAxesView: View {
             if let index = visibleAxisIndexToRename {
                 RenameView(isPresented: $isVisibleAxisRenamePresented, oldName: visibleAxes[index].name, invalidNames: allAxisNames) { newName in
                     let a = visibleAxes[index]
-                    rename(updated: Axis(id: a.id, name: newName, hidden: a.hidden))
+                    rename(from: a.name, to: newName)
                 }
             }
         }
@@ -190,7 +208,7 @@ struct ManageAxesView: View {
             if let index = hiddenAxisIndexToRename {
                 RenameView(isPresented: $isHiddenAxisRenamePresented, oldName: hiddenAxes[index].name, invalidNames: allAxisNames) { newName in
                     let a = hiddenAxes[index]
-                    rename(updated: Axis(id: a.id, name: newName, hidden: a.hidden))
+                    rename(from: a.name, to: newName)
                 }
             }
         }
