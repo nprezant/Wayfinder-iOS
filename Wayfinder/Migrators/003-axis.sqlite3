@@ -46,6 +46,26 @@ PRAGMA foreign_keys=ON;
 -- Down
 -----------
 
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+
+CREATE TABLE new_reflection(
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    isFlowState BOOL,
+    engagement INT,
+    energy INT,
+    date INT,
+    note TEXT
+);
+
+INSERT INTO new_reflection SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection;
+
+DROP TABLE reflection;
+ALTER TABLE new_reflection RENAME TO reflection;
 DROP TABLE axis;
-DROP INDEX indexReflectionAxis;
-ALTER TABLE reflection DROP COLUMN axis;
+
+PRAGMA foreign_key_check;
+
+END TRANSACTION;
+PRAGMA foreign_keys=ON;
