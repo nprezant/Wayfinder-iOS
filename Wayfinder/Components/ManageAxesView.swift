@@ -91,6 +91,10 @@ struct ManageAxesView: View {
                                 }
                                 else {
                                     let a = visibleAxes[index]
+                                    withAnimation {
+                                        dataStore.visibleAxes.remove(at: index)
+                                        dataStore.hiddenAxes.append(a)
+                                    }
                                     dataStore.update(axis: Axis(id: a.id, name: a.name, hidden: true.intValue)) { error in
                                         if let error = error {
                                             errorMessage = ErrorMessage(title: "Cannot hide view", message: "\(error)")
@@ -113,18 +117,20 @@ struct ManageAxesView: View {
                 HStack {
                     TextField("New View", text: $newAxis)
                     Button(action: {
+                        let insertionIndex = visibleAxes.map{ $0.name }.insertionIndex(of: newAxis, using: >)
                         withAnimation {
-                            dataStore.add(axis: newAxis) { error in
-                                if let error = error {
-                                    errorMessage = ErrorMessage(title: "Cannot add view", message: "\(error)")
-                                }
-                            }
-                            newAxis = ""
+                            dataStore.visibleAxes.insert(Axis(id: 0, name: newAxis, hidden: false.intValue), at: insertionIndex)
                         }
+                        dataStore.add(axis: newAxis) { error in
+                            if let error = error {
+                                errorMessage = ErrorMessage(title: "Cannot add view", message: "\(error)")
+                            }
+                        }
+                        newAxis = ""
                     }) {
                         Image(systemName: "plus.circle.fill")
                     }
-                    .disabled(newAxis.isEmpty)
+                    .disabled(newAxis.isEmpty || (allAxisNames.contains(newAxis)))
                 }
             }
             if !hiddenAxes.isEmpty {
@@ -141,6 +147,10 @@ struct ManageAxesView: View {
                                 }
                                 Button {
                                     let a = hiddenAxes[index]
+                                    withAnimation {
+                                        dataStore.hiddenAxes.remove(at: index)
+                                        dataStore.visibleAxes.append(a)
+                                    }
                                     dataStore.update(axis: Axis(id: a.id, name: a.name, hidden: false.intValue)) { error in
                                         if let error = error {
                                             errorMessage = ErrorMessage(title: "Cannot show view", message: "\(error)")
