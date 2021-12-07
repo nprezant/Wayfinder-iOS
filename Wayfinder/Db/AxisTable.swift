@@ -180,7 +180,7 @@ extension SqliteDatabase {
     func merge(axis: Axis, into: Axis) throws {
         try beginTransaction()
         try execute(sql: "UPDATE reflection SET axis = ?1 WHERE axis = ?2;", binds: into.id, axis.id)
-        try execute(sql: "DELETE FROM axis WHERE name = ?1;", binds: axis.id)
+        try execute(sql: "DELETE FROM axis WHERE id = ?1;", binds: axis.id)
         try endTransaction()
     }
 }
