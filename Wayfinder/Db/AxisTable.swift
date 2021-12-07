@@ -178,27 +178,9 @@ extension SqliteDatabase {
     
     /// Merges the axis into another axis. Use this when you want to dump all the reflections associated with one axis into another
     func merge(axis: Axis, into: Axis) throws {
-        let sql = """
-        BEGIN TRANSACTION;
-        UPDATE reflection SET axis = ?2 WHERE axis = ?1;
-        DELETE FROM axis WHERE name = ?1;
-        END TRANSACTION;
-        """
-        
-        let stmt = try prepare(sql: sql)
-        defer {
-            sqlite3_finalize(stmt)
-        }
-        
-        guard
-            sqlite3_bind_int64(stmt, 1, axis.id) == SQLITE_OK &&
-            sqlite3_bind_int64(stmt, 2, axis.hidden) == SQLITE_OK
-        else {
-            throw SqliteError.Bind(message: errorMessage)
-        }
-        
-        guard sqlite3_step(stmt) == SQLITE_DONE else {
-            throw SqliteError.Step(message: errorMessage)
-        }
+        try beginTransaction()
+        try execute(sql: "UPDATE reflection SET axis = ?1 WHERE axis = ?2;", binds: into.id, axis.id)
+        try execute(sql: "DELETE FROM axis WHERE name = ?1;", binds: axis.id)
+        try endTransaction()
     }
 }

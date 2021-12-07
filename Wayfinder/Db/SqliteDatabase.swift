@@ -173,13 +173,21 @@ class SqliteDatabase {
     /// Execute sql command
     /// Only executes a single command. Subsequent commands in the string are ignored.
     /// Issues warning if multiple commands are provided.
-    func execute(sql: String) throws {
+    func execute(sql: String, binds: Int64...) throws {
         guard sql.split(separator: ";").count == 1 else {
             throw SqliteError.Unspecified(message: "Cannot `execute` sql statement contains multiple commands. Please use `executeMany` to run multiple commands")
         }
         let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
+        }
+        
+        for (n, bindItem) in binds.enumerated() {
+            guard
+                sqlite3_bind_int64(stmt, Int32(n + 1), bindItem) == SQLITE_OK
+            else {
+                throw SqliteError.Bind(message: errorMessage)
+            }
         }
         
         let rc = sqlite3_step(stmt)
