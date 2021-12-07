@@ -3,10 +3,14 @@
 import Foundation
 
 /// The axis table
-struct Axis : Identifiable, Equatable {    
+struct Axis : Identifiable, Equatable, CustomStringConvertible {
     var id: Int64
     var name: String
     var hidden: Int64
+    
+    var description: String {
+        return "Axis(id: \(id), name: \(name), hidden: \(hidden))"
+    }
 }
 
 /// A friendlier version of the table data

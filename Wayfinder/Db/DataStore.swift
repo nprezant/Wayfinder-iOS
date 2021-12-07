@@ -131,6 +131,7 @@ class DataStore: ObservableObject {
     /// https://stackoverflow.com/questions/42484281/waiting-until-the-task-finishes
     private func processPendingBatchRenames() throws {
         if pendingBatchRenames.isEmpty { return }
+        Logger().info("Processing batch renames")
         while !pendingBatchRenames.isEmpty {
             let data = pendingBatchRenames.removeFirst()
             try batchRename(with: data)
@@ -155,6 +156,8 @@ class DataStore: ObservableObject {
         DispatchQueue.global(qos: .background).async { [weak self] in
             
             guard let self = self else { return }
+            
+            Logger().info("Adding reflection \(reflection)")
             
             var result: Result<Int64, SqliteError>
             
@@ -194,6 +197,8 @@ class DataStore: ObservableObject {
             
             guard let self = self else { return }
             
+            Logger().info("Adding axis \(axis)")
+            
             var result: SqliteError?
             
             do {
@@ -215,6 +220,7 @@ class DataStore: ObservableObject {
     func update(reflection: Reflection, completion: @escaping (SqliteError?)->() = {_ in}) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
+            Logger().info("Updating reflection \(reflection)")
             do {
                 try self.processPendingBatchRenames()
                 try self.db.update(reflection: reflection)
@@ -237,6 +243,7 @@ class DataStore: ObservableObject {
     func update(axis: Axis, completion: @escaping (SqliteError?)->() = {_ in}) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
+            Logger().info("Updating axis \(axis)")
             do {
                 try self.db.update(axis: axis)
                 self.sync() {
@@ -259,6 +266,7 @@ class DataStore: ObservableObject {
         self.reflections.removeAll(where: {reflectionIds.contains($0.id)})
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
+            Logger().info("Deleting reflections \(reflectionIds.map{"\($0)"}.joined(separator: ", "))")
             do {
                 try self.processPendingBatchRenames()
                 try self.db.delete(reflectionsIds: reflectionIds)
@@ -281,6 +289,7 @@ class DataStore: ObservableObject {
     func delete(axes: [String], completion: @escaping (SqliteError?)->() = {_ in}) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
+            Logger().info("Deleting axes \(axes.joined(separator: ", "))")
             do {
                 try self.db.delete(axes: axes)
                 self.sync() {
@@ -302,6 +311,7 @@ class DataStore: ObservableObject {
     func merge(axis: Axis, into: Axis, completion: @escaping (SqliteError?)->() = {_ in}) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
+            Logger().info("Merging axis \(axis) into \(into)")
             do {
                 try self.db.merge(axis: axis, into: into)
                 self.sync() {
@@ -322,6 +332,7 @@ class DataStore: ObservableObject {
     func ExportCsv(completion: @escaping (Result<URL, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
+            Logger().info("Exporting csv")
             let reflections = try! self.db.fetchReflections()
             
             var s: String = "view\tname\tisFlowState\tengagement\tenergy\tdate\tnote\ttags\n"

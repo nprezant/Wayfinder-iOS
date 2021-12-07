@@ -3,7 +3,7 @@
 import Foundation
 
 /// The table itself
-struct Reflection : Identifiable, Equatable, MetricComparable {    
+struct Reflection : Identifiable, Equatable, MetricComparable, CustomStringConvertible {
     var id: Int64
     var name: String
     var isFlowState: Int64
@@ -16,6 +16,10 @@ struct Reflection : Identifiable, Equatable, MetricComparable {
     var tags: [String] // References tag table
     
     // NOTE: no need to implement static func ==(lhs, rhs). By default all properties are compared
+    
+    var description: String {
+        return "Reflection(id: \(id), name: \(name), isFlowState: \(isFlowState), engagement: \(engagement), energy: \(energy), date: \(date), note: \(note), axis: \(axis), tags: \(tags.joined(separator: ";")))"
+    }
 }
 
 /// Example data, useful for previews
