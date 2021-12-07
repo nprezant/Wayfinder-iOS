@@ -5,7 +5,7 @@ import SwiftUI
 struct DetailView: View {
     
     @ObservedObject var dataStore: DataStore
-    @Binding var reflection: Reflection
+    @State var reflection: Reflection
     let saveAction: ((Reflection) -> Void)
     var parentIsPresenting: Binding<Bool>? = nil // If supplied (e.g. when using in a sheet) additional header text and buttons are displayed that are otherwise handled by the navigation view
     
@@ -106,7 +106,7 @@ struct DetailView_Previews: PreviewProvider {
         NavigationView {
             DetailView(
                 dataStore: DataStore.createExample(),
-                reflection: .constant(Reflection.exampleData[0]),
+                reflection: Reflection.exampleData[0],
                 saveAction: saveAction
             )
         }

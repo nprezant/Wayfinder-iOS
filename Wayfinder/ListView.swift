@@ -78,7 +78,7 @@ struct ListView: View {
                             NavigationLink(
                                 destination: DetailView(
                                     dataStore: dataStore,
-                                    reflection: $dataStore.reflections[index],
+                                    reflection: dataStore.reflections[index],
                                     saveAction: updateAction
                                 )
                             ) {

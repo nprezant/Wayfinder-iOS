@@ -134,7 +134,7 @@ struct BestOfReportView: View {
             if let dsIndex = dsIndexToEdit {
                 DetailView(
                     dataStore: dataStore,
-                    reflection: $dataStore.reflections[dsIndex],
+                    reflection: dataStore.reflections[dsIndex],
                     saveAction: {_ in updateEditedReflection()},
                     parentIsPresenting: $isDetailPresented
                 )
