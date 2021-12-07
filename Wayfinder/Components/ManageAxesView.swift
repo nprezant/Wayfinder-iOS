@@ -86,7 +86,6 @@ struct ManageAxesView: View {
                         }
                         .popover(isPresented: $isVisibleAxisMergePresented, arrowEdge: .top) {
                             if let index = visibleAxisIndexToMerge {
-                                // TODO should this only allow you to pick visible axes? Or all?
                                 NamePicker($mergeIntoAxisName, nameOptions: allAxisNames, prompt: "Merge **\(visibleAxes[index].name)** into...", canCreate: false) {
                                     let mergeInto = (visibleAxes + hiddenAxes).first(where: { $0.name == mergeIntoAxisName })
                                     if mergeInto == nil {
@@ -161,7 +160,7 @@ struct ManageAxesView: View {
                 }
             }
             // https://developer.apple.com/forums/thread/652080
-            let _ = "\(hiddenAxisIndexToRename ?? 1) \(visibleAxisIndexToRename ?? 1)"
+            let _ = "\(hiddenAxisIndexToRename ?? 1) \(visibleAxisIndexToRename ?? 1) \(visibleAxisIndexToMerge ?? 1)"
         }
         .listStyle(InsetGroupedListStyle())
         .alert(item: $errorMessage) { msg in
