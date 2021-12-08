@@ -112,6 +112,7 @@
 		4FF30943270D1A0400272EBF /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		4FF41EDA270926AC00A44044 /* ExportAppIcons.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ExportAppIcons.sh; sourceTree = "<group>"; };
 		4FFB893A27612C7F002474FC /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		4FFB893C27615AE7002474FC /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		5F7487352609A52B0046B148 /* Wayfinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wayfinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7487382609A52B0046B148 /* WayfinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WayfinderApp.swift; sourceTree = "<group>"; };
 		5F74873C2609A5310046B148 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -215,6 +216,7 @@
 				5F7487372609A52B0046B148 /* Wayfinder */,
 				5F7487492609A5310046B148 /* WayfinderTests */,
 				5F7487542609A5310046B148 /* WayfinderUITests */,
+				4FFB893C27615AE7002474FC /* LICENSE */,
 				5F7487362609A52B0046B148 /* Products */,
 			);
 			sourceTree = "<group>";
