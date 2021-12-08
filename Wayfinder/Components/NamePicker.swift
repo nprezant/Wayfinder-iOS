@@ -33,7 +33,7 @@ struct NamePicker: View {
                     }
                     Spacer()
                 }
-                .padding(/*@START_MENU_TOKEN@*/[.top, .leading, .trailing]/*@END_MENU_TOKEN@*/)
+                .padding([.top, .leading, .trailing])
                 HStack {
                     Text(prompt)
                         .font(.title.bold())
