@@ -125,10 +125,19 @@ struct ManageAxesView: View {
                         }
                 }
                 .onDelete { indices in
-                    let axesToDelete = indices.map{ visibleAxes[$0] }
-                    dataStore.delete(axes: axesToDelete.map{ $0.name }) { error in
-                        if let error = error {
-                            errorMessage = ErrorMessage(title: "Cannot delete view", message: "\(error)")
+                    let axesToDelete = indices.map{ visibleAxes[$0].name }
+                    if visibleAxes.count == axesToDelete.count {
+                        errorMessage = ErrorMessage(title: "", message: "Please leave at least one view visible")
+                    } else {
+                        if axesToDelete.contains(dataStore.activeAxis) {
+                            if let notDeletedVisibleAxis = visibleAxes.first(where: { !axesToDelete.contains($0.name) }) {
+                                dataStore.activeAxis = notDeletedVisibleAxis.name
+                            }
+                        }
+                        dataStore.delete(axes: axesToDelete) { error in
+                            if let error = error {
+                                errorMessage = ErrorMessage(title: "Cannot delete view", message: "\(error)")
+                            }
                         }
                     }
                 }
