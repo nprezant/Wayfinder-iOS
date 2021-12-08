@@ -7,6 +7,7 @@ struct ListView: View {
     
     @State private var isNewReflectionPresented = false
     @State private var isManageAxesPresented = false
+    @State private var isAboutPresented = false
     @State private var isCreatingExport = false
     @State private var errorMessage: ErrorMessage?
     
@@ -131,6 +132,11 @@ struct ListView: View {
                             }) {
                                 Label("Privacy", systemImage: "hand.raised.fill")
                             }
+                            Button(action: {
+                                isAboutPresented = true
+                            }) {
+                                Label("About the App", systemImage: "questionmark.circle")
+                            }
                         }, label: {
                             Image(systemName: "ellipsis.circle")
                         })
@@ -157,6 +163,9 @@ struct ListView: View {
             ManageAxesView(
                 dataStore: dataStore
             )
+        }
+        .sheet(isPresented: $isAboutPresented) {
+            AboutView()
         }
         .alert(item: $errorMessage) { msg in
             msg.toAlert()
