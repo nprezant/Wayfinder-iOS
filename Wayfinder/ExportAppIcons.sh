@@ -30,7 +30,7 @@ function append_export_command () {
     readonly idiom=${1:?"The idiom must be specified."}
     readonly height=${2:?"The export height must be specified."}
     readonly scale=${3:?"The export scale be specified."}
-    echo "export-filename: $saveDir/AppIcon-${idiom}-${height}x${height}@${scale}x.png; export-height: $(($height * $scale)); export-do;" >> $commandFile
+    echo "export-filename: $saveDir/AppIcon-${idiom}-${height}x${height}@${scale}x.png; export-height: $(($height * $scale)); export-background-opacity: 255; export-do;" >> $commandFile
 }
 
 # App Store
