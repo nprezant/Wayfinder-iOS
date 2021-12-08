@@ -12,12 +12,21 @@ struct Tag : Identifiable {
 /// Tag related database methods
 extension SqliteDatabase {
     
-    func fetchAllUniqueTags() -> [String] {
-        let sql = "SELECT DISTINCT name FROM tag"
+    func fetchUniqueTagNames(axis: String? = nil) throws -> [String] {
+        let sql = "SELECT DISTINCT tag.name FROM tag" + (axis == nil ? "" : " INNER JOIN reflection r ON tag.reflection = r.id INNER JOIN axis ON r.axis = axis.id WHERE axis.name = ?1")
         
-        let stmt = try! prepare(sql: sql)
+        let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
+        }
+        
+        // Only bind variable if we have a variable to bind
+        if axis != nil {
+            guard
+                sqlite3_bind_text(stmt, 1, axis, -1, SQLITE_TRANSIENT) == SQLITE_OK
+            else {
+                throw SqliteError.Bind(message: errorMessage)
+            }
         }
         
         var tags: [String] = []

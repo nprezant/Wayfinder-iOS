@@ -25,14 +25,17 @@ class DataStore: ObservableObject {
         return FileLocations.documentsFolder.appendingPathComponent("wayfinder.csv")
     }
     
-    /// Available reflections
+    /// Reflections on the current axis
     @Published var reflections: [Reflection] = []
     
-    /// Distinct available activity names
+    /// Activity names on the current axis
     @Published var activityNames: [String] = []
     
-    /// Distinct available tag names
+    /// Tag names on the current axis
     @Published var tagNames: [String] = []
+    
+    /// All tag names
+    @Published var allTagNames: [String] = []
     
     /// All visible axes
     @Published var visibleAxes: [Axis] = []
@@ -112,21 +115,28 @@ class DataStore: ObservableObject {
             
             Logger().info("Syncing with axis = \(self.activeAxis)")
             
-            let reflections = try! self.db.fetchReflections(axis: self.activeAxis)
-            let activityNames = try! self.db.fetchVisibleActivities(axis: self.activeAxis)
-            let tagNames = self.db.fetchAllUniqueTags().sorted(by: <)
-            let axes = self.db.fetchAllAxes().sorted(by: { $0.name < $1.name })
-            let visibleAxes = axes.filter{ !$0.hidden.boolValue }
-            let hiddenAxes = axes.filter{ $0.hidden.boolValue }
-            
-            // Assigning published properties is UI work, must do on main thread
-            DispatchQueue.main.async {
-                self.reflections = reflections
-                self.activityNames = activityNames
-                self.tagNames = tagNames
-                self.visibleAxes = visibleAxes
-                self.hiddenAxes = hiddenAxes
-                completion()
+            do {
+                let reflections = try self.db.fetchReflections(axis: self.activeAxis)
+                let activityNames = try self.db.fetchVisibleActivities(axis: self.activeAxis)
+                let allTagNames = try self.db.fetchUniqueTagNames().sorted(by: <)
+                let tagNames = try self.db.fetchUniqueTagNames(axis: self.activeAxis).sorted(by: <)
+                let axes = self.db.fetchAllAxes().sorted(by: { $0.name < $1.name })
+                let visibleAxes = axes.filter{ !$0.hidden.boolValue }
+                let hiddenAxes = axes.filter{ $0.hidden.boolValue }
+                
+                // Assigning published properties is UI work, must do on main thread
+                DispatchQueue.main.async {
+                    self.reflections = reflections
+                    self.activityNames = activityNames
+                    self.allTagNames = allTagNames
+                    self.tagNames = tagNames
+                    self.visibleAxes = visibleAxes
+                    self.hiddenAxes = hiddenAxes
+                    completion()
+                }
+            } catch {
+                let msg = "\(error)"
+                Logger().error("Sync error: \(msg)")
             }
         }
     }
@@ -418,7 +428,7 @@ class DataStore: ObservableObject {
             case .activity:
                 categoryValues = self.activityNames
             case .tag:
-                categoryValues = self.tagNames
+                categoryValues = self.allTagNames
             }
             
             var allAveraged: [Reflection.Averaged] = []

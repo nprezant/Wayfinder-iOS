@@ -87,7 +87,7 @@ struct EditView: View {
                     data.tags.remove(atOffsets: indices)
                 }
                 // Remove from the list any tags that are already listed on this reflection
-                var tagOptions = dataStore.tagNames
+                var tagOptions = dataStore.allTagNames
                 let _ = tagOptions.removeAll(where: {data.tags.contains($0)})
                 NavigationLink(
                     destination: NamePicker($newTag, nameOptions: tagOptions, prompt: "Add Tag") {
@@ -120,7 +120,7 @@ struct EditView: View {
         .sheet(isPresented: $isTagRenamePresented) {
             if tagIndexToRename != nil {
                 let oldTag = data.tags[tagIndexToRename!]
-                NamePicker($newTag, nameOptions: dataStore.tagNames, prompt: "Rename all of '\(oldTag)'", canCreate: true, parentIsPresenting: $isTagRenamePresented) {
+                NamePicker($newTag, nameOptions: dataStore.allTagNames, prompt: "Rename all of '\(oldTag)'", canCreate: true, parentIsPresenting: $isTagRenamePresented) {
                     dataStore.enqueueBatchRename(BatchRenameData(category: .tag, from: oldTag, to: newTag))
                     data.tags[tagIndexToRename!] = newTag
                     newTag = ""
