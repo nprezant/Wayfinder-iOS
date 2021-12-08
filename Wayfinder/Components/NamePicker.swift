@@ -4,7 +4,7 @@ import SwiftUI
 
 struct NamePicker: View {
     @Binding var name: String
-    @State var originalName: String
+    @State var searchName: String
     let nameOptions: [String]
     let prompt: String
     let canCreate: Bool
@@ -15,7 +15,7 @@ struct NamePicker: View {
     
     init(_ name: Binding<String>, nameOptions: [String], prompt: String, canCreate: Bool = true, parentIsPresenting: Binding<Bool>? = nil, completion: @escaping ()->Void = {}) {
         self._name = name
-        self._originalName = State(initialValue: name.wrappedValue)
+        self._searchName = State(initialValue: name.wrappedValue)
         self.nameOptions = nameOptions
         self.prompt = prompt
         self.canCreate = canCreate
@@ -28,7 +28,6 @@ struct NamePicker: View {
             if parentIsPresenting != nil {
                 HStack {
                     Button("Dismiss") {
-                        name = originalName
                         parentIsPresenting?.wrappedValue = false
                     }
                     Spacer()
@@ -41,13 +40,13 @@ struct NamePicker: View {
                 }
                 .padding()
             }
-            SearchBar(text: $name)
+            SearchBar(text: $searchName)
             List {
                 let filteredNames =
                     nameOptions.filter {
-                        name.isEmpty
+                        searchName.isEmpty
                             ? true
-                            : $0.lowercased().contains(self.name.lowercased()) }
+                            : $0.lowercased().contains(self.searchName.lowercased()) }
                 ForEach(filteredNames, id: \.self) { nameOption in
                     Button(action: {
                         name = nameOption
@@ -57,14 +56,15 @@ struct NamePicker: View {
                         Text(nameOption)
                     }
                 }
-                if canCreate && !name.isEmpty && !nameOptions.contains(name) {
+                if canCreate && !searchName.isEmpty && !nameOptions.contains(searchName) {
                     Button(action: {
+                        name = searchName
                         self.presentationMode.wrappedValue.dismiss()
                         completion()
                     }) {
                         HStack {
                             Image(systemName: "plus.circle")
-                            Text("Create \"\(name)\"")
+                            Text("Create \"\(searchName)\"")
                         }
                         .foregroundColor(.green)
                     }
@@ -84,7 +84,6 @@ struct NamePicker: View {
         .navigationTitle(prompt)
         .navigationBarItems(
             leading: Button(action: {
-                name = originalName
                 self.presentationMode.wrappedValue.dismiss()
             }) {
                 HStack {
