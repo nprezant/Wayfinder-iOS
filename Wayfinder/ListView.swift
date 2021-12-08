@@ -119,11 +119,22 @@ struct ListView: View {
                         }),
                 trailing:
                     HStack {
-                        Button(action: shareSheet) {
-                            Image(systemName: "square.and.arrow.up")
-                        }
+                        Menu(content: {
+                            Button(action: shareSheet) {
+                                Label("Export", systemImage: "square.and.arrow.up")
+                            }
+                            .disabled(isCreatingExport)
+                            Button(action: {
+                                if let url = URL(string: "https://nprezant.github.io/Wayfinder/privacy/") {
+                                    UIApplication.shared.open(url)
+                                }
+                            }) {
+                                Label("Privacy", systemImage: "hand.raised.fill")
+                            }
+                        }, label: {
+                            Image(systemName: "ellipsis.circle")
+                        })
                         .padding([.leading])
-                        .disabled(isCreatingExport)
                         Button(action: {
                             isNewReflectionPresented = true
                         }) {
