@@ -6,14 +6,15 @@ import UIKit
 
 struct DocumentPicker: UIViewControllerRepresentable {
 
-    @Binding var fileContent: String
+    var forContentTypes: [UTType]
+    var onDocumentsPicked: (_: [URL]) -> ()
 
     func makeCoordinator() ->DocumentPickerCoordinator {
-        return DocumentPickerCoordinator(fileContent: $fileContent)
+        return DocumentPickerCoordinator(onDocumentsPicked: onDocumentsPicked)
     }
 
     func makeUIViewController(context: Context) -> some UIViewController {
-        let controller = UIDocumentPickerViewController(forOpeningContentTypes: [.text, .commaSeparatedText], asCopy: false)
+        let controller = UIDocumentPickerViewController(forOpeningContentTypes: forContentTypes, asCopy: false)
         controller.delegate = context.coordinator
         return controller
     }
@@ -25,21 +26,14 @@ struct DocumentPicker: UIViewControllerRepresentable {
 
 class DocumentPickerCoordinator: NSObject, UIDocumentPickerDelegate, UINavigationControllerDelegate {
 
-    @Binding var fileContent: String
+    var onDocumentsPicked: (_: [URL]) -> ()
 
-    init(fileContent: Binding<String>) {
-        _fileContent = fileContent
+    init(onDocumentsPicked: @escaping (_: [URL]) -> ()) {
+        self.onDocumentsPicked = onDocumentsPicked
     }
 
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let fileURL = urls[0]
-        do {
-            print("Reading url: \(fileURL)")
-            fileContent = try String(contentsOf: fileURL, encoding: .utf8)
-            print(fileContent)
-        } catch let error {
-            print("\(error)")
-        }
+        onDocumentsPicked(urls)
     }
     
     // NOTE can define `func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {}` to handle cancelled event

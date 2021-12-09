@@ -176,7 +176,17 @@ struct ListView: View {
             AboutView()
         }
         .sheet(isPresented: $isImportFilePresented) {
-            DocumentPicker(fileContent: $fileContent)
+            DocumentPicker(forContentTypes: [.text, .commaSeparatedText]) { urls in
+                if urls.isEmpty { return }
+                let fileURL = urls[0]
+                do {
+                    print("Reading url: \(fileURL)")
+                    fileContent = try String(contentsOf: fileURL, encoding: .utf8)
+                    print(fileContent)
+                } catch let error {
+                    print("\(error)")
+                }
+            }
         }
         .alert(item: $errorMessage) { msg in
             msg.toAlert()
