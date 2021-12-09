@@ -28,14 +28,14 @@ class TagTableTests: XCTestCase {
     
     func testFetchAllUniqueTagsWhenNone() throws {
         let db = try! TestUtils.makeDatabase(with: &testDataNoTags)
-        let dbTags = db.fetchAllUniqueTags()
+        let dbTags = try db.fetchUniqueTagNames()
         let expectedTags: [String] = []
         XCTAssertEqual(dbTags, expectedTags)
     }
     
     func testFetchAllUniqueTags() throws {
         let db = try! TestUtils.makeDatabase(with: &testDataWithTags)
-        let dbTags = db.fetchAllUniqueTags()
+        let dbTags = try db.fetchUniqueTagNames()
         let expectedTags: [String] = ["tagShared", "tag1.0", "tag1.1", "tag2.0"]
         XCTAssertEqual(dbTags, expectedTags)
     }
@@ -60,7 +60,7 @@ class TagTableTests: XCTestCase {
         let tagsToInsert: [String] = ["insertedTag"]
         try db.insertTags(for: testDataNoTags[0].id, tags: tagsToInsert)
         
-        let allDbTags = db.fetchAllUniqueTags()
+        let allDbTags = try db.fetchUniqueTagNames()
         XCTAssertEqual(allDbTags, tagsToInsert)
         
         let thisReflectionTags = try db.fetchTags(for: testDataNoTags[0].id)
@@ -76,7 +76,7 @@ class TagTableTests: XCTestCase {
         let tagsToInsert: [String] = ["inserted tag"]
         try db.insertTags(for: testDataNoTags[0].id, tags: tagsToInsert)
         
-        let allDbTags = db.fetchAllUniqueTags()
+        let allDbTags = try db.fetchUniqueTagNames()
         XCTAssertEqual(allDbTags, tagsToInsert)
         
         let thisReflectionTags = try db.fetchTags(for: testDataNoTags[0].id)
@@ -92,7 +92,7 @@ class TagTableTests: XCTestCase {
         let tagsToInsert: [String] = ["insertedTag", "insertedTag2", "insertedTag3"]
         try db.insertTags(for: testDataNoTags[0].id, tags: tagsToInsert)
         
-        let allDbTags = db.fetchAllUniqueTags()
+        let allDbTags = try db.fetchUniqueTagNames()
         XCTAssertEqual(allDbTags, tagsToInsert)
         
         let thisReflectionTags = try db.fetchTags(for: testDataNoTags[0].id)
