@@ -44,3 +44,14 @@ var MonthShortNames: [Int: String] = [
     11: "Nov",
     12: "Dec"
 ]
+
+// Perhaps this will come in handy? Like with alerts needing to display on topmost window?
+//func getTopMostViewController() -> UIViewController? {
+//    var topMostViewController = UIApplication.shared.keyWindow?.rootViewController
+//
+//    while let presentedViewController = topMostViewController?.presentedViewController {
+//        topMostViewController = presentedViewController
+//    }
+//
+//    return topMostViewController
+//}
