@@ -350,13 +350,33 @@ class DataStore: ObservableObject {
         }
     }
     
-    func ExportCsv(completion: @escaping (Result<URL, Error>) -> Void) {
+    private struct ExportHeader: Encodable, Decodable {
+        var schemaVersion: Int32
+        
+        func toJson() -> String {
+            guard let data = try? JSONEncoder().encode(self) else {
+                Logger().warning("Error encoding export header data")
+                return ""
+            }
+            return String(decoding: data, as: UTF8.self)
+        }
+        
+        static func fromJson(_ data: Data) throws -> ExportHeader {
+            guard let exportHeader = try? JSONDecoder().decode(ExportHeader.self, from: data) else {
+                throw SqliteError.Unspecified(message: "Can't decode json export header data: \(String(decoding: data, as: UTF8.self))")
+            }
+            return exportHeader
+        }
+    }
+    
+    func exportCsv(completion: @escaping (Result<URL, Error>) -> Void) {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
             Logger().info("Exporting csv")
             let reflections = try! self.db.fetchReflections()
             
-            var s: String = "view\tname\tisFlowState\tengagement\tenergy\tdate\tnote\ttags\n"
+            var s: String = "\(ExportHeader(schemaVersion: self.db.version).toJson())\n"
+            s += "view\tname\tisFlowState\tengagement\tenergy\tdate\tnote\ttags\n"
             
             for r in reflections {
                 s.append("\(r.axis)\t\(r.name)\t\(r.isFlowState)\t\(r.engagement)\t\(r.energy)\t\(r.date)\t\(r.note)\t\(r.tags.joined(separator: ";"))\n")
@@ -368,11 +388,86 @@ class DataStore: ObservableObject {
                 try s.write(to: DataStore.exportUrl, atomically: true, encoding: .utf8)
                 result = .success(DataStore.exportUrl)
             } catch let e {
-                result = .failure("Can't write to csv export file at \(DataStore.exportUrl). Error: \(e)" as! Error) // TODO not sure this cast is safe...
+                result = .failure(SqliteError.Unspecified(message: "Can't write to csv export file at \(DataStore.exportUrl). Error: \(e)"))
             }
             
             DispatchQueue.main.async {
                 completion(result)
+            }
+        }
+    }
+    
+    func importCsvAsync(fileURL: URL, completion: @escaping (Error?) -> Void) {
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            guard let self = self else { return }
+            
+            var result: Error? = nil
+            do {
+                try self.importCsv(fileURL: fileURL)
+            } catch {
+                result = error
+            }
+            
+            self.sync() {
+                completion(result)
+            }
+        }
+    }
+    
+    func importCsv(fileURL: URL) throws {
+        // Log a nice note
+        Logger().info("Reading url: \(fileURL)")
+        
+        // Read file
+        let data = try String(contentsOf: fileURL, encoding: .utf8)
+        let lines = data.components(separatedBy: .newlines)
+        if lines.isEmpty {
+            throw SqliteError.Unspecified(message: "File is empty; no data imported.")
+        }
+        
+        Logger().debug("\(data)")
+        
+        // Read headers
+        guard let exportHeaderData = lines[0].data(using: .utf8) else { throw SqliteError.Unspecified(message: "Cannot convert export header string to data") }
+        let exportHeader = try ExportHeader.fromJson(exportHeaderData)
+        
+        // Different import logic for different schema versions
+        let schemaVersion = exportHeader.schemaVersion
+        
+        // Make sure there is at least one record. First two lines are export headers and column headers
+        // so there must be 3 or more total lines for data to exist. Having 2 lines is acceptable, just no data will be read.
+        if lines.count < 2 {
+            throw SqliteError.Unspecified(message: "Cannot import data. Found \(lines.count) lines in import file. Expected at least 2.")
+        }
+        
+        // Wrap this whole fiasco in a transaction so as to avoid making changes when one buggers out
+        try db.beginTransaction()
+        defer { try! db.endTransaction() }
+        
+        // Go line by line. Skip header lines.
+        for line in lines[2..<lines.count] {
+            
+            // Skip blank lines
+            if line.trimmingCharacters(in: .whitespaces) == "" {
+                continue
+            }
+            
+            // Different schemas have different export formats
+            switch schemaVersion {
+            case 3:
+                let tokens = line.components(separatedBy: "\t")
+                if tokens.count != 8 { throw SqliteError.Unspecified(message: "Expected 8 tab delimited items, got \(tokens.count) on line: \(line)") }
+                let view = tokens[0]
+                let name = tokens[1]
+                guard let isFlowState = Int64(tokens[2]) else { throw SqliteError.Unspecified(message: "Cannot convert isFlowState to int: \(tokens[2])") }
+                guard let engagement = Int64(tokens[3]) else { throw SqliteError.Unspecified(message: "Cannot convert engagement to int: \(tokens[3])") }
+                guard let energy = Int64(tokens[4]) else { throw SqliteError.Unspecified(message: "Cannot convert energy to int: \(tokens[4])") }
+                guard let date = Int64(tokens[5]) else { throw SqliteError.Unspecified(message: "Cannot convert date to int: \(tokens[5])") }
+                let note = tokens[6]
+                let tags = tokens[7].components(separatedBy: ";")
+                let _ = try db.insert(reflection: Reflection(id: 0, name: name, isFlowState: isFlowState, engagement: engagement, energy: energy, date: date, note: note, axis: view, tags: tags))
+            default:
+                throw SqliteError.Unspecified(message: "Unsupported schema version: \(schemaVersion)")
             }
         }
     }

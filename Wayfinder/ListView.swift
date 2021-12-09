@@ -9,7 +9,6 @@ struct ListView: View {
     @State private var isManageAxesPresented = false
     @State private var isAboutPresented = false
     @State private var isImportFilePresented = false
-    @State private var fileContent = ""
     @State private var isCreatingExport = false
     @State private var errorMessage: ErrorMessage?
     
@@ -44,7 +43,7 @@ struct ListView: View {
         defer {
             isCreatingExport = false
         }
-        dataStore.ExportCsv() { result in
+        dataStore.exportCsv() { result in
             switch result {
             case .failure(let error):
                 errorMessage = ErrorMessage(title: "Export Error", message: "\(error)")
@@ -179,12 +178,10 @@ struct ListView: View {
             DocumentPicker(forContentTypes: [.text, .commaSeparatedText]) { urls in
                 if urls.isEmpty { return }
                 let fileURL = urls[0]
-                do {
-                    print("Reading url: \(fileURL)")
-                    fileContent = try String(contentsOf: fileURL, encoding: .utf8)
-                    print(fileContent)
-                } catch let error {
-                    print("\(error)")
+                dataStore.importCsvAsync(fileURL: fileURL) { error in
+                    if let error = error {
+                        errorMessage = ErrorMessage(title: "Import Error", message: "\(error)")
+                    }
                 }
             }
         }
