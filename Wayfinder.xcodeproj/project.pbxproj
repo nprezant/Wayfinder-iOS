@@ -46,6 +46,7 @@
 		4FF30942270D186900272EBF /* ReportMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF30941270D186900272EBF /* ReportMetrics.swift */; };
 		4FF30944270D1A0400272EBF /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF30943270D1A0400272EBF /* Common.swift */; };
 		4FFB893B27612C7F002474FC /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB893A27612C7F002474FC /* AboutView.swift */; };
+		4FFB893E27616FDD002474FC /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB893D27616FDD002474FC /* DocumentPicker.swift */; };
 		5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7487382609A52B0046B148 /* WayfinderApp.swift */; };
 		5F74873D2609A5310046B148 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873C2609A5310046B148 /* Assets.xcassets */; };
 		5F7487402609A5310046B148 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873F2609A5310046B148 /* Preview Assets.xcassets */; };
@@ -113,6 +114,7 @@
 		4FF41EDA270926AC00A44044 /* ExportAppIcons.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ExportAppIcons.sh; sourceTree = "<group>"; };
 		4FFB893A27612C7F002474FC /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		4FFB893C27615AE7002474FC /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		4FFB893D27616FDD002474FC /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
 		5F7487352609A52B0046B148 /* Wayfinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wayfinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7487382609A52B0046B148 /* WayfinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WayfinderApp.swift; sourceTree = "<group>"; };
 		5F74873C2609A5310046B148 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -206,6 +208,7 @@
 				4FCE948426E5896B00BD636C /* SearchBar.swift */,
 				4F0D5E48275D79FA0034A26C /* RenameView.swift */,
 				4FFB893A27612C7F002474FC /* AboutView.swift */,
+				4FFB893D27616FDD002474FC /* DocumentPicker.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -426,6 +429,7 @@
 				4F001B8F2723D88E0039CFF2 /* AxisTable.swift in Sources */,
 				4F235679270553D700906E88 /* BestOfAllReportView.swift in Sources */,
 				4F23566927018E5B00906E88 /* Utilities.swift in Sources */,
+				4FFB893E27616FDD002474FC /* DocumentPicker.swift in Sources */,
 				4FCE948926E5ABE100BD636C /* WeeklyReportView.swift in Sources */,
 				4F0D5E49275D79FA0034A26C /* RenameView.swift in Sources */,
 				4FCE948326E5849600BD636C /* NamePickerField.swift in Sources */,

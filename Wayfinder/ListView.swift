@@ -8,6 +8,8 @@ struct ListView: View {
     @State private var isNewReflectionPresented = false
     @State private var isManageAxesPresented = false
     @State private var isAboutPresented = false
+    @State private var isImportFilePresented = false
+    @State private var fileContent = ""
     @State private var isCreatingExport = false
     @State private var errorMessage: ErrorMessage?
     
@@ -68,6 +70,10 @@ struct ListView: View {
         }
     }
     
+    func importData() {
+        
+    }
+    
     var body: some View {
         NavigationView {
             List {
@@ -123,8 +129,10 @@ struct ListView: View {
                         Menu(content: {
                             Button(action: shareSheet) {
                                 Label("Export", systemImage: "square.and.arrow.up")
+                            }.disabled(isCreatingExport)
+                            Button(action: {isImportFilePresented = true}) {
+                                Label("Import", systemImage: "square.and.arrow.down")
                             }
-                            .disabled(isCreatingExport)
                             Button(action: {
                                 if let url = URL(string: "https://nprezant.github.io/Wayfinder/privacy/") {
                                     UIApplication.shared.open(url)
@@ -166,6 +174,9 @@ struct ListView: View {
         }
         .sheet(isPresented: $isAboutPresented) {
             AboutView()
+        }
+        .sheet(isPresented: $isImportFilePresented) {
+            DocumentPicker(fileContent: $fileContent)
         }
         .alert(item: $errorMessage) { msg in
             msg.toAlert()
