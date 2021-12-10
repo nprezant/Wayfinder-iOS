@@ -47,21 +47,27 @@ struct BestOfReportView: View {
         VStack {
             VStack {
                 HStack {
-                    Picker("\(selectedBestWorst.rawValue.capitalized)", selection: $selectedBestWorst) {
-                        ForEach(BestWorst.allCases) { bestWorst in
-                            Text(bestWorst.rawValue.capitalized).tag(bestWorst)
+                    Menu(content: {
+                        Picker(selection: $selectedBestWorst, label: Text(selectedBestWorst.rawValue.capitalized)) {
+                            ForEach(BestWorst.allCases) { bestWorst in
+                                Text(bestWorst.rawValue.capitalized).tag(bestWorst)
+                            }
                         }
-                    }
+                    }, label: {
+                        Text(selectedBestWorst.rawValue.capitalized)
+                    })
                     .onChange(of: selectedBestWorst, perform: {_ in updateBestOf()})
-                    .pickerStyle(MenuPickerStyle())
                     Text("of a \(dataStore.activeAxis)")
-                    Picker("\(selectedCategory.rawValue.capitalized)", selection: $selectedCategory) {
-                        ForEach(Category.allCases) { category in
-                            Text(category.rawValue.capitalized).tag(category)
+                    Menu(content: {
+                        Picker(selection: $selectedCategory, label: Text(selectedCategory.rawValue.capitalized)) {
+                            ForEach(Category.allCases) { category in
+                                Text(category.rawValue.capitalized).tag(category)
+                            }
                         }
-                    }
+                    }, label: {
+                        Text(selectedCategory.rawValue.capitalized)
+                    })
                     .onChange(of: selectedCategory, perform: {_ in updateBestOf()})
-                    .pickerStyle(MenuPickerStyle())
                     Spacer()
                 }
                 .font(.title)

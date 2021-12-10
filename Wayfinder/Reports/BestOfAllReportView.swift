@@ -37,19 +37,26 @@ struct BestOfAllReportView: View {
         VStack {
             VStack {
                 HStack {
-                    Picker("\(selectedBestWorst.rawValue.capitalized)", selection: $selectedBestWorst) {
-                        ForEach(BestWorst.allCases) { bestWorst in
-                            Text(bestWorst.rawValue.capitalized).tag(bestWorst)
+                    Menu(content: {
+                        Picker(selection: $selectedBestWorst, label: Text(selectedBestWorst.rawValue.capitalized)) {
+                            ForEach(BestWorst.allCases) { bestWorst in
+                                Text(bestWorst.rawValue.capitalized).tag(bestWorst)
+                            }
                         }
-                    }
+                    }, label: {
+                        Text(selectedBestWorst.rawValue.capitalized)
+                    })
                     .onChange(of: selectedBestWorst, perform: {_ in updateBestOfAll()})
-                    .pickerStyle(MenuPickerStyle())
                     Text("of all \(dataStore.activeAxis)")
-                    Picker("\(selectedCategory.pluralized.capitalized)", selection: $selectedCategory) {
-                        ForEach(Category.allCases) { category in
-                            Text(category.pluralized.capitalized).tag(category)
+                    Menu(content: {
+                        Picker(selection: $selectedCategory, label: Text(selectedCategory.pluralized.capitalized)) {
+                            ForEach(Category.allCases) { category in
+                                Text(category.pluralized.capitalized).tag(category)
+                            }
                         }
-                    }
+                    }, label: {
+                        Text(selectedCategory.pluralized.capitalized)
+                    })
                     .onChange(of: selectedCategory, perform: {_ in updateBestOfAll()})
                     .pickerStyle(MenuPickerStyle())
                     Spacer()

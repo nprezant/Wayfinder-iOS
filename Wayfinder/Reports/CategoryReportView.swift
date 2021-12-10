@@ -67,13 +67,16 @@ struct CategoryReportView: View {
             VStack {
                 if showHeader {
                     HStack {
-                        Picker("\(selectedCategory.rawValue.capitalized)", selection: $selectedCategory) {
-                            ForEach(Category.allCases) { category in
-                                Text(category.rawValue.capitalized).tag(category)
+                        Menu(content: {
+                            Picker(selection: $selectedCategory, label: Text(selectedCategory.rawValue.capitalized)) {
+                                ForEach(Category.allCases) { category in
+                                    Text(category.rawValue.capitalized).tag(category)
+                                }
                             }
-                        }
+                        }, label: {
+                            Text(selectedCategory.rawValue.capitalized)
+                        })
                         .onChange(of: selectedCategory, perform: {_ in updateAverages()})
-                        .pickerStyle(MenuPickerStyle())
                         .font(.title)
                         Text("Average")
                             .font(.title)

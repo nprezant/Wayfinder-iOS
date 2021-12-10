@@ -33,12 +33,15 @@ struct AveragedReportView: View {
         VStack {
             HStack {
                 Text(dataStore.activeAxis)
-                Picker("\(selectedAverageOption.rawValue.capitalized)", selection: $selectedAverageOption) {
-                    ForEach(AverageOption.allCases) { option in
-                        Text(option.rawValue.capitalized).tag(option)
+                Menu(content: {
+                    Picker(selection: $selectedAverageOption, label: Text(selectedAverageOption.rawValue.capitalized)) {
+                        ForEach(AverageOption.allCases) { option in
+                            Text(option.rawValue.capitalized).tag(option)
+                        }
                     }
-                }
-                .pickerStyle(MenuPickerStyle())
+                }, label: {
+                    Text(selectedAverageOption.rawValue.capitalized)
+                })
                 Text("Average")
                 Spacer()
             }
