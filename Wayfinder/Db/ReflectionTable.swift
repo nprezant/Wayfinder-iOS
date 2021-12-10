@@ -1,6 +1,7 @@
 // Wayfinder
 
 import Foundation
+import os
 
 /// The table itself
 struct Reflection : Identifiable, Equatable, MetricComparable, CustomStringConvertible {
@@ -212,7 +213,7 @@ extension SqliteDatabase {
             sql = "SELECT r.id, r.name, r.isFlowState, r.engagement, r.energy, r.date, r.note, axis.name FROM reflection r INNER JOIN axis ON axis.id = r.axis ORDER BY r.date DESC"
         }
         
-        let stmt = try? prepare(sql: sql)
+        let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
         }

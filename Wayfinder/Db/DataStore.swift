@@ -380,7 +380,14 @@ class DataStore: ObservableObject {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
             Logger().info("Exporting csv")
-            let reflections = try! self.db.fetchReflections()
+            let reflections: [Reflection]
+            do {
+                reflections = try self.db.fetchReflections()
+            } catch {
+                let msg = "\(error)"
+                Logger().error("Could not fetch current reflections for export. Using last fetched reflections. Error: \(msg)")
+                reflections = self.reflections
+            }
             
             var s: String = "\(ExportHeader(schemaVersion: self.db.version).toJson())\n"
             s += "view\tname\tisFlowState\tengagement\tenergy\tdate\tnote\ttags\n"
