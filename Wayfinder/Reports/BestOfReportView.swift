@@ -9,7 +9,7 @@ struct BestOfReportView: View {
     @State public var selectedBestWorst: BestWorst = .best
     @State public var selectedCategory: Category = .activity
     @State public var selectedCategoryValue: String = ""
-    @State public var selectedMetric: Metric = .engagement
+    @State public var selectedMetric: Metric = .combined
     public var wasUpdated: Binding<Bool>?
 
     @State private var result: [Reflection] = []

@@ -14,8 +14,8 @@ protocol MetricComparable {
 
 enum Metric: String, CaseIterable, Identifiable {
     case engagement
-    case energy
     case combined
+    case energy
     
     var id: String { self.rawValue }
     

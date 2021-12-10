@@ -8,7 +8,7 @@ struct BestOfAllReportView: View {
     
     @State private var selectedBestWorst: BestWorst = .best
     @State private var selectedCategory: Category = .activity
-    @State private var selectedMetric: Metric = .engagement
+    @State private var selectedMetric: Metric = .combined
     @State private var result: [Reflection.Averaged] = []
     @State private var errorMessage: ErrorMessage?
     @State private var isBestOfPresented: Bool = false
