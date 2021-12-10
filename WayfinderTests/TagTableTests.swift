@@ -27,35 +27,35 @@ class TagTableTests: XCTestCase {
     }
     
     func testFetchAllUniqueTagsWhenNone() throws {
-        let db = try! TestUtils.makeDatabase(with: &testDataNoTags)
+        let db = try TestUtils.makeDatabase(with: &testDataNoTags)
         let dbTags = try db.fetchUniqueTagNames()
         let expectedTags: [String] = []
         XCTAssertEqual(dbTags, expectedTags)
     }
     
     func testFetchAllUniqueTags() throws {
-        let db = try! TestUtils.makeDatabase(with: &testDataWithTags)
+        let db = try TestUtils.makeDatabase(with: &testDataWithTags)
         let dbTags = try db.fetchUniqueTagNames()
         let expectedTags: [String] = ["tagShared", "tag1.0", "tag1.1", "tag2.0"]
         XCTAssertEqual(dbTags, expectedTags)
     }
     
     func testFetchTagsForReflection() throws {
-        let db = try! TestUtils.makeDatabase(with: &testDataWithTags)
+        let db = try TestUtils.makeDatabase(with: &testDataWithTags)
         let dbTags = try db.fetchTags(for: 1)
         let expectedTags: [String] = ["tagShared", "tag1.0", "tag1.1"]
         XCTAssertEqual(dbTags, expectedTags)
     }
     
     func testFetchTagsForReflectionNoMatch() throws {
-        let db = try! TestUtils.makeDatabase(with: &testDataNoTags)
+        let db = try TestUtils.makeDatabase(with: &testDataNoTags)
         let dbTags = try db.fetchTags(for: 1000)
         let expectedTags: [String] = []
         XCTAssertEqual(dbTags, expectedTags)
     }
     
     func testInsertTagForReflection() throws {
-        let db = try! TestUtils.makeDatabase(with: &testDataNoTags)
+        let db = try TestUtils.makeDatabase(with: &testDataNoTags)
         
         let tagsToInsert: [String] = ["insertedTag"]
         try db.insertTags(for: testDataNoTags[0].id, tags: tagsToInsert)
@@ -71,7 +71,7 @@ class TagTableTests: XCTestCase {
     }
     
     func testInsertTagForReflectionWithSpaces() throws {
-        let db = try! TestUtils.makeDatabase(with: &testDataNoTags)
+        let db = try TestUtils.makeDatabase(with: &testDataNoTags)
         
         let tagsToInsert: [String] = ["inserted tag"]
         try db.insertTags(for: testDataNoTags[0].id, tags: tagsToInsert)
@@ -87,7 +87,7 @@ class TagTableTests: XCTestCase {
     }
     
     func testInsertTagsForReflection() throws {
-        let db = try! TestUtils.makeDatabase(with: &testDataNoTags)
+        let db = try TestUtils.makeDatabase(with: &testDataNoTags)
         
         let tagsToInsert: [String] = ["insertedTag", "insertedTag2", "insertedTag3"]
         try db.insertTags(for: testDataNoTags[0].id, tags: tagsToInsert)
@@ -103,7 +103,7 @@ class TagTableTests: XCTestCase {
     }
     
     func testDeleteTagFromReflection() throws {
-        let db = try! TestUtils.makeDatabase(with: &testDataNoTags)
+        let db = try TestUtils.makeDatabase(with: &testDataNoTags)
         
         let reflectionId = testDataNoTags[0].id
         
@@ -120,7 +120,7 @@ class TagTableTests: XCTestCase {
     }
     
     func testDeleteReflectionCascadesToTags() throws {
-        let db = try! TestUtils.makeDatabase(with: &testDataNoTags)
+        let db = try TestUtils.makeDatabase(with: &testDataNoTags)
         
         let reflectionId = testDataNoTags[0].id
         
@@ -137,7 +137,7 @@ class TagTableTests: XCTestCase {
     }
     
     func testUpdateReflectionCascadesToTags() throws {
-        let db = try! TestUtils.makeDatabase(with: &testDataNoTags)
+        let db = try TestUtils.makeDatabase(with: &testDataNoTags)
         
         let reflectionId = testDataNoTags[0].id
         

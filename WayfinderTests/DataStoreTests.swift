@@ -108,7 +108,7 @@ class DataStoreTests: XCTestCase {
     }
     
     func testDeleteReflection() throws {
-        let dataStore = try! populatedDataStore()
+        let dataStore = try populatedDataStore()
         dataStore.activeAxis = testData[0].axis
         
         let expectation = XCTestExpectation(description: "Delete one reflection")
@@ -132,7 +132,7 @@ class DataStoreTests: XCTestCase {
     }
     
     func testDeleteReflections() throws {
-        let dataStore = try! populatedDataStore()
+        let dataStore = try populatedDataStore()
         dataStore.activeAxis = testData[0].axis
         
         let expectation = XCTestExpectation(description: "Delete many reflections")
@@ -156,7 +156,7 @@ class DataStoreTests: XCTestCase {
     }
     
     func testUpdateReflection() throws {
-        let dataStore = try! populatedDataStore()
+        let dataStore = try populatedDataStore()
         dataStore.activeAxis = testData[0].axis
         
         let expectation = XCTestExpectation(description: "Update a reflection")

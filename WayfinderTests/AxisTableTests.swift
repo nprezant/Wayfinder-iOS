@@ -15,7 +15,7 @@ class AxisTableTests: XCTestCase {
             Reflection.Data(id: 0, name: "Fourth Reflection", isFlowState: true, engagement: 50, energy: 30, date: Date(), note: "Fourth note", axis: "Work").reflection,
         ]
         
-        dbBeforeAxis = try! TestUtils.makeDatabase(with: &testData)
+        dbBeforeAxis = try TestUtils.makeDatabase(with: &testData)
     }
 
     override func tearDownWithError() throws {

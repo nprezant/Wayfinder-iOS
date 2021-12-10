@@ -63,7 +63,7 @@ class MigrationTests: XCTestCase {
     }
     
     func testNewDatabaseMigrates() throws {
-        let db = try! SqliteDatabase.openInMemory()
+        let db = try SqliteDatabase.openInMemory()
         XCTAssertEqual(db.version, SqliteDatabase.latestVersion)
     }
     

@@ -22,11 +22,11 @@ class ReflectionTableTests: XCTestCase {
 
     func testInsertReflection() throws {
         // Create database in memory. No data should be loaded yet
-        let db = try! SqliteDatabase.openInMemory()
+        let db = try SqliteDatabase.openInMemory()
         XCTAssert(try db.fetchReflections().isEmpty)
         
         // Insert reflection
-        let insertedId = try! db.insert(reflection: testData[0])
+        let insertedId = try db.insert(reflection: testData[0])
         XCTAssertEqual(insertedId, 1)
         testData[0].id = insertedId
         
@@ -36,7 +36,7 @@ class ReflectionTableTests: XCTestCase {
         XCTAssertEqual(loadedReflections[0], testData[0])
         
         // Insert another reflection
-        let insertedId2 = try! db.insert(reflection: testData[1])
+        let insertedId2 = try db.insert(reflection: testData[1])
         XCTAssertEqual(insertedId2, 2)
         testData[1].id = insertedId2
         
@@ -47,11 +47,11 @@ class ReflectionTableTests: XCTestCase {
     
     func testDeleteReflection() throws {
         // Create database in memory. No data should be loaded yet
-        let db = try! SqliteDatabase.openInMemory()
+        let db = try SqliteDatabase.openInMemory()
         XCTAssert(try db.fetchReflections().isEmpty)
         
         // Insert reflection
-        let insertedId = try! db.insert(reflection: testData[0])
+        let insertedId = try db.insert(reflection: testData[0])
         XCTAssertEqual(insertedId, 1)
         testData[0].id = insertedId
         
@@ -68,10 +68,10 @@ class ReflectionTableTests: XCTestCase {
     }
     
     func testDeleteFirstReflection() throws {
-        let db = try! TestUtils.makeDatabase(with: &testData)
+        let db = try TestUtils.makeDatabase(with: &testData)
         
         // Remove the first entry
-        try! db.delete(reflectionsIds: [testData.first!.id])
+        try db.delete(reflectionsIds: [testData.first!.id])
         
         // Update test data to match
         testData.remove(at: 0)
@@ -82,10 +82,10 @@ class ReflectionTableTests: XCTestCase {
     }
     
     func testDeleteLastReflection() throws {
-        let db = try! TestUtils.makeDatabase(with: &testData)
+        let db = try TestUtils.makeDatabase(with: &testData)
         
         // Remove the first entry
-        try! db.delete(reflectionsIds: [testData.last!.id])
+        try db.delete(reflectionsIds: [testData.last!.id])
         
         // Update test data to match
         testData.remove(at: testData.count - 1)
@@ -96,10 +96,10 @@ class ReflectionTableTests: XCTestCase {
     }
     
     func testDeleteOneOfManyReflections() throws {
-        let db = try! TestUtils.makeDatabase(with: &testData)
+        let db = try TestUtils.makeDatabase(with: &testData)
         
         // Remove the second entry
-        try! db.delete(reflectionsIds: [testData[1].id])
+        try db.delete(reflectionsIds: [testData[1].id])
         
         // Update test data to match
         testData.remove(at: 1)
@@ -110,7 +110,7 @@ class ReflectionTableTests: XCTestCase {
     }
     
     func testDeleteManyReflections() throws {
-        let db = try! TestUtils.makeDatabase(with: &testData)
+        let db = try TestUtils.makeDatabase(with: &testData)
         
         // Setup values to remove (first and third entity)
         let toRemove = [0, 2]
@@ -118,7 +118,7 @@ class ReflectionTableTests: XCTestCase {
         
         // Remove from database
         for id in idsToRemove {
-            try! db.delete(reflectionsIds: [id])
+            try db.delete(reflectionsIds: [id])
         }
         
         // Remove from test data

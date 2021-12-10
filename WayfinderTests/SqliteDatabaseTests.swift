@@ -33,7 +33,7 @@ class SqliteDatabaseTests: XCTestCase {
     }
 
     func testGetVersion() throws {
-        let db = try! TestUtils.makeDatabase(with: &testData)
+        let db = try TestUtils.makeDatabase(with: &testData)
         
         let version = db.version
         
@@ -41,13 +41,13 @@ class SqliteDatabaseTests: XCTestCase {
     }
     
     func testSetVersionDoesNotThrow() throws {
-        let db = try! TestUtils.makeDatabase(with: &testData)
+        let db = try TestUtils.makeDatabase(with: &testData)
         
         db.version = 2
     }
     
     func testSetVersionSetsProperly() throws {
-        let db = try! TestUtils.makeDatabase(with: &testData)
+        let db = try TestUtils.makeDatabase(with: &testData)
         
         db.version = 2
         
