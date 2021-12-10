@@ -92,7 +92,7 @@ extension SqliteDatabase {
     func insert(axis name: String) throws {
         let sql = "INSERT INTO axis (name, hidden) VALUES (?1, FALSE);"
         
-        let stmt = try! prepare(sql: sql)
+        let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
         }

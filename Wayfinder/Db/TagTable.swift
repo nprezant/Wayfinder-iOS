@@ -47,7 +47,7 @@ extension SqliteDatabase {
     func fetchTags(for reflectionId: Int64) throws -> [String] {
         let sql = "SELECT name FROM tag WHERE reflection = ?"
         
-        let stmt = try! prepare(sql: sql)
+        let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
         }
