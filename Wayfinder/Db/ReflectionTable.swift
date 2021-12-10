@@ -112,10 +112,10 @@ extension SqliteDatabase {
             sqlite3_finalize(stmt)
         }
         
-        var axis = fetchAxis(name: reflection.axis)
+        var axis = try fetchAxis(name: reflection.axis)
         if axis == nil {
             try insert(axis: reflection.axis)
-            axis = fetchAxis(name: reflection.axis)
+            axis = try fetchAxis(name: reflection.axis)
             guard axis != nil else { throw SqliteError.Unspecified(message: "Cannot insert reflection with non-existent axis. Axis name not found: \(reflection.axis)") }
         }
         

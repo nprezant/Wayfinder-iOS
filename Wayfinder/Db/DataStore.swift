@@ -120,7 +120,7 @@ class DataStore: ObservableObject {
                 let activityNames = try self.db.fetchVisibleActivities(axis: axis)
                 let allTagNames = try self.db.fetchUniqueTagNames().sorted(by: <)
                 let tagNames = try self.db.fetchUniqueTagNames(axis: axis).sorted(by: <)
-                let axes = self.db.fetchAllAxes().sorted(by: { $0.name < $1.name })
+                let axes = try self.db.fetchAllAxes().sorted(by: { $0.name < $1.name })
                 let visibleAxes = axes.filter{ !$0.hidden.boolValue }
                 let hiddenAxes = axes.filter{ $0.hidden.boolValue }
                 

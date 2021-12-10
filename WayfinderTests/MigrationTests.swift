@@ -150,45 +150,45 @@ class MigrationTests: XCTestCase {
     
     func testVersion0() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 0)
-        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema0)
+        XCTAssertEqual(try db.tableSchemas, reference: MigrationTests.schema0)
     }
     
     func testVersion0Backwards() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 1)
         try db.migrate(to: 0)
-        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema0)
+        XCTAssertEqual(try db.tableSchemas, reference: MigrationTests.schema0)
     }
     
     func testVersion1() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 1)
-        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema1)
+        XCTAssertEqual(try db.tableSchemas, reference: MigrationTests.schema1)
     }
     
     func testVersion1Backwards() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 2)
         try db.migrate(to: 1)
-        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema1)
+        XCTAssertEqual(try db.tableSchemas, reference: MigrationTests.schema1)
     }
     
     func testVersion2() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 2)
-        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema2)
+        XCTAssertEqual(try db.tableSchemas, reference: MigrationTests.schema2)
     }
     
     func testVersion2Backwards() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 3)
         try db.migrate(to: 2)
-        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema2)
+        XCTAssertEqual(try db.tableSchemas, reference: MigrationTests.schema2)
     }
     
     func testVersion3() throws {
         let db = try SqliteDatabase.openInMemory(targetVersion: 3)
-        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema3)
+        XCTAssertEqual(try db.tableSchemas, reference: MigrationTests.schema3)
     }
     
     func testLatest() throws {
         let db = try SqliteDatabase.openInMemory()
-        XCTAssertEqual(db.tableSchemas, reference: MigrationTests.schema3)
+        XCTAssertEqual(try db.tableSchemas, reference: MigrationTests.schema3)
     }
 
     func testMigrate1To2() throws {
@@ -258,7 +258,7 @@ class MigrationTests: XCTestCase {
         let defaultAxis = Axis(id: 1, name: "Work", hidden: false.intValue)
         
         // A single axis should be made overall
-        let axes = db.fetchAllAxes()
+        let axes = try db.fetchAllAxes()
         XCTAssertEqual(axes.count, 1)
         XCTAssertEqual(axes.first, defaultAxis)
         

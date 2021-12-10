@@ -234,7 +234,7 @@ class SqliteDatabase {
     
     /// List of all existing tables
     var tableNames: [String] {
-        get {
+        get throws {
             let sql = """
                 SELECT
                     name
@@ -244,7 +244,7 @@ class SqliteDatabase {
                     type ='table' AND
                     name NOT LIKE 'sqlite_%';
             """
-            let stmt = try! prepare(sql: sql)
+            let stmt = try prepare(sql: sql)
             defer {
                 sqlite3_finalize(stmt)
             }
@@ -262,7 +262,7 @@ class SqliteDatabase {
     /// The sql table name cannot be parameterized using prepare() and bind(), so it is instead sanitized by ensuring beforehand
     /// that the requested table name to drop is indeed a table name in the database
     func dropTable(name: String) throws {
-        guard tableNames.contains(name) else {
+        guard try tableNames.contains(name) else {
             throw SqliteError.Prepare(message: "Cannot drop non-existent table '\(name)'")
         }
         let stmt = try prepare(sql: "DROP TABLE \(name);")
@@ -283,7 +283,14 @@ class SqliteDatabase {
     /// The database version
     var version: Int32 {
         get {
-            let stmt = try! prepare(sql: "PRAGMA user_version;")
+            let stmt: OpaquePointer?
+            do {
+                stmt = try prepare(sql: "PRAGMA user_version;")
+            } catch {
+                let msg = "\(error)"
+                Logger().error("Could not read user_version. \(msg)")
+                return 0
+            }
             defer {
                 sqlite3_finalize(stmt)
             }
@@ -293,8 +300,15 @@ class SqliteDatabase {
             return sqlite3_column_int(stmt, 0)
         }
         set(newVersion) {
-            // Prepare seems to fail with "?" involved
-            let stmt = try! prepare(sql: "PRAGMA user_version = \(newVersion);")
+            let stmt: OpaquePointer?
+            do {
+                // Prepare seems to fail with "?" involved
+                stmt = try prepare(sql: "PRAGMA user_version = \(newVersion);")
+            } catch {
+                let msg = "\(error)"
+                Logger().error("Could not set user_version. \(msg)")
+                return
+            }
             defer {
                 sqlite3_finalize(stmt)
             }
@@ -322,8 +336,8 @@ class SqliteDatabase {
     }
     
     var tableSchemas: [String] {
-        get {
-            let stmt = try! prepare(sql: "SELECT sql FROM sqlite_master;")
+        get throws {
+            let stmt = try prepare(sql: "SELECT sql FROM sqlite_master;")
             defer {
                 sqlite3_finalize(stmt)
             }

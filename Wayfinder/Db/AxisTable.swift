@@ -39,10 +39,10 @@ extension Axis {
 /// Tag related database methods
 extension SqliteDatabase {
     
-    func fetchAllAxes() -> [Axis] {
+    func fetchAllAxes() throws -> [Axis] {
         let sql = "SELECT id, name, hidden FROM axis"
         
-        let stmt = try! prepare(sql: sql)
+        let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
         }
@@ -64,10 +64,10 @@ extension SqliteDatabase {
         return axes
     }
     
-    func fetchAxis(name targetName: String) -> Axis? {
+    func fetchAxis(name targetName: String) throws -> Axis? {
         let sql = "SELECT id, name, hidden FROM axis WHERE name = ?1 LIMIT 1"
         
-        let stmt = try! prepare(sql: sql)
+        let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
         }
