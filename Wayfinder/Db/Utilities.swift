@@ -38,14 +38,7 @@ extension Int64 {
 
 struct FileLocations {
     public static var documentsFolder: URL {
-        do {
-            return try FileManager.default.url(
-                for: .documentDirectory,
-                in: .userDomainMask,
-                appropriateFor: nil,
-                create: false)
-        } catch {
-            fatalError("Can't find documents directory.")
-        }
+        // Apple's eskimo says this try! is okay
+        return try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     }
 }

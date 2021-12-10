@@ -56,6 +56,7 @@ class DataStore: ObservableObject {
         do {
             try db = inMemory ? SqliteDatabase.openInMemory() : SqliteDatabase.open(at: DataStore.dbUrl)
         } catch let e {
+            // TODO not sure how to make this recoverable...
             fatalError("Cannot open database: \(DataStore.dbUrl). Error: \(e)")
         }
     }

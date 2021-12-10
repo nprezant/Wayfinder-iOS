@@ -288,14 +288,15 @@ class SqliteDatabase {
                 stmt = try prepare(sql: "PRAGMA user_version;")
             } catch {
                 let msg = "\(error)"
-                Logger().error("Could not read user_version. \(msg)")
+                Logger().error("Could not read user_version. Assuming 0. \(msg)")
                 return 0
             }
             defer {
                 sqlite3_finalize(stmt)
             }
             guard sqlite3_step(stmt) == SQLITE_ROW else {
-                fatalError("Could not read database version: \(errorMessage)")
+                Logger().error("Could not read database version. Assuming 0. \(self.errorMessage)")
+                return 0
             }
             return sqlite3_column_int(stmt, 0)
         }
@@ -313,7 +314,8 @@ class SqliteDatabase {
                 sqlite3_finalize(stmt)
             }
             guard sqlite3_step(stmt) == SQLITE_DONE else {
-                fatalError("Could not set database version to \(newVersion): \(errorMessage)")
+                Logger().error("Could not set database version to \(newVersion). Version is unchanged. \(self.errorMessage)")
+                return
             }
         }
     }
