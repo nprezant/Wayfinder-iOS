@@ -168,7 +168,7 @@ extension SqliteDatabase {
     func renameTags(from oldName: String, to newName: String) throws {
         let sql = "UPDATE tag SET name = ? WHERE name = ?"
         
-        let stmt = try? prepare(sql: sql)
+        let stmt = try prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
         }

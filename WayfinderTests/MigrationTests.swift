@@ -202,7 +202,7 @@ class MigrationTests: XCTestCase {
         
         let sql = "SELECT id, name, isFlowState, engagement, energy, date, note, FROM reflection ORDER BY date DESC"
         
-        let stmt = try? db.prepare(sql: sql)
+        let stmt = try db.prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
         }
