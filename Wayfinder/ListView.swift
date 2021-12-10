@@ -109,11 +109,16 @@ struct ListView: View {
                 leading:
                         Menu(content: {
                             let axisNames = dataStore.visibleAxes.map{ $0.name }
-                            Picker(selection: $dataStore.activeAxis, label: Image(systemName: "eyeglasses")) {
-                                ForEach(axisNames, id: \.self) { axis in
-                                    Text(axis)
-                                }
+                            AxisPicker(initialAxis: dataStore.activeAxis, axisNames: axisNames) { pickedAxis in
+                                dataStore.sync(withAxis: pickedAxis)
                             }
+                            // Binds the picker to the active axis. When the active axis changes, the view is re-constructed
+                            // This is necessary because the axis picker needs an updated account of the active axis, and gets
+                            // the active axis value when the picker is initialized.
+                            // Binding the data store's active axis directly is not advised, as it requires putting an 'onChanged'
+                            // event or similar on that published property. This has the side effect of running every time that
+                            // value is changed, whether it is the picker's doing or not
+                            .id(dataStore.activeAxis)
                             Button(action: {
                                 isManageAxesPresented = true
                             }) {

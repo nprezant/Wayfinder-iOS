@@ -40,7 +40,7 @@ struct ManageAxesView: View {
         }
         let updated = Axis(id: oldData.id, name: newName, hidden: oldData.hidden)
         if oldName == dataStore.activeAxis {
-            dataStore.activeAxis = newName // TODO this causes the sync() event to fire. Is there a way to set the published property without it calling sync?
+            dataStore.activeAxis = newName
         }
         dataStore.update(axis: updated) { error in
             if let error = error {
@@ -74,7 +74,7 @@ struct ManageAxesView: View {
             return
         }
         if axis.name == dataStore.activeAxis {
-            dataStore.activeAxis = mergeInto.name // TODO this causes the sync() event to fire. Is there a way to set the published property without it calling sync?
+            dataStore.activeAxis = mergeInto.name
         }
         dataStore.merge(axis: axis, into: mergeInto) { error in
             if let error = error {

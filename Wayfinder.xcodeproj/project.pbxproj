@@ -47,6 +47,7 @@
 		4FF30944270D1A0400272EBF /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF30943270D1A0400272EBF /* Common.swift */; };
 		4FFB893B27612C7F002474FC /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB893A27612C7F002474FC /* AboutView.swift */; };
 		4FFB893E27616FDD002474FC /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB893D27616FDD002474FC /* DocumentPicker.swift */; };
+		4FFB89402763035D002474FC /* AxisPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FFB893F2763035D002474FC /* AxisPicker.swift */; };
 		5F7487392609A52B0046B148 /* WayfinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7487382609A52B0046B148 /* WayfinderApp.swift */; };
 		5F74873D2609A5310046B148 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873C2609A5310046B148 /* Assets.xcassets */; };
 		5F7487402609A5310046B148 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5F74873F2609A5310046B148 /* Preview Assets.xcassets */; };
@@ -115,6 +116,7 @@
 		4FFB893A27612C7F002474FC /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		4FFB893C27615AE7002474FC /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		4FFB893D27616FDD002474FC /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
+		4FFB893F2763035D002474FC /* AxisPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisPicker.swift; sourceTree = "<group>"; };
 		5F7487352609A52B0046B148 /* Wayfinder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wayfinder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F7487382609A52B0046B148 /* WayfinderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WayfinderApp.swift; sourceTree = "<group>"; };
 		5F74873C2609A5310046B148 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 				4F03BE2726DED59B001E61E5 /* EditView.swift */,
 				4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */,
 				4FF3093F270D16D500272EBF /* LabeledSlider.swift */,
+				4FFB893F2763035D002474FC /* AxisPicker.swift */,
 				4F0D5E3D27571A530034A26C /* ManageAxesView.swift */,
 				4FCE948026E582F100BD636C /* NamePicker.swift */,
 				4FCE948226E5849600BD636C /* NamePickerField.swift */,
@@ -428,6 +431,7 @@
 				4FCE948D26E5CCED00BD636C /* CategoryReportView.swift in Sources */,
 				4F001B8F2723D88E0039CFF2 /* AxisTable.swift in Sources */,
 				4F235679270553D700906E88 /* BestOfAllReportView.swift in Sources */,
+				4FFB89402763035D002474FC /* AxisPicker.swift in Sources */,
 				4F23566927018E5B00906E88 /* Utilities.swift in Sources */,
 				4FFB893E27616FDD002474FC /* DocumentPicker.swift in Sources */,
 				4FCE948926E5ABE100BD636C /* WeeklyReportView.swift in Sources */,

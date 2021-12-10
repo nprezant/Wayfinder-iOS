@@ -46,10 +46,11 @@ class DataStore: ObservableObject {
     /// The currently active axis
     @Published var activeAxis: String = ""
     
-    /// So that we can properly subscribe to publisher events
-    private var cancellables = Set<AnyCancellable>()
-    
+    /// The wrapped database
     private var db: SqliteDatabase
+    
+    /// Can only have one sync happening at a time
+    private var isSyncing: Bool = false
     
     public init(inMemory: Bool = false) {
         do {
@@ -57,13 +58,6 @@ class DataStore: ObservableObject {
         } catch let e {
             fatalError("Cannot open database: \(DataStore.dbUrl). Error: \(e)")
         }
-        
-        self.$activeAxis
-            .dropFirst() // Skips the initial value so we only persist changes
-            .sink { (newActiveAxis: String) in
-                self.sync() // Sync data when active axis changes
-            }
-            .store(in: &cancellables)
     }
         
     public static func createExample() -> DataStore {
@@ -89,15 +83,13 @@ class DataStore: ObservableObject {
             
             let preferences = PreferencesData.load()
             
-            DispatchQueue.main.async {
-                if let preferences = preferences {
-                    // Only apply preferences if they exist
-                    // Updating active axis will automatically queue a sync
-                    self.activeAxis = preferences.activeAxis
-                } else {
-                    // Use default preferences
-                    self.activeAxis = PreferencesData().activeAxis
-                }
+            if let preferences = preferences {
+                // Only apply preferences if they exist
+                // Syncing with an axis has the side effect of also updating the active axis
+                self.sync(withAxis: preferences.activeAxis)
+            } else {
+                // Use default preferences
+                self.sync(withAxis: PreferencesData().activeAxis)
             }
         }
     }
@@ -108,24 +100,29 @@ class DataStore: ObservableObject {
     }
     
     /// Syncs published properties with the database (asyncronosly)
-    public func sync(_ completion: @escaping ()->Void = {}) {
+    public func sync(withAxis: String? = nil, _ completion: @escaping ()->Void = {}) {
+        if isSyncing {
+            Logger().warning("Cannot begin a sync while another sync is incomplete")
+            completion()
+            return
+        }
+        isSyncing = true
         DispatchQueue.global(qos: .background).async { [weak self] in
-            
             guard let self = self else { return }
-            
-            Logger().info("Syncing with axis = \(self.activeAxis)")
-            
+            let axis = withAxis ?? self.activeAxis
+            Logger().info("Syncing with axis = \(axis)")
             do {
-                let reflections = try self.db.fetchReflections(axis: self.activeAxis)
-                let activityNames = try self.db.fetchVisibleActivities(axis: self.activeAxis)
+                let reflections = try self.db.fetchReflections(axis: axis)
+                let activityNames = try self.db.fetchVisibleActivities(axis: axis)
                 let allTagNames = try self.db.fetchUniqueTagNames().sorted(by: <)
-                let tagNames = try self.db.fetchUniqueTagNames(axis: self.activeAxis).sorted(by: <)
+                let tagNames = try self.db.fetchUniqueTagNames(axis: axis).sorted(by: <)
                 let axes = self.db.fetchAllAxes().sorted(by: { $0.name < $1.name })
                 let visibleAxes = axes.filter{ !$0.hidden.boolValue }
                 let hiddenAxes = axes.filter{ $0.hidden.boolValue }
                 
                 // Assigning published properties is UI work, must do on main thread
                 DispatchQueue.main.async {
+                    self.activeAxis = axis
                     self.reflections = reflections
                     self.activityNames = activityNames
                     self.allTagNames = allTagNames
@@ -137,7 +134,9 @@ class DataStore: ObservableObject {
             } catch {
                 let msg = "\(error)"
                 Logger().error("Sync error: \(msg)")
+                completion()
             }
+            self.isSyncing = false
         }
     }
     
