@@ -207,9 +207,13 @@ class DataStore: ObservableObject {
     /// Adds many reflections (not async...) and updates the ids to match the those in the inserted database
     func add(reflections: inout [Reflection]) {
         for i in reflections.indices {
-            let dbId = try! self.db.insert(reflection: reflections[i])
-            reflections[i].id = dbId
-            self.reflections.append(reflections[i])
+            do {
+                let dbId = try self.db.insert(reflection: reflections[i])
+                reflections[i].id = dbId
+                self.reflections.append(reflections[i])
+            } catch {
+                Logger().error("Could not add reflection \(self.db.errorMessage)")
+            }
         }
     }
     
