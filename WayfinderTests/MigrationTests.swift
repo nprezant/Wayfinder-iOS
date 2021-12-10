@@ -200,15 +200,16 @@ class MigrationTests: XCTestCase {
         
         try db.migrate(to: 2)
         
-        let sql = "SELECT id, name, isFlowState, engagement, energy, date, note, FROM reflection ORDER BY date DESC"
+        let sql = "SELECT id, name, isFlowState, engagement, energy, date, note FROM reflection ORDER BY name ASC"
         
         let stmt = try db.prepare(sql: sql)
         defer {
             sqlite3_finalize(stmt)
         }
         
-        let count: Int = 0
+        var count: Int = 0
         while (true) {
+            count += 1
             guard sqlite3_step(stmt) == SQLITE_ROW else {
                 break
             }
@@ -221,18 +222,18 @@ class MigrationTests: XCTestCase {
             let date = sqlite3_column_int64(stmt, 5)
             let note = String(cString: sqlite3_column_text(stmt, 6))
             
-            if count == 0 {
+            if count == 1 {
                 XCTAssertEqual(id, 1)
                 XCTAssertEqual(name, "reflection1")
-                XCTAssertEqual(isFlowState, false.intValue)
+                XCTAssertEqual(isFlowState, true.intValue)
                 XCTAssertEqual(engagement, 25)
                 XCTAssertEqual(energy, 80)
                 XCTAssertEqual(date, 10000)
                 XCTAssertEqual(note, "no notes")
-            } else if count == 1 {
+            } else if count == 2 {
                 XCTAssertEqual(id, 2)
                 XCTAssertEqual(name, "reflection2")
-                XCTAssertEqual(isFlowState, true.intValue)
+                XCTAssertEqual(isFlowState, false.intValue)
                 XCTAssertEqual(engagement, 10)
                 XCTAssertEqual(energy, 20)
                 XCTAssertEqual(date, 50000)
