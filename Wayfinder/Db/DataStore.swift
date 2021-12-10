@@ -66,10 +66,14 @@ class DataStore: ObservableObject {
             do {
                 let _ = try dataStore.db.insert(reflection: r)
             } catch {
-                fatalError("Could not create example data. \(dataStore.db.errorMessage)")
+                Logger().error("Could not insert example reflection data. \(dataStore.db.errorMessage)")
             }
         }
-        dataStore.reflections = try! dataStore.db.fetchReflections()
+        do {
+            dataStore.reflections = try dataStore.db.fetchReflections()
+        } catch {
+            Logger().error("Could not fetch example reflections. \(dataStore.db.errorMessage)")
+        }
         return dataStore
     }
     
