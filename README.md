@@ -1,6 +1,6 @@
 # Wayfinder
 
-Make your best way forward
+Make your best way forward.
 
 ### Developer Notes
 
