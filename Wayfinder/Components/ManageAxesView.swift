@@ -99,107 +99,109 @@ struct ManageAxesView: View {
     }
     
     var body: some View {
-        Text("Manage views").font(.title).padding([.top])
-        List {
-            Section() {
-                ForEach(visibleAxes.indices, id: \.self) { index in
-                    Text(visibleAxes[index].name)
-                        // TODO this causes the "disabling recursion trigger logging" message
-                        .contextMenu {
-                            Button {
-                                visibleAxisIndexToRename = index
-                                isVisibleAxisRenamePresented = true
-                            } label: {
-                                Label("Rename", systemImage: "pencil")
-                            }
-                            Button {
-                                visibleAxisIndexToMerge = index
-                                isVisibleAxisMergePresented = true
-                            } label: {
-                                Label("Merge into...", systemImage: "arrow.triangle.merge")
-                            }
-                            Button {
-                                if visibleAxes.count == 1 {
-                                    errorMessage = ErrorMessage(title: "", message: "Please leave at least one view visible")
-                                }
-                                else {
-                                    let a = visibleAxes[index]
-                                    withAnimation {
-                                        store.visibleAxes.remove(at: index)
-                                        store.hiddenAxes.append(a)
-                                    }
-                                    store.update(axis: Axis(id: a.id, name: a.name, hidden: true.intValue)) { error in
-                                        if let error = error {
-                                            errorMessage = ErrorMessage(title: "Cannot hide view", message: "\(error)")
-                                        }
-                                    }
-                                }
-                            } label: {
-                                Label("Hide", systemImage: "arrow.down")
-                            }
-                        }
-                }
-                .onDelete { indices in
-                    let axesToDelete = indices.map{ visibleAxes[$0].name }
-                    if visibleAxes.count == axesToDelete.count {
-                        errorMessage = ErrorMessage(title: "", message: "Please leave at least one view visible")
-                    } else {
-                        if axesToDelete.contains(store.activeAxis) {
-                            if let notDeletedVisibleAxis = visibleAxes.first(where: { !axesToDelete.contains($0.name) }) {
-                                store.activeAxis = notDeletedVisibleAxis.name
-                            }
-                        }
-                        store.delete(axes: axesToDelete) { error in
-                            if let error = error {
-                                errorMessage = ErrorMessage(title: "Cannot delete view", message: "\(error)")
-                            }
-                        }
-                    }
-                }
-                HStack {
-                    TextField("New View", text: $newAxis, onCommit: {
-                        addNewAxis()
-                    })
-                    Button(action: {
-                        addNewAxis()
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                    }
-                    .disabled(newAxis.isEmpty || (allAxisNames.contains(newAxis)))
-                }
-            }
-            if !hiddenAxes.isEmpty {
-                Section(header: Text("Hidden Views")) {
-                    ForEach(hiddenAxes.indices, id: \.self) { index in
-                        Text(hiddenAxes[index].name)
+        VStack {
+            Text("Manage views").font(.title).padding([.top])
+            List {
+                Section() {
+                    ForEach(visibleAxes.indices, id: \.self) { index in
+                        Text(visibleAxes[index].name)
                             // TODO this causes the "disabling recursion trigger logging" message
                             .contextMenu {
                                 Button {
-                                    hiddenAxisIndexToRename = index
-                                    isHiddenAxisRenamePresented = true
+                                    visibleAxisIndexToRename = index
+                                    isVisibleAxisRenamePresented = true
                                 } label: {
                                     Label("Rename", systemImage: "pencil")
                                 }
                                 Button {
-                                    let a = hiddenAxes[index]
-                                    withAnimation {
-                                        store.hiddenAxes.remove(at: index)
-                                        store.visibleAxes.append(a)
+                                    visibleAxisIndexToMerge = index
+                                    isVisibleAxisMergePresented = true
+                                } label: {
+                                    Label("Merge into...", systemImage: "arrow.triangle.merge")
+                                }
+                                Button {
+                                    if visibleAxes.count == 1 {
+                                        errorMessage = ErrorMessage(title: "", message: "Please leave at least one view visible")
                                     }
-                                    store.update(axis: Axis(id: a.id, name: a.name, hidden: false.intValue)) { error in
-                                        if let error = error {
-                                            errorMessage = ErrorMessage(title: "Cannot show view", message: "\(error)")
+                                    else {
+                                        let a = visibleAxes[index]
+                                        withAnimation {
+                                            store.visibleAxes.remove(at: index)
+                                            store.hiddenAxes.append(a)
+                                        }
+                                        store.update(axis: Axis(id: a.id, name: a.name, hidden: true.intValue)) { error in
+                                            if let error = error {
+                                                errorMessage = ErrorMessage(title: "Cannot hide view", message: "\(error)")
+                                            }
                                         }
                                     }
                                 } label: {
-                                    Label("Show", systemImage: "arrow.up")
+                                    Label("Hide", systemImage: "arrow.down")
                                 }
                             }
                     }
+                    .onDelete { indices in
+                        let axesToDelete = indices.map{ visibleAxes[$0].name }
+                        if visibleAxes.count == axesToDelete.count {
+                            errorMessage = ErrorMessage(title: "", message: "Please leave at least one view visible")
+                        } else {
+                            if axesToDelete.contains(store.activeAxis) {
+                                if let notDeletedVisibleAxis = visibleAxes.first(where: { !axesToDelete.contains($0.name) }) {
+                                    store.activeAxis = notDeletedVisibleAxis.name
+                                }
+                            }
+                            store.delete(axes: axesToDelete) { error in
+                                if let error = error {
+                                    errorMessage = ErrorMessage(title: "Cannot delete view", message: "\(error)")
+                                }
+                            }
+                        }
+                    }
+                    HStack {
+                        TextField("Add view...", text: $newAxis, onCommit: {
+                            addNewAxis()
+                        })
+                        Button(action: {
+                            addNewAxis()
+                        }) {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                        .disabled(newAxis.isEmpty || (allAxisNames.contains(newAxis)))
+                    }
                 }
+                if !hiddenAxes.isEmpty {
+                    Section(header: Text("Hidden Views")) {
+                        ForEach(hiddenAxes.indices, id: \.self) { index in
+                            Text(hiddenAxes[index].name)
+                                // TODO this causes the "disabling recursion trigger logging" message
+                                .contextMenu {
+                                    Button {
+                                        hiddenAxisIndexToRename = index
+                                        isHiddenAxisRenamePresented = true
+                                    } label: {
+                                        Label("Rename", systemImage: "pencil")
+                                    }
+                                    Button {
+                                        let a = hiddenAxes[index]
+                                        withAnimation {
+                                            store.hiddenAxes.remove(at: index)
+                                            store.visibleAxes.append(a)
+                                        }
+                                        store.update(axis: Axis(id: a.id, name: a.name, hidden: false.intValue)) { error in
+                                            if let error = error {
+                                                errorMessage = ErrorMessage(title: "Cannot show view", message: "\(error)")
+                                            }
+                                        }
+                                    } label: {
+                                        Label("Show", systemImage: "arrow.up")
+                                    }
+                                }
+                        }
+                    }
+                }
+                // https://developer.apple.com/forums/thread/652080
+                let _ = "\(hiddenAxisIndexToRename ?? 1) \(visibleAxisIndexToRename ?? 1) \(visibleAxisIndexToMerge ?? 1)"
             }
-            // https://developer.apple.com/forums/thread/652080
-            let _ = "\(hiddenAxisIndexToRename ?? 1) \(visibleAxisIndexToRename ?? 1) \(visibleAxisIndexToMerge ?? 1)"
         }
         .listStyle(InsetGroupedListStyle())
         .alert(item: $errorMessage) { msg in
@@ -211,6 +213,7 @@ struct ManageAxesView: View {
                     let a = visibleAxes[index]
                     rename(from: a.name, to: newName)
                 }
+                .dismissable(isPresented: $isVisibleAxisRenamePresented)
             }
         }
         .sheet(isPresented: $isVisibleAxisMergePresented, onDismiss: { merge() }) {
@@ -219,6 +222,7 @@ struct ManageAxesView: View {
                 NamePicker($axisNameToMergeInto, nameOptions: axisNameOptions, prompt: "Merge '\(visibleAxes[index].name)' into...", canCreate: false, parentIsPresenting: $isVisibleAxisMergePresented) {
                     shouldDoMerge = true
                 }
+                // TODO simplify name picker. Doesn't need to handle parent presentation.
             }
         }
         .sheet(isPresented: $isHiddenAxisRenamePresented) {
@@ -227,6 +231,7 @@ struct ManageAxesView: View {
                     let a = hiddenAxes[index]
                     rename(from: a.name, to: newName)
                 }
+                .dismissable(isPresented: $isHiddenAxisRenamePresented)
             }
         }
     }
@@ -237,5 +242,6 @@ struct ManageAxesView_Previews: PreviewProvider {
         ManageAxesView(
             store: Store.createExample()
         )
+            .dismissable()
     }
 }

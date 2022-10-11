@@ -30,6 +30,7 @@
 		4F23567327042C1400906E88 /* TestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23567227042C1400906E88 /* TestUtils.swift */; };
 		4F23567727050F5000906E88 /* BestOfReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23567627050F5000906E88 /* BestOfReportView.swift */; };
 		4F235679270553D700906E88 /* BestOfAllReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F235678270553D700906E88 /* BestOfAllReportView.swift */; };
+		4F26149728F5C38800217ABB /* Dismissable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F26149628F5C38800217ABB /* Dismissable.swift */; };
 		4F38668126E1EB74006AD6AC /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F38668026E1EB74006AD6AC /* ReportView.swift */; };
 		4F38668326E1EEE9006AD6AC /* EditViewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */; };
 		4F6DD211272F1B5600F6C3B8 /* AxisTableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F6DD210272F1B5600F6C3B8 /* AxisTableTests.swift */; };
@@ -97,6 +98,7 @@
 		4F23567227042C1400906E88 /* TestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUtils.swift; sourceTree = "<group>"; };
 		4F23567627050F5000906E88 /* BestOfReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestOfReportView.swift; sourceTree = "<group>"; };
 		4F235678270553D700906E88 /* BestOfAllReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestOfAllReportView.swift; sourceTree = "<group>"; };
+		4F26149628F5C38800217ABB /* Dismissable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dismissable.swift; sourceTree = "<group>"; };
 		4F38668026E1EB74006AD6AC /* ReportView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		4F38668226E1EEE9006AD6AC /* EditViewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditViewSheet.swift; sourceTree = "<group>"; };
 		4F6DD210272F1B5600F6C3B8 /* AxisTableTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisTableTests.swift; sourceTree = "<group>"; };
@@ -181,6 +183,14 @@
 			path = Migrators;
 			sourceTree = "<group>";
 		};
+		4F26149528F5C34F00217ABB /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				4F26149628F5C38800217ABB /* Dismissable.swift */,
+			);
+			path = Modifiers;
+			sourceTree = "<group>";
+		};
 		4FF3093D270D155D00272EBF /* Reports */ = {
 			isa = PBXGroup;
 			children = (
@@ -246,6 +256,7 @@
 				4F0D5E41275883AC0034A26C /* Migrators */,
 				4FF3093D270D155D00272EBF /* Reports */,
 				4FF3093E270D15C200272EBF /* Components */,
+				4F26149528F5C34F00217ABB /* Modifiers */,
 				5F7487382609A52B0046B148 /* WayfinderApp.swift */,
 				4F03BE2B26DED710001E61E5 /* ListView.swift */,
 				4F38668026E1EB74006AD6AC /* ReportView.swift */,
@@ -422,6 +433,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F26149728F5C38800217ABB /* Dismissable.swift in Sources */,
 				4FCE948726E5A7AE00BD636C /* DailyReportView.swift in Sources */,
 				4FFB893B27612C7F002474FC /* AboutView.swift in Sources */,
 				4F23566B27019C0A00906E88 /* TagTable.swift in Sources */,

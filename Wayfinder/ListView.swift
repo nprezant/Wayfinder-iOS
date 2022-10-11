@@ -175,6 +175,7 @@ struct ListView: View {
             ManageAxesView(
                 store: store
             )
+                .dismissable(isPresented: $isManageAxesPresented)
         }
         .sheet(isPresented: $isAboutPresented) {
             AboutView()
