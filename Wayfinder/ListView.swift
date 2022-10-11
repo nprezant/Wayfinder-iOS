@@ -151,14 +151,14 @@ struct ListView: View {
                             }
                         }, label: {
                             Image(systemName: "ellipsis.circle")
+                                .padding([.top, .bottom])
                         })
-                        .padding([.leading])
                         Button(action: {
                             isNewReflectionPresented = true
                         }) {
                             Image(systemName: "plus")
+                                .padding([.top, .bottom])
                         }
-                        .padding([.leading])
                     }
             )
             .listStyle(GroupedListStyle())
