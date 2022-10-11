@@ -38,7 +38,7 @@ enum Category: String, CaseIterable, Identifiable {
 }
 
 struct CategoryReportView: View {
-    @ObservedObject var dataStore: DataStore
+    @ObservedObject var store: Store
     @State var showHeader: Bool = true
     @State var selectedCategory: Category = .activity
 
@@ -59,7 +59,7 @@ struct CategoryReportView: View {
         }
         
         let inclusionComparator = selectedCategory.makeInclusionComparator(selectedCategoryValue)
-        dataStore.makeAverageReport(inclusionComparator, completion: processResult)
+        store.makeAverageReport(inclusionComparator, completion: processResult)
     }
     
     var body: some View {
@@ -105,9 +105,9 @@ struct CategoryReportView: View {
         .sheet(isPresented: $isPresented, onDismiss: updateAverages) {
             switch selectedCategory {
             case .activity:
-                NamePicker($selectedCategoryValue, nameOptions: dataStore.activityNames, prompt: selectedCategory.choicePrompt, canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: store.activityNames, prompt: selectedCategory.choicePrompt, canCreate: false, parentIsPresenting: $isPresented)
             case .tag:
-                NamePicker($selectedCategoryValue, nameOptions: dataStore.tagNames, prompt: selectedCategory.choicePrompt, canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: store.tagNames, prompt: selectedCategory.choicePrompt, canCreate: false, parentIsPresenting: $isPresented)
             }
         }
     }
@@ -116,6 +116,6 @@ struct CategoryReportView: View {
 
 struct CategoryReportView_Previews: PreviewProvider {
     static var previews: some View {
-        CategoryReportView(dataStore: DataStore.createExample())
+        CategoryReportView(store: Store.createExample())
     }
 }

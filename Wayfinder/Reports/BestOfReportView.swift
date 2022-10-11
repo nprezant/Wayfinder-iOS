@@ -4,7 +4,7 @@ import SwiftUI
 import os
 
 struct BestOfReportView: View {
-    @ObservedObject var dataStore: DataStore
+    @ObservedObject var store: Store
     
     @State public var selectedBestWorst: BestWorst = .best
     @State public var selectedCategory: Category = .activity
@@ -30,11 +30,11 @@ struct BestOfReportView: View {
         }
         
         let inclusionComparator = selectedCategory.makeInclusionComparator(selectedCategoryValue)
-        dataStore.makeBestOfReport(inclusionComparator, by: selectedMetric, direction: selectedBestWorst, completion: processResult)
+        store.makeBestOfReport(inclusionComparator, by: selectedMetric, direction: selectedBestWorst, completion: processResult)
     }
     
     func updateAction(reflection: Reflection) -> Void {
-        dataStore.update(reflection: reflection) { error in
+        store.update(reflection: reflection) { error in
             if let error = error {
                 errorMessage = ErrorMessage(title: "Update Error", message: "\(error)")
             }
@@ -57,7 +57,7 @@ struct BestOfReportView: View {
                         Text(selectedBestWorst.rawValue.capitalized)
                     })
                     .onChange(of: selectedBestWorst, perform: {_ in updateBestOf()})
-                    Text("of a \(dataStore.activeAxis)")
+                    Text("of a \(store.activeAxis)")
                     Menu(content: {
                         Picker(selection: $selectedCategory, label: Text(selectedCategory.rawValue.capitalized)) {
                             ForEach(Category.allCases) { category in
@@ -131,15 +131,15 @@ struct BestOfReportView: View {
         .sheet(isPresented: $isPresented, onDismiss: updateBestOf) {
             switch selectedCategory {
             case .activity:
-                NamePicker($selectedCategoryValue, nameOptions: dataStore.activityNames, prompt: "Choose Activity", canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: store.activityNames, prompt: "Choose Activity", canCreate: false, parentIsPresenting: $isPresented)
             case .tag:
-                NamePicker($selectedCategoryValue, nameOptions: dataStore.tagNames, prompt: "Choose Tag", canCreate: false, parentIsPresenting: $isPresented)
+                NamePicker($selectedCategoryValue, nameOptions: store.tagNames, prompt: "Choose Tag", canCreate: false, parentIsPresenting: $isPresented)
             }
         }
         .sheet(isPresented: $isDetailPresented) {
             if let r = reflectionToEdit {
                 DetailView(
-                    dataStore: dataStore,
+                    store: store,
                     reflection: r,
                     saveAction: updateAction,
                     parentIsPresenting: $isDetailPresented
@@ -157,6 +157,6 @@ struct BestOfReportView: View {
 
 struct BestOfReportView_Previews: PreviewProvider {
     static var previews: some View {
-        BestOfReportView(dataStore: DataStore.createExample())
+        BestOfReportView(store: Store.createExample())
     }
 }

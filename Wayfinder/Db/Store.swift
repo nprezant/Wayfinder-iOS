@@ -16,7 +16,7 @@ struct BatchRenameData {
     }
 }
 
-class DataStore: ObservableObject {
+class Store: ObservableObject {
     private static var dbUrl: URL {
         return FileLocations.documentsFolder.appendingPathComponent("wayfinder.sqlite3")
     }
@@ -54,28 +54,28 @@ class DataStore: ObservableObject {
     
     public init(inMemory: Bool = false) {
         do {
-            try db = inMemory ? SqliteDatabase.openInMemory() : SqliteDatabase.open(at: DataStore.dbUrl)
+            try db = inMemory ? SqliteDatabase.openInMemory() : SqliteDatabase.open(at: Store.dbUrl)
         } catch let e {
             // TODO not sure how to make this recoverable...
-            fatalError("Cannot open database: \(DataStore.dbUrl). Error: \(e)")
+            fatalError("Cannot open database: \(Store.dbUrl). Error: \(e)")
         }
     }
         
-    public static func createExample() -> DataStore {
-        let dataStore = DataStore(inMemory: true)
+    public static func createExample() -> Store {
+        let store = Store(inMemory: true)
         for r in Reflection.exampleData {
             do {
-                let _ = try dataStore.db.insert(reflection: r)
+                let _ = try store.db.insert(reflection: r)
             } catch {
-                Logger().error("Could not insert example reflection data. \(dataStore.db.errorMessage)")
+                Logger().error("Could not insert example reflection data. \(store.db.errorMessage)")
             }
         }
         do {
-            dataStore.reflections = try dataStore.db.fetchReflections()
+            store.reflections = try store.db.fetchReflections()
         } catch {
-            Logger().error("Could not fetch example reflections. \(dataStore.db.errorMessage)")
+            Logger().error("Could not fetch example reflections. \(store.db.errorMessage)")
         }
-        return dataStore
+        return store
     }
     
     /// Performs initial sync with persistant data, including preferences and database (asyncronosly)
@@ -400,10 +400,10 @@ class DataStore: ObservableObject {
             var result: Result<URL, Error>
             
             do {
-                try s.write(to: DataStore.exportUrl, atomically: true, encoding: .utf8)
-                result = .success(DataStore.exportUrl)
+                try s.write(to: Store.exportUrl, atomically: true, encoding: .utf8)
+                result = .success(Store.exportUrl)
             } catch let e {
-                result = .failure(SqliteError.Unspecified(message: "Can't write to csv export file at \(DataStore.exportUrl). Error: \(e)"))
+                result = .failure(SqliteError.Unspecified(message: "Can't write to csv export file at \(Store.exportUrl). Error: \(e)"))
             }
             
             DispatchQueue.main.async {

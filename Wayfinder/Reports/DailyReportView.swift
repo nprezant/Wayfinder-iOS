@@ -4,14 +4,14 @@ import SwiftUI
 import os
 
 struct DailyReportView: View {
-    @ObservedObject var dataStore: DataStore
+    @ObservedObject var store: Store
     @State var showHeader: Bool = true
     
     @State private var selectedDay: Date = Date()
     @State private var averagedResult: Reflection.Averaged? = nil
     
     private func updateAverages(date: Date) {
-        dataStore.makeAverageReport(for: date) { results in
+        store.makeAverageReport(for: date) { results in
             switch results {
             case .failure(let error):
                 Logger().error("\(error.localizedDescription)")
@@ -60,6 +60,6 @@ struct DailyReportView: View {
 
 struct DailyReportView_Previews: PreviewProvider {
     static var previews: some View {
-        DailyReportView(dataStore: DataStore.createExample())
+        DailyReportView(store: Store.createExample())
     }
 }

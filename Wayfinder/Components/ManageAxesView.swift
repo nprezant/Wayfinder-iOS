@@ -4,7 +4,7 @@ import SwiftUI
 
 struct ManageAxesView: View {
     
-    @ObservedObject var dataStore: DataStore
+    @ObservedObject var store: Store
     
     @State private var newAxis: String = ""
     
@@ -22,11 +22,11 @@ struct ManageAxesView: View {
     @State private var errorMessage: ErrorMessage?
     
     var visibleAxes: [Axis] {
-        dataStore.visibleAxes
+        store.visibleAxes
     }
     
     var hiddenAxes: [Axis] {
-        dataStore.hiddenAxes
+        store.hiddenAxes
     }
     
     var allAxisNames: [String] {
@@ -39,10 +39,10 @@ struct ManageAxesView: View {
             return
         }
         let updated = Axis(id: oldData.id, name: newName, hidden: oldData.hidden)
-        if oldName == dataStore.activeAxis {
-            dataStore.activeAxis = newName
+        if oldName == store.activeAxis {
+            store.activeAxis = newName
         }
-        dataStore.update(axis: updated) { error in
+        store.update(axis: updated) { error in
             if let error = error {
                 errorMessage = ErrorMessage(title: "Cannot rename view", message: "\(error)")
             }
@@ -73,10 +73,10 @@ struct ManageAxesView: View {
             }
             return
         }
-        if axis.name == dataStore.activeAxis {
-            dataStore.activeAxis = mergeInto.name
+        if axis.name == store.activeAxis {
+            store.activeAxis = mergeInto.name
         }
-        dataStore.merge(axis: axis, into: mergeInto) { error in
+        store.merge(axis: axis, into: mergeInto) { error in
             if let error = error {
                 errorMessage = ErrorMessage(title: "Cannot merge views", message: "\(error)")
             }
@@ -110,10 +110,10 @@ struct ManageAxesView: View {
                                 else {
                                     let a = visibleAxes[index]
                                     withAnimation {
-                                        dataStore.visibleAxes.remove(at: index)
-                                        dataStore.hiddenAxes.append(a)
+                                        store.visibleAxes.remove(at: index)
+                                        store.hiddenAxes.append(a)
                                     }
-                                    dataStore.update(axis: Axis(id: a.id, name: a.name, hidden: true.intValue)) { error in
+                                    store.update(axis: Axis(id: a.id, name: a.name, hidden: true.intValue)) { error in
                                         if let error = error {
                                             errorMessage = ErrorMessage(title: "Cannot hide view", message: "\(error)")
                                         }
@@ -129,12 +129,12 @@ struct ManageAxesView: View {
                     if visibleAxes.count == axesToDelete.count {
                         errorMessage = ErrorMessage(title: "", message: "Please leave at least one view visible")
                     } else {
-                        if axesToDelete.contains(dataStore.activeAxis) {
+                        if axesToDelete.contains(store.activeAxis) {
                             if let notDeletedVisibleAxis = visibleAxes.first(where: { !axesToDelete.contains($0.name) }) {
-                                dataStore.activeAxis = notDeletedVisibleAxis.name
+                                store.activeAxis = notDeletedVisibleAxis.name
                             }
                         }
-                        dataStore.delete(axes: axesToDelete) { error in
+                        store.delete(axes: axesToDelete) { error in
                             if let error = error {
                                 errorMessage = ErrorMessage(title: "Cannot delete view", message: "\(error)")
                             }
@@ -146,9 +146,9 @@ struct ManageAxesView: View {
                     Button(action: {
                         let insertionIndex = visibleAxes.map{ $0.name }.insertionIndex(of: newAxis, using: >)
                         withAnimation {
-                            dataStore.visibleAxes.insert(Axis(id: 0, name: newAxis, hidden: false.intValue), at: insertionIndex)
+                            store.visibleAxes.insert(Axis(id: 0, name: newAxis, hidden: false.intValue), at: insertionIndex)
                         }
-                        dataStore.add(axis: newAxis) { error in
+                        store.add(axis: newAxis) { error in
                             if let error = error {
                                 errorMessage = ErrorMessage(title: "Cannot add view", message: "\(error)")
                             }
@@ -175,10 +175,10 @@ struct ManageAxesView: View {
                                 Button {
                                     let a = hiddenAxes[index]
                                     withAnimation {
-                                        dataStore.hiddenAxes.remove(at: index)
-                                        dataStore.visibleAxes.append(a)
+                                        store.hiddenAxes.remove(at: index)
+                                        store.visibleAxes.append(a)
                                     }
-                                    dataStore.update(axis: Axis(id: a.id, name: a.name, hidden: false.intValue)) { error in
+                                    store.update(axis: Axis(id: a.id, name: a.name, hidden: false.intValue)) { error in
                                         if let error = error {
                                             errorMessage = ErrorMessage(title: "Cannot show view", message: "\(error)")
                                         }
@@ -227,7 +227,7 @@ struct ManageAxesView: View {
 struct ManageAxesView_Previews: PreviewProvider {
     static var previews: some View {
         ManageAxesView(
-            dataStore: DataStore.createExample()
+            store: Store.createExample()
         )
     }
 }

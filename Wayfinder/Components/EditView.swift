@@ -4,7 +4,7 @@ import SwiftUI
 
 struct EditView: View {
     
-    @ObservedObject var dataStore: DataStore
+    @ObservedObject var store: Store
     @Binding var data: Reflection.Data
     
     @State private var newTag: String = ""
@@ -17,9 +17,9 @@ struct EditView: View {
         List {
             // TODO fix issue with tappable area too small
             Section() {
-                let prompt = dataStore.activityNames.isEmpty ? "Create Activity" : "Choose Activity"
+                let prompt = store.activityNames.isEmpty ? "Create Activity" : "Choose Activity"
                 NavigationLink(
-                    destination: NamePicker($data.name, nameOptions: dataStore.activityNames, prompt: prompt)
+                    destination: NamePicker($data.name, nameOptions: store.activityNames, prompt: prompt)
                 ) {
                     NamePickerField(name: data.name, prompt: prompt, font: .title2)
                         .contentShape(Rectangle())
@@ -59,7 +59,7 @@ struct EditView: View {
                     Text("View")
                     Spacer()
                     Menu(content: {
-                        let axisNames = dataStore.visibleAxes.map{ $0.name }
+                        let axisNames = store.visibleAxes.map{ $0.name }
                         Picker(selection: $data.axis, label: Text(data.axis)) {
                             ForEach(axisNames, id: \.self) { axis in
                                 Text(axis)
@@ -87,7 +87,7 @@ struct EditView: View {
                     data.tags.remove(atOffsets: indices)
                 }
                 // Remove from the list any tags that are already listed on this reflection
-                var tagOptions = dataStore.allTagNames
+                var tagOptions = store.allTagNames
                 let _ = tagOptions.removeAll(where: {data.tags.contains($0)})
                 NavigationLink(
                     destination: NamePicker($newTag, nameOptions: tagOptions, prompt: "Add Tag") {
@@ -112,16 +112,16 @@ struct EditView: View {
         }
         .listStyle(InsetGroupedListStyle())
         .sheet(isPresented: $isActivityRenamePresented) {
-            NamePicker($data.name, nameOptions: dataStore.activityNames, prompt: "Rename all of '\(oldName)'", canCreate: true, parentIsPresenting: $isActivityRenamePresented) {
-                dataStore.enqueueBatchRename(BatchRenameData(category: .activity, from: oldName, to: data.name))
+            NamePicker($data.name, nameOptions: store.activityNames, prompt: "Rename all of '\(oldName)'", canCreate: true, parentIsPresenting: $isActivityRenamePresented) {
+                store.enqueueBatchRename(BatchRenameData(category: .activity, from: oldName, to: data.name))
                 oldName = ""
             }
         }
         .sheet(isPresented: $isTagRenamePresented) {
             if tagIndexToRename != nil {
                 let oldTag = data.tags[tagIndexToRename!]
-                NamePicker($newTag, nameOptions: dataStore.allTagNames, prompt: "Rename all of '\(oldTag)'", canCreate: true, parentIsPresenting: $isTagRenamePresented) {
-                    dataStore.enqueueBatchRename(BatchRenameData(category: .tag, from: oldTag, to: newTag))
+                NamePicker($newTag, nameOptions: store.allTagNames, prompt: "Rename all of '\(oldTag)'", canCreate: true, parentIsPresenting: $isTagRenamePresented) {
+                    store.enqueueBatchRename(BatchRenameData(category: .tag, from: oldTag, to: newTag))
                     data.tags[tagIndexToRename!] = newTag
                     newTag = ""
                 }
@@ -133,7 +133,7 @@ struct EditView: View {
 struct EditView_Previews: PreviewProvider {
     static var previews: some View {
         EditView(
-            dataStore: DataStore.createExample(),
+            store: Store.createExample(),
             data: .constant(Reflection.exampleData[0].data)
         )
     }

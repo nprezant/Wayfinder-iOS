@@ -8,7 +8,7 @@ import SwiftUI
 /// Optionally include additional actions to be called on the "Dismiss" and "Add" button presses.
 struct EditViewSheet: View {
     
-    @ObservedObject var dataStore: DataStore
+    @ObservedObject var store: Store
     @Binding var isPresented: Bool
     @Binding var errorMessage: ErrorMessage?
     var dismissAction: (() -> Void) = {}
@@ -17,7 +17,7 @@ struct EditViewSheet: View {
     @State private var newReflectionData = Reflection.Data(axis: "To be overwritten")
     
     func saveAction() -> Void {
-        dataStore.add(reflection: newReflectionData.reflection) { result in
+        store.add(reflection: newReflectionData.reflection) { result in
             switch result {
             case .failure(let error):
                 errorMessage = ErrorMessage(title: "Save Error", message: "\(error)")
@@ -30,7 +30,7 @@ struct EditViewSheet: View {
     var body: some View {
         NavigationView {
             EditView(
-                dataStore: dataStore,
+                store: store,
                 data: $newReflectionData
             )
                 .navigationBarItems(
@@ -46,13 +46,13 @@ struct EditViewSheet: View {
                 )
         }
         .onAppear(perform: {
-            newReflectionData = Reflection.Data(axis: dataStore.activeAxis)
+            newReflectionData = Reflection.Data(axis: store.activeAxis)
         })
     }
 }
 
 struct EditViewSheet_Previews: PreviewProvider {
     static var previews: some View {
-        EditViewSheet(dataStore: DataStore(), isPresented: .constant(true), errorMessage: .constant(nil))
+        EditViewSheet(store: Store(), isPresented: .constant(true), errorMessage: .constant(nil))
     }
 }

@@ -21,20 +21,20 @@ class DataStoreTests: XCTestCase {
         testData.removeAll()
     }
     
-    func populatedDataStore() throws -> DataStore {
-        let dataStore = DataStore(inMemory: true)
-        dataStore.add(reflections: &testData)
-        return dataStore
+    func populatedDataStore() throws -> Store {
+        let store = Store(inMemory: true)
+        store.add(reflections: &testData)
+        return store
     }
 
     func testAddReflection() throws {
-        let dataStore = DataStore(inMemory: true)
-        dataStore.activeAxis = testData[0].axis
+        let store = Store(inMemory: true)
+        store.activeAxis = testData[0].axis
         
         let expectation = XCTestExpectation(description: "Add two reflections individually")
         
         // Add first reflection
-        dataStore.add(reflection: testData[0]) { [self] result in
+        store.add(reflection: testData[0]) { [self] result in
             switch result {
             case .failure(let error):
                 XCTFail("\(error)")
@@ -46,7 +46,7 @@ class DataStoreTests: XCTestCase {
             self.testData[0].id = 1
             
             // Add second reflection
-            dataStore.add(reflection: testData[1]) { [self] result in
+            store.add(reflection: testData[1]) { [self] result in
                 switch result {
                 case .failure(let error):
                     XCTFail("\(error)")
@@ -58,8 +58,8 @@ class DataStoreTests: XCTestCase {
                 self.testData[1].id = 2
                 
                 // Read reflection list and ensure they are equal
-                dataStore.sync() {
-                    XCTAssertEqual(Array(testData[0...1]), dataStore.reflections)
+                store.sync() {
+                    XCTAssertEqual(Array(testData[0...1]), store.reflections)
                     expectation.fulfill()
                 }
             }
@@ -74,18 +74,18 @@ class DataStoreTests: XCTestCase {
         XCTAssertEqual(testData[2].id, 0)
         XCTAssertEqual(testData[3].id, 0)
         
-        let dataStore = DataStore(inMemory: true)
-        dataStore.add(reflections: &testData)
-        dataStore.activeAxis = testData[0].axis
+        let store = Store(inMemory: true)
+        store.add(reflections: &testData)
+        store.activeAxis = testData[0].axis
         
         let expectation = XCTestExpectation(description: "Add many reflections")
         
-        dataStore.sync() {
-            XCTAssertEqual(dataStore.reflections.count, 4)
-            XCTAssertEqual(dataStore.reflections[0].id, 1)
-            XCTAssertEqual(dataStore.reflections[1].id, 2)
-            XCTAssertEqual(dataStore.reflections[2].id, 3)
-            XCTAssertEqual(dataStore.reflections[3].id, 4)
+        store.sync() {
+            XCTAssertEqual(store.reflections.count, 4)
+            XCTAssertEqual(store.reflections[0].id, 1)
+            XCTAssertEqual(store.reflections[1].id, 2)
+            XCTAssertEqual(store.reflections[2].id, 3)
+            XCTAssertEqual(store.reflections[3].id, 4)
             expectation.fulfill()
         }
         
@@ -93,14 +93,14 @@ class DataStoreTests: XCTestCase {
     }
     
     func testAddReflections() throws {
-        let dataStore = DataStore(inMemory: true)
-        dataStore.add(reflections: &testData)
-        dataStore.activeAxis = testData[0].axis
+        let store = Store(inMemory: true)
+        store.add(reflections: &testData)
+        store.activeAxis = testData[0].axis
         
         let expectation = XCTestExpectation(description: "Add many reflections")
         
-        dataStore.sync() { [testData] in
-            XCTAssertEqual(testData, dataStore.reflections)
+        store.sync() { [testData] in
+            XCTAssertEqual(testData, store.reflections)
             expectation.fulfill()
         }
         
@@ -108,21 +108,21 @@ class DataStoreTests: XCTestCase {
     }
     
     func testDeleteReflection() throws {
-        let dataStore = try populatedDataStore()
-        dataStore.activeAxis = testData[0].axis
+        let store = try populatedDataStore()
+        store.activeAxis = testData[0].axis
         
         let expectation = XCTestExpectation(description: "Delete one reflection")
         
         // Delete second reflection
-        dataStore.delete(reflectionIds: [2]) {error in
+        store.delete(reflectionIds: [2]) {error in
             
             if let error = error {
                 XCTFail("\(error)")
             }
             
-            dataStore.sync() { [self] in
+            store.sync() { [self] in
                 testData.remove(at: 1) // Remove second reflection from test data list
-                XCTAssertEqual(testData, dataStore.reflections)
+                XCTAssertEqual(testData, store.reflections)
                 expectation.fulfill()
             }
             
@@ -132,21 +132,21 @@ class DataStoreTests: XCTestCase {
     }
     
     func testDeleteReflections() throws {
-        let dataStore = try populatedDataStore()
-        dataStore.activeAxis = testData[0].axis
+        let store = try populatedDataStore()
+        store.activeAxis = testData[0].axis
         
         let expectation = XCTestExpectation(description: "Delete many reflections")
         
         // Delete first and second reflection
-        dataStore.delete(reflectionIds: [1, 2]) {error in
+        store.delete(reflectionIds: [1, 2]) {error in
             
             if let error = error {
                 XCTFail("\(error)")
             }
             
-            dataStore.sync() { [self] in
+            store.sync() { [self] in
                 testData.removeAll(where: {[1, 2].contains($0.id)}) // Remove first and second reflection from test data list
-                XCTAssertEqual(testData, dataStore.reflections)
+                XCTAssertEqual(testData, store.reflections)
                 expectation.fulfill()
             }
             
@@ -156,25 +156,25 @@ class DataStoreTests: XCTestCase {
     }
     
     func testUpdateReflection() throws {
-        let dataStore = try populatedDataStore()
-        dataStore.activeAxis = testData[0].axis
+        let store = try populatedDataStore()
+        store.activeAxis = testData[0].axis
         
         let expectation = XCTestExpectation(description: "Update a reflection")
         
         let newSecondReflection = Reflection.Data(id: 2, name: "Frank", isFlowState: true, engagement: 0, energy: 100, date: Date(), note: "", axis: "Work").reflection
         
         // Delete first and second reflection
-        dataStore.update(reflection: newSecondReflection) {error in
+        store.update(reflection: newSecondReflection) {error in
             
             if let error = error {
                 XCTFail("\(error)")
             }
             
-            dataStore.sync() { [self] in
-                XCTAssertEqual(dataStore.reflections[1], newSecondReflection)
+            store.sync() { [self] in
+                XCTAssertEqual(store.reflections[1], newSecondReflection)
                 
                 testData[1] = newSecondReflection
-                XCTAssertEqual(testData, dataStore.reflections)
+                XCTAssertEqual(testData, store.reflections)
                 
                 expectation.fulfill()
             }

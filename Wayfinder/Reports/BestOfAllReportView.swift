@@ -4,7 +4,7 @@ import SwiftUI
 import os
 
 struct BestOfAllReportView: View {
-    @ObservedObject var dataStore: DataStore
+    @ObservedObject var store: Store
     
     @State private var selectedBestWorst: BestWorst = .best
     @State private var selectedCategory: Category = .activity
@@ -16,7 +16,7 @@ struct BestOfAllReportView: View {
     @State private var selectedAverage: Reflection.Averaged?
     
     private func updateBestOfAll() {
-        dataStore.makeBestOfAllReport(for: selectedCategory, by: selectedMetric, direction: selectedBestWorst) { results in
+        store.makeBestOfAllReport(for: selectedCategory, by: selectedMetric, direction: selectedBestWorst) { results in
             switch results {
             case .failure(let error):
                 Logger().error("\(error.localizedDescription)")
@@ -47,7 +47,7 @@ struct BestOfAllReportView: View {
                         Text(selectedBestWorst.rawValue.capitalized)
                     })
                     .onChange(of: selectedBestWorst, perform: {_ in updateBestOfAll()})
-                    Text("of all \(dataStore.activeAxis)")
+                    Text("of all \(store.activeAxis)")
                     Menu(content: {
                         Picker(selection: $selectedCategory, label: Text(selectedCategory.pluralized.capitalized)) {
                             ForEach(Category.allCases) { category in
@@ -103,7 +103,7 @@ struct BestOfAllReportView: View {
         }
         .sheet(isPresented: $isBestOfPresented, onDismiss: updateBestOfAllIfBestOfMadeChanges) {
             if selectedAverage != nil {
-                BestOfReportView(dataStore: dataStore, selectedBestWorst: selectedBestWorst, selectedCategory: selectedCategory, selectedCategoryValue: selectedAverage!.label ?? "[No group label]", wasUpdated: $bestOfUpdatedData)
+                BestOfReportView(store: store, selectedBestWorst: selectedBestWorst, selectedCategory: selectedCategory, selectedCategoryValue: selectedAverage!.label ?? "[No group label]", wasUpdated: $bestOfUpdatedData)
             }
         }
     }
@@ -112,7 +112,7 @@ struct BestOfAllReportView: View {
 
 struct BestOfAllReportView_Previews: PreviewProvider {
     static var previews: some View {
-        BestOfAllReportView(dataStore: DataStore.createExample())
+        BestOfAllReportView(store: Store.createExample())
     }
 }
 

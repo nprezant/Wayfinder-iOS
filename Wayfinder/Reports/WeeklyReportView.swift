@@ -4,7 +4,7 @@ import SwiftUI
 import os
 
 struct WeeklyReportView: View {
-    @ObservedObject var dataStore: DataStore
+    @ObservedObject var store: Store
     @State var showHeader: Bool = true
     
     @State private var selectedStartDay: Date = Date().minusOneWeek
@@ -12,7 +12,7 @@ struct WeeklyReportView: View {
     @State private var averagedResult: Reflection.Averaged? = nil
     
     private func updateAverages(start: Date, end: Date) {
-        dataStore.makeAverageReport(for: start, to: end) { results in
+        store.makeAverageReport(for: start, to: end) { results in
             switch results {
             case .failure(let error):
                 Logger().error("\(error.localizedDescription)")
@@ -75,6 +75,6 @@ struct WeeklyReportView: View {
 
 struct WeeklyReportView_Previews: PreviewProvider {
     static var previews: some View {
-        WeeklyReportView(dataStore: DataStore.createExample())
+        WeeklyReportView(store: Store.createExample())
     }
 }

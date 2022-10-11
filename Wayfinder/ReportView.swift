@@ -37,26 +37,26 @@ enum Report: Int, CaseIterable, Identifiable {
         }
     }
     
-    func buildView(dataStore: DataStore) -> AnyView {
+    func buildView(store: Store) -> AnyView {
         switch self {
         case .bestOfAll:
-            return AnyView(BestOfAllReportView(dataStore: dataStore))
+            return AnyView(BestOfAllReportView(store: store))
         case .bestOf:
-            return AnyView(BestOfReportView(dataStore: dataStore))
+            return AnyView(BestOfReportView(store: store))
         case .categorical:
-            return AnyView(CategoryReportView(dataStore: dataStore))
+            return AnyView(CategoryReportView(store: store))
         case .weekly:
-            return AnyView(WeeklyReportView(dataStore: dataStore))
+            return AnyView(WeeklyReportView(store: store))
         case .daily:
-            return AnyView(DailyReportView(dataStore: dataStore))
+            return AnyView(DailyReportView(store: store))
         case .average:
-            return AnyView(AveragedReportView(dataStore: dataStore))
+            return AnyView(AveragedReportView(store: store))
         }
     }
 }
 
 struct ReportView: View {
-    @ObservedObject var dataStore: DataStore
+    @ObservedObject var store: Store
     
     @State private var selectedIndex: Int = 0
     @State private var reports: [Report] = [.bestOfAll, .average]
@@ -67,7 +67,7 @@ struct ReportView: View {
             if !reports.isEmpty {
                 TabView(selection: $selectedIndex) {
                     ForEach(reports.indices, id: \.self) { index in
-                        reports[index].buildView(dataStore: dataStore)
+                        reports[index].buildView(store: store)
                             .tag(index)
                     }
                 }
@@ -122,6 +122,6 @@ struct ReportView: View {
 
 struct ReportView_Previews: PreviewProvider {
     static var previews: some View {
-        ReportView(dataStore: DataStore())
+        ReportView(store: Store())
     }
 }

@@ -10,29 +10,29 @@ enum AverageOption : String, CaseIterable, Identifiable {
 
     var id: String { self.rawValue }
     
-    func buildView(dataStore: DataStore) -> AnyView {
+    func buildView(store: Store) -> AnyView {
         switch self {
         case .activity:
-            return AnyView(CategoryReportView(dataStore: dataStore, showHeader: false, selectedCategory: .activity))
+            return AnyView(CategoryReportView(store: store, showHeader: false, selectedCategory: .activity))
         case .tag:
-            return AnyView(CategoryReportView(dataStore: dataStore, showHeader: false, selectedCategory: .tag))
+            return AnyView(CategoryReportView(store: store, showHeader: false, selectedCategory: .tag))
         case .daily:
-            return AnyView(DailyReportView(dataStore: dataStore, showHeader: false))
+            return AnyView(DailyReportView(store: store, showHeader: false))
         case .weekly:
-            return AnyView(WeeklyReportView(dataStore: dataStore, showHeader: false))
+            return AnyView(WeeklyReportView(store: store, showHeader: false))
         }
     }
 }
 
 struct AveragedReportView: View {
-    @ObservedObject var dataStore: DataStore
+    @ObservedObject var store: Store
     
     @State private var selectedAverageOption: AverageOption = .activity
     
     var body: some View {
         VStack {
             HStack {
-                Text(dataStore.activeAxis)
+                Text(store.activeAxis)
                 Menu(content: {
                     Picker(selection: $selectedAverageOption, label: Text(selectedAverageOption.rawValue.capitalized)) {
                         ForEach(AverageOption.allCases) { option in
@@ -48,7 +48,7 @@ struct AveragedReportView: View {
             .font(.title)
             .padding([.top])
             .padding([.top, .leading, .trailing])
-            selectedAverageOption.buildView(dataStore: dataStore)
+            selectedAverageOption.buildView(store: store)
                 .id(selectedAverageOption) // Without this view won't update when changing between tag/activity
         }
     }
@@ -56,6 +56,6 @@ struct AveragedReportView: View {
 
 struct AveragedReportView_Previews: PreviewProvider {
     static var previews: some View {
-        AveragedReportView(dataStore: DataStore.createExample())
+        AveragedReportView(store: Store.createExample())
     }
 }

@@ -16,6 +16,7 @@ enum SqliteError: Error {
 // https://github.com/groue/GRDB.swift/blob/v2.9.0/GRDB/Core/Database.swift#L14
 let SQLITE_TRANSIENT = unsafeBitCast(OpaquePointer(bitPattern: -1), to: sqlite3_destructor_type.self)
 
+/// General interface to a SQLite database. Provides general usage functions.
 class SqliteDatabase {
     
     private let dbPointer: OpaquePointer? // C pointer

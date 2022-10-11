@@ -3,7 +3,7 @@
 import SwiftUI
 
 struct ListView: View {
-    @ObservedObject var dataStore: DataStore
+    @ObservedObject var store: Store
     
     @State private var isNewReflectionPresented = false
     @State private var isManageAxesPresented = false
@@ -15,7 +15,7 @@ struct ListView: View {
     var reflectionsByDate: [Date: [Reflection]] {
         // TODO consider setting standard time of day when creating/editing instead of converting on the fly
         // Converts all datetimes to be at the same time of day to simulate grouping by day
-        Dictionary(grouping: dataStore.reflections, by: { Calendar.current.startOfDay(for: $0.data.date) })
+        Dictionary(grouping: store.reflections, by: { Calendar.current.startOfDay(for: $0.data.date) })
     }
     
     var dates: [Date] {
@@ -23,7 +23,7 @@ struct ListView: View {
     }
     
     func updateAction(reflection: Reflection) -> Void {
-        dataStore.update(reflection: reflection) { error in
+        store.update(reflection: reflection) { error in
             if let error = error {
                 errorMessage = ErrorMessage(title: "Update Error", message: "\(error)")
             }
@@ -31,7 +31,7 @@ struct ListView: View {
     }
     
     func deleteAction(ids: [Int64]) -> Void {
-        dataStore.delete(reflectionIds: ids) { error in
+        store.delete(reflectionIds: ids) { error in
             if let error = error {
                 errorMessage = ErrorMessage(title: "Delete Error", message: "\(error)")
             }
@@ -43,7 +43,7 @@ struct ListView: View {
         defer {
             isCreatingExport = false
         }
-        dataStore.exportCsv() { result in
+        store.exportCsv() { result in
             switch result {
             case .failure(let error):
                 errorMessage = ErrorMessage(title: "Export Error", message: "\(error)")
@@ -80,15 +80,15 @@ struct ListView: View {
                     Section(header: Text(date, style: .date)) {
                         let reflectionsThisDate = reflectionsByDate[date]!
                         ForEach(reflectionsThisDate) { r in
-                            let index = dataStore.reflections.firstIndex(where: {$0.id == r.id})!
+                            let index = store.reflections.firstIndex(where: {$0.id == r.id})!
                             NavigationLink(
                                 destination: DetailView(
-                                    dataStore: dataStore,
-                                    reflection: dataStore.reflections[index],
+                                    store: store,
+                                    reflection: store.reflections[index],
                                     saveAction: updateAction
                                 )
                             ) {
-                                CardView(reflection: dataStore.reflections[index])
+                                CardView(reflection: store.reflections[index])
                             }
                         }
                         .onDelete{
@@ -104,13 +104,13 @@ struct ListView: View {
                     }
                 }
             }
-            .navigationTitle("\(dataStore.activeAxis) Reflections")
+            .navigationTitle("\(store.activeAxis) Reflections")
             .navigationBarItems(
                 leading:
                         Menu(content: {
-                            let axisNames = dataStore.visibleAxes.map{ $0.name }
-                            AxisPicker(initialAxis: dataStore.activeAxis, axisNames: axisNames) { pickedAxis in
-                                dataStore.sync(withAxis: pickedAxis)
+                            let axisNames = store.visibleAxes.map{ $0.name }
+                            AxisPicker(initialAxis: store.activeAxis, axisNames: axisNames) { pickedAxis in
+                                store.sync(withAxis: pickedAxis)
                             }
                             // Binds the picker to the active axis. When the active axis changes, the view is re-constructed
                             // This is necessary because the axis picker needs an updated account of the active axis, and gets
@@ -118,7 +118,7 @@ struct ListView: View {
                             // Binding the data store's active axis directly is not advised, as it requires putting an 'onChanged'
                             // event or similar on that published property. This has the side effect of running every time that
                             // value is changed, whether it is the picker's doing or not
-                            .id(dataStore.activeAxis)
+                            .id(store.activeAxis)
                             Button(action: {
                                 isManageAxesPresented = true
                             }) {
@@ -166,14 +166,14 @@ struct ListView: View {
         .navigationViewStyle(StackNavigationViewStyle())
         .sheet(isPresented: $isNewReflectionPresented) {
             EditViewSheet(
-                dataStore: dataStore,
+                store: store,
                 isPresented: $isNewReflectionPresented,
                 errorMessage: $errorMessage
             )
         }
         .sheet(isPresented: $isManageAxesPresented) {
             ManageAxesView(
-                dataStore: dataStore
+                store: store
             )
         }
         .sheet(isPresented: $isAboutPresented) {
@@ -183,7 +183,7 @@ struct ListView: View {
             DocumentPicker(forContentTypes: [.text, .commaSeparatedText]) { urls in
                 if urls.isEmpty { return }
                 let fileURL = urls[0]
-                dataStore.importCsvAsync(fileURL: fileURL) { error in
+                store.importCsvAsync(fileURL: fileURL) { error in
                     if let error = error {
                         errorMessage = ErrorMessage(title: "Import Error", message: "\(error)")
                     }
@@ -198,10 +198,10 @@ struct ListView: View {
 
 struct ListView_Previews: PreviewProvider {
     static var previews: some View {
-        ListView(dataStore: DataStore.createExample())
+        ListView(store: Store.createExample())
             .previewDevice(PreviewDevice(rawValue: "iPhone 7"))
             .previewDisplayName("iPhone 11")
-        ListView(dataStore: DataStore.createExample())
+        ListView(store: Store.createExample())
             .previewDevice(PreviewDevice(rawValue: "iPhone 11 Pro Max"))
             .previewDisplayName("iPhone 11 Pro Max")
     }
