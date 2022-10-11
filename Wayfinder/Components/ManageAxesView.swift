@@ -5,6 +5,7 @@ import SwiftUI
 struct ManageAxesView: View {
     
     @ObservedObject var store: Store
+    @Binding var isPresented: Bool
     
     @State private var newAxis: String = ""
     
@@ -104,7 +105,11 @@ struct ManageAxesView: View {
             List {
                 Section() {
                     ForEach(visibleAxes.indices, id: \.self) { index in
-                        Text(visibleAxes[index].name)
+                        Button {
+                            store.sync(withAxis: visibleAxes[index].name)
+                            isPresented = false
+                        } label: {
+                            Text(visibleAxes[index].name)
                             // TODO this causes the "disabling recursion trigger logging" message
                             .contextMenu {
                                 Button {
@@ -139,6 +144,7 @@ struct ManageAxesView: View {
                                     Label("Hide", systemImage: "arrow.down")
                                 }
                             }
+                        }
                     }
                     .onDelete { indices in
                         let axesToDelete = indices.map{ visibleAxes[$0].name }
@@ -170,7 +176,7 @@ struct ManageAxesView: View {
                     }
                 }
                 if !hiddenAxes.isEmpty {
-                    Section(header: Text("Hidden Views")) {
+                    Section(header: Text("Archived Views")) {
                         ForEach(hiddenAxes.indices, id: \.self) { index in
                             Text(hiddenAxes[index].name)
                                 // TODO this causes the "disabling recursion trigger logging" message
@@ -240,7 +246,8 @@ struct ManageAxesView: View {
 struct ManageAxesView_Previews: PreviewProvider {
     static var previews: some View {
         ManageAxesView(
-            store: Store.createExample()
+            store: Store.createExample(),
+            isPresented: .constant(true)
         )
             .dismissable()
     }

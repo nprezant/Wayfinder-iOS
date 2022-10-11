@@ -173,7 +173,8 @@ struct ListView: View {
         }
         .sheet(isPresented: $isManageAxesPresented) {
             ManageAxesView(
-                store: store
+                store: store,
+                isPresented: $isManageAxesPresented
             )
                 .dismissable(isPresented: $isManageAxesPresented)
         }
