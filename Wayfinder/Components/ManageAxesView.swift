@@ -83,6 +83,21 @@ struct ManageAxesView: View {
         }
     }
     
+    func addNewAxis() {
+        if allAxisNames.contains(newAxis) { return }
+        if newAxis == "" { return }
+        let insertionIndex = visibleAxes.map{ $0.name }.insertionIndex(of: newAxis, using: >)
+        withAnimation {
+            store.visibleAxes.insert(Axis(id: 0, name: newAxis, hidden: false.intValue), at: insertionIndex)
+        }
+        store.add(axis: newAxis) { error in
+            if let error = error {
+                errorMessage = ErrorMessage(title: "Cannot add view", message: "\(error)")
+            }
+        }
+        newAxis = ""
+    }
+    
     var body: some View {
         Text("Manage views").font(.title).padding([.top])
         List {
@@ -142,18 +157,11 @@ struct ManageAxesView: View {
                     }
                 }
                 HStack {
-                    TextField("New View", text: $newAxis)
+                    TextField("New View", text: $newAxis, onCommit: {
+                        addNewAxis()
+                    })
                     Button(action: {
-                        let insertionIndex = visibleAxes.map{ $0.name }.insertionIndex(of: newAxis, using: >)
-                        withAnimation {
-                            store.visibleAxes.insert(Axis(id: 0, name: newAxis, hidden: false.intValue), at: insertionIndex)
-                        }
-                        store.add(axis: newAxis) { error in
-                            if let error = error {
-                                errorMessage = ErrorMessage(title: "Cannot add view", message: "\(error)")
-                            }
-                        }
-                        newAxis = ""
+                        addNewAxis()
                     }) {
                         Image(systemName: "plus.circle.fill")
                     }
