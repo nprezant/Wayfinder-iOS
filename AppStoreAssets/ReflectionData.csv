@@ -1,0 +1,17 @@
+{"schemaVersion":3}
+view	name	isFlowState	engagement	energy	date	note	tags
+Work	Weekly Standup	0	15	-30	1639417080		Meeting
+Work	Respond to Emails	0	53	21	1639379040		Writing
+Work	Submit Paper to Journal	0	12	-50	1639378920		Forms;Bad Web Design :(
+Work	Edit Report for Client	0	33	32	1639378860		Editing
+Work	Write Script to Copy Server Files	0	78	25	1639119589		Python;Dev
+Work	Create Github Training Presentation	0	79	33	1639119545		PowerPoint;Teach
+Work	Edit Report for Client	0	48	-77	1639119489		Editing
+Work	Monthly Budget Meeting	0	47	-38	1639119321		Meeting;Finance
+Work	Automate System Updates	1	74	-21	1639119175		Python;Dev
+Work	Draft Report for Client	0	80	64	1639032960		Writing
+Work	Onboard New Hire	0	90	79	1639032840		Mentor;Teach
+Play	Running	0	10	-15	1638995547		Exercise;Outdoors
+Play	Painting	0	80	-20	1638986560		Art;Hands On
+Play	Ice skating	1	80	80	1638984956		Exercise
+Play	Running	0	25	20	1638984778		Exercise;Outdoors
